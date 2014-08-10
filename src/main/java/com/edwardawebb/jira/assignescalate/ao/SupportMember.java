@@ -12,14 +12,12 @@ import net.java.ao.schema.Table;
 
 
 /**
- * this interface is used by @AssigmentConfigurationActiveObjectsService  which exposes @AssignmentConfigurationResource objects to manipulate.
+ * This is a person, they take FTO and get assigned across many project roles.
+ *
  * 
- * Classes should not extend or implement this interface.
- * 
- * @author n0158588
  *
  */
-@Table("ASSTAT")
+@Table("USER")
 @Preload
 public interface SupportMember extends Entity {
 
@@ -28,8 +26,27 @@ public interface SupportMember extends Entity {
     public String getPrincipleName();
     @Mutator("NAME")
     public void setPrincipleName(String name);
+    
+    @Default("FALSE")
+    @Accessor("ASSIGN")
+    public boolean isAssignable();
+    @Mutator("ASSIGN")
+    public void setAssignable(boolean isAssignable);   
+    
 
+    @Accessor("LASTDATE")
+    public Date getLastAssigned();
+    @Mutator("LASTDATE")
+    public void setLastAssigned(Date assigned);
+    
+    // users that are no longer in role or system
+    @Default("FALSE")
+    @Accessor("HIDE")
+    public boolean isHidden();
+    @Mutator("HIDE")
+    public void setHidden(boolean isHidden);
+    
 
-    @ManyToMany(value = ProjectRoleAssignmentMapping.class,through="getProjectRole",reverse="getSupportMember")
+    @ManyToMany(value = ProjectRoleAssignmentMapping.class,through="getProjectRole",reverse="getUser")
     ProjectRole[] getProjectRoles();
 }

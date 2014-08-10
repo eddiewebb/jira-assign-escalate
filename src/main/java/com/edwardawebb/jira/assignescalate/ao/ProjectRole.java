@@ -16,7 +16,7 @@ import net.java.ao.schema.Table;
  *  A single project may have many support teams, each grouped into their "role".
  * 
  */
-@Table("ASROLES")
+@Table("ROLE")
 @Preload
 public interface ProjectRole extends Entity {
     @AutoIncrement
@@ -47,8 +47,9 @@ public interface ProjectRole extends Entity {
     @Mutator("ROLE")
     void setRole(String projectRole);
 
-    @ManyToMany(value = ProjectRoleAssignmentMapping.class,reverse="getProjectRole",through="getSupportMember")
+    @ManyToMany(value = ProjectRoleAssignmentMapping.class,reverse="getProjectRole",through="getUser")
     SupportMember[] getAssignees();
 
+   
     
 }
