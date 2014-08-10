@@ -1,8 +1,8 @@
 package ut.com.edwardawebb.jira.assignescalate.ao;
 
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -52,6 +52,7 @@ public class AssignmentServiceTest {
 
     /*
      * Use cases for service
+     * - A list of Project Role can be Retreived
      * - Project Role can be Retreived
      * - Project Role can be created
      * - Retrieve all available assignees for Role
@@ -76,6 +77,16 @@ public class AssignmentServiceTest {
     public void testAListOfProjectRoleRulesCanBeRetrieved(){
         ProjectRole[] projectRoles = assignmentService.getProjectRoles(PROJECT_ONE_KEY);
         assertThat(projectRoles.length,is(2));
+    }
+    
+    
+    @Test
+    public void testASpecificProjectRoleRulesCanBeRetrieved(){
+        ProjectRole projectRole = assignmentService.getProjectRole(PROJECT_ONE_KEY,ROLE_ONE);
+        assertThat(projectRole,notNullValue());
+        
+        ProjectRole projectRole2 = assignmentService.getProjectRole(PROJECT_ONE_KEY,ROLE_TWO);
+        assertThat(projectRole2,notNullValue());
     }
     
     

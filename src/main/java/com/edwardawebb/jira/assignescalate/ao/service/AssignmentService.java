@@ -23,6 +23,8 @@ public interface AssignmentService {
      * @return
      */
     ProjectRole[] getProjectRoles(Long projectId);
+
+    ProjectRole getProjectRole(Long projectId, String role);
    
    
 

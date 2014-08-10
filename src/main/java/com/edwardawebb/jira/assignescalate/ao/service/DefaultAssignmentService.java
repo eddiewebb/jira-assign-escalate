@@ -18,4 +18,14 @@ public class DefaultAssignmentService implements AssignmentService {
         return ao.find(ProjectRole.class,Query.select().where("projectId = ?",projectId));
     }
 
+    @Override
+    public ProjectRole getProjectRole(Long projectId, String role) {
+        ProjectRole[] results = ao.find(ProjectRole.class,Query.select().where("projectId = ? and projectRole = '?'",projectId,role));
+        if ( null != results && results.length == 1 ) {
+            return results[0];
+        }else{
+            return null;
+        }
+    }
+
 }
