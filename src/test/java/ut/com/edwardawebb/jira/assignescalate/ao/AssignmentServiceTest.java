@@ -155,6 +155,38 @@ public class AssignmentServiceTest {
     public void testThatUserRosterAvailabilityCanBeUpdated(){
         ProjectRole role = assignmentService.getProjectRole(1);
         assertThat(role.getAssignees().length,is(3));
+        
+        SupportMember[] team = role.getAssignees();        
+        int assignableCount=0;
+        for (int i = 0; i < team.length; i++) {
+            SupportMember person = team[i];
+            if(person.isAssignable()){
+                assignableCount++;
+                person.setAssignable(false);
+            }else{
+                person.setAssignable(true);
+            }
+        }
+        assertThat(assignableCount,is(2));
+        //save
+        assignmentService.updateProjectRole(role);
+        
+        //now check it worked
+         role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignees().length,is(3));
+        SupportMember[] newteam = role.getAssignees();
+        assignableCount=0;
+        for (int i = 0; i < newteam.length; i++) {
+            SupportMember person = newteam[i];
+            if(person.isAssignable()){
+                assignableCount++;
+                person.setAssignable(false);
+            }else{
+                person.setAssignable(true);
+            }
+        }
+        assertThat(assignableCount,is(1));
+        
     }
     
     

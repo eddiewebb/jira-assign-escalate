@@ -26,25 +26,7 @@ public interface SupportMember extends Entity {
     public String getPrincipleName();
     @Mutator("NAME")
     public void setPrincipleName(String name);
-    
-    @Default("FALSE")
-    @Accessor("ASSIGN")
-    public boolean isAssignable();
-    @Mutator("ASSIGN")
-    public void setAssignable(boolean isAssignable);   
-    
-
-    @Accessor("LASTDATE")
-    public Date getLastAssigned();
-    @Mutator("LASTDATE")
-    public void setLastAssigned(Date assigned);
-    
-    // users that are no longer in role or system
-    @Default("FALSE")
-    @Accessor("HIDE")
-    public boolean isHidden();
-    @Mutator("HIDE")
-    public void setHidden(boolean isHidden);
+ 
     
 
     @ManyToMany(value = ProjectRoleAssignmentMapping.class,through="getProjectRole",reverse="getUser")

@@ -43,6 +43,8 @@ public interface AssignmentService {
 
     SupportMember assignNextAvailableAssigneeForProjectRole(Long projectId, String name);
 
+    ProjectRole updateProjectRole(ProjectRole role);
+
    
    
 

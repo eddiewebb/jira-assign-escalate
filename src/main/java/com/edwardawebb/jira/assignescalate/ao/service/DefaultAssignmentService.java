@@ -76,6 +76,13 @@ public class DefaultAssignmentService implements AssignmentService {
         return results.length > 0 ? results[0] : null;
     }
 
+    @Override
+    public ProjectRole updateProjectRole(ProjectRole role) {
+        role.save();
+        return role;
+        
+    }
+
   
 
 }
