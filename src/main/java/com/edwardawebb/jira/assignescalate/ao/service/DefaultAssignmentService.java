@@ -56,8 +56,10 @@ public class DefaultAssignmentService implements AssignmentService {
         
         final SupportMember next = members.length > 0 ? members[0] : null;
         if(null != next){
-            next.setLastAssigned(new Date());
-            next.save();
+            ProjectRoleAssignmentMapping[] history = ao.find(ProjectRoleAssignmentMapping.class,Query.select()
+                    .where("ROLEID = ? and USERID = ?", role.getID(),next.getID()));
+            history[0].setLastAssigned(new Date());
+            history[0].save();
         }
         
         return next;

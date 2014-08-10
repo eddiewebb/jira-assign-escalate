@@ -134,7 +134,7 @@ public class AssignmentServiceTest {
             break;
         }       
         
-        assertThat(projectRole.getAssignees().length,is(3));
+        assertThat(projectRole.getAssignments().length,is(3));
         adHocRole=projectRole;
     }
     
@@ -154,12 +154,12 @@ public class AssignmentServiceTest {
     @Test
     public void testThatUserRosterAvailabilityCanBeUpdated(){
         ProjectRole role = assignmentService.getProjectRole(1);
-        assertThat(role.getAssignees().length,is(3));
+        assertThat(role.getAssignments().length,is(3));
         
-        SupportMember[] team = role.getAssignees();        
+        ProjectRoleAssignmentMapping[] team = role.getAssignments();        
         int assignableCount=0;
         for (int i = 0; i < team.length; i++) {
-            SupportMember person = team[i];
+            ProjectRoleAssignmentMapping person = team[i];
             if(person.isAssignable()){
                 assignableCount++;
                 person.setAssignable(false);
@@ -173,11 +173,11 @@ public class AssignmentServiceTest {
         
         //now check it worked
          role = assignmentService.getProjectRole(1);
-        assertThat(role.getAssignees().length,is(3));
-        SupportMember[] newteam = role.getAssignees();
+        assertThat(role.getAssignments().length,is(3));
+        ProjectRoleAssignmentMapping[] newteam = role.getAssignments();
         assignableCount=0;
         for (int i = 0; i < newteam.length; i++) {
-            SupportMember person = newteam[i];
+            ProjectRoleAssignmentMapping person = newteam[i];
             if(person.isAssignable()){
                 assignableCount++;
                 person.setAssignable(false);
@@ -230,22 +230,23 @@ public class AssignmentServiceTest {
 
             final SupportMember me = em.create(SupportMember.class);
             me.setPrincipleName(FIRST_ASSIGNEE);
-            me.setAssignable(true);
-            me.setLastAssigned(new Date());
             me.save();
             final SupportMember moe = em.create(SupportMember.class);
             moe.setPrincipleName(SECOND_ASSIGNEE);
-            moe.setAssignable(true);
             moe.save();
             final SupportMember max = em.create(SupportMember.class);
             max.setPrincipleName(THIRD_ASSIGNEE);
             max.save();
             
             final ProjectRoleAssignmentMapping roleToPerson = em.create(ProjectRoleAssignmentMapping.class);
+            roleToPerson.setAssignable(true);
+            roleToPerson.setLastAssigned(new Date(10L));
             roleToPerson.setProjectRole(todo);
             roleToPerson.setUser(me);
             roleToPerson.save();
             final ProjectRoleAssignmentMapping roleToPerson2 = em.create(ProjectRoleAssignmentMapping.class);
+            roleToPerson2.setAssignable(true);
+            roleToPerson2.setLastAssigned(new Date(0L));
             roleToPerson2.setProjectRole(todo);
             roleToPerson2.setUser(moe);
             roleToPerson2.save();
