@@ -43,6 +43,8 @@ public class AssignmentServiceTest {
     private static final String THIRD_ASSIGNEE = "Tammy";
     private static final String FIRST_ESCALATION = "Felix";
     private static final String SECOND_ESCALATION = "Selina";
+    
+    private static final String[] allDevelopers={FIRST_ASSIGNEE,SECOND_ASSIGNEE,THIRD_ASSIGNEE,FIRST_ESCALATION,SECOND_ESCALATION,"Eddie","Ivan"};
 
    private ProjectRole adHocRole;
     
@@ -64,7 +66,7 @@ public class AssignmentServiceTest {
      * - Retrieve all available assignees for Role
      * - ON HOLD - Retrieve all available escalatees for Role
      * - Retrieve next assignee for Role
-     * - Retrieve next escalatee for Role
+     * - ON HOLD - Retrieve next escalatee for Role
      * - Update assignees
      * - Update escalatees
      * 
@@ -147,6 +149,28 @@ public class AssignmentServiceTest {
          assertThat(nextGuy.getPrincipleName(),is(FIRST_ASSIGNEE));
          nextGuy = assignmentService.assignNextAvailableAssigneeForProjectRole(PROJECT_ONE_KEY,ROLE_ONE);
           assertThat(nextGuy.getPrincipleName(),is(SECOND_ASSIGNEE));
+    }
+    
+    @Test
+    public void testThatUserRosterAvailabilityCanBeUpdated(){
+        ProjectRole role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignees().length,is(3));
+    }
+    
+    
+    @Test
+    public void testThatNewUsersOfRoleCanBeAdded(){
+        
+    }
+    
+    @Test
+    public void testThatFormerUsersOfRoleCanReapear(){
+        
+    }
+    
+    @Test
+    public void testThatNewUsersOfRoleCanBeReEnabled(){
+        
     }
     
     

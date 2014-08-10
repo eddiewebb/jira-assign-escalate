@@ -47,7 +47,7 @@ public interface ProjectRole extends Entity {
     @Mutator("ROLE")
     void setRole(String projectRole);
 
-    @ManyToMany(value = ProjectRoleAssignmentMapping.class,reverse="getProjectRole",through="getUser")
+    @ManyToMany(value = ProjectRoleAssignmentMapping.class,reverse="getProjectRole",through="getUser",where="HIDE = false")
     SupportMember[] getAssignees();
 
    

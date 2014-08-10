@@ -52,9 +52,7 @@ public class DefaultAssignmentService implements AssignmentService {
                 .alias(ProjectRoleAssignmentMapping.class, "am")
                 .alias(SupportMember.class, "sm")
                 .join(ProjectRoleAssignmentMapping.class,"sm.ID = USERID")
-                .where("ROLEID = ? and HIDE = 0 and ASSIGN = 1", role.getID()).order("LASTDATE"));
-
-        
+                .where("ROLEID = ? and HIDE = 0 and ASSIGN = 1", role.getID()).order("LASTDATE"));        
         
         final SupportMember next = members.length > 0 ? members[0] : null;
         if(null != next){
