@@ -3,7 +3,9 @@
  */
 package com.edwardawebb.jira.assignescalate.admin;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +21,9 @@ import com.atlassian.jira.security.roles.ProjectRoleActors;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
+import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
+import com.google.common.collect.Lists;
 /**
  * This class just provides the front end initial UI. All heavy lifting is done
  * by our custom servlet, invokes via AJS.
@@ -31,23 +35,17 @@ public class SupportDutyProjectTabPanel extends AbstractProjectTabPanel {
     private static final Logger LOG = LoggerFactory.getLogger(SupportDutyProjectTabPanel.class);
 
     public final static String ADMIN_ROLE = "Administrators";
-    public final static String SUPPORT_ROLE = "Developers";
-    public final static String ASSIGNABLE_USERS = "selectedPeople";
-    public final static String LEVEL_ONE_PEOPLE = "people";
-    public final static String LEVEL_TWO_PEOPLE = "leveltwo";
 
-    private final UserManager userManager;
     private final JiraAuthenticationContext authenticationContext;
     private final ProjectRoleManager projectRoleManager;
-    private final AssignmentService assignmentConfigurationService;
+    private final AssignmentService assignmentService;
 
     public SupportDutyProjectTabPanel(UserManager userManager, ProjectRoleManager projectRoleManager,
             JiraAuthenticationContext authenticationContext,
-            AssignmentService assignmentConfigurationService) {
+            AssignmentService assignmentService) {
         this.authenticationContext = authenticationContext;
-        this.userManager = userManager;
         this.projectRoleManager = projectRoleManager;
-        this.assignmentConfigurationService = assignmentConfigurationService;
+        this.assignmentService = assignmentService;
     }
 
     @Override
@@ -64,12 +62,14 @@ public class SupportDutyProjectTabPanel extends AbstractProjectTabPanel {
     @Override
     protected Map<String, Object> createVelocityParams(BrowseContext ctx) {
         Project project = ctx.getProject();
-          Map<String, Object> params = super.createVelocityParams(ctx);
+        Map<String, Object> params = super.createVelocityParams(ctx);
+        params.put("projectTeams", teamsForProject(ctx));
         return params;
     }
 
     @Override
     public String getHtml(BrowseContext ctx) {
+        
         return descriptor.getHtml("view", createVelocityParams(ctx));
     }
 
@@ -78,15 +78,13 @@ public class SupportDutyProjectTabPanel extends AbstractProjectTabPanel {
      * 
      * @return
      */
-    private Collection<ApplicationUser> usersInSupportRole(BrowseContext context) {
+    private List<SupportTeam> teamsForProject(BrowseContext context) {
 
         Project project = context.getProject();
-        ProjectRole projectRole = projectRoleManager.getProjectRole(SUPPORT_ROLE);
-        ProjectRoleActors projectRoleActors = projectRoleManager.getProjectRoleActors(projectRole, project);
+        SupportTeam[] teams = assignmentService.getProjectTeams(project.getId());
         
-        Set<ApplicationUser> supportMembers = projectRoleActors.getApplicationUsers();
-        LOG.debug("Available Users: {}",supportMembers );
-        return supportMembers;
+        return Arrays.asList(teams);     
+        
     }
 
 

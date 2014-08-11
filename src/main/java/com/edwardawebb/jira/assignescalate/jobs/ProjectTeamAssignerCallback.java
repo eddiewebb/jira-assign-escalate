@@ -1,4 +1,4 @@
-package com.edwardawebb.jira.assignescalate.ao.service;
+package com.edwardawebb.jira.assignescalate.jobs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,20 +12,21 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.roles.ProjectRole;
 import com.atlassian.jira.security.roles.ProjectRoleActors;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
+import com.atlassian.jira.user.ApplicationUser;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
-import com.edwardawebb.jira.assignescalate.jobs.SyncProjectRoleUsersMonitorImpl;
+import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
 
-public class ProjectRoleStreamCallback {
+public class ProjectTeamAssignerCallback {
 
     // YES, this is not the same class, and allows our log statements to fall under the same as the job.
-    private final Logger logger = Logger.getLogger(SyncProjectRoleUsersMonitorImpl.class);
+    private final Logger logger = Logger.getLogger(SyncProjectTeamUsersScheduler.class);
     
     private AssignmentService assignmentService;
     private ProjectRoleManager roleManager;
     private ProjectManager projectManager;
     
 
-    public ProjectRoleStreamCallback(AssignmentService assignmentService, ProjectRoleManager roleManager, ProjectManager projectManager) {
+    public ProjectTeamAssignerCallback(AssignmentService assignmentService, ProjectRoleManager roleManager, ProjectManager projectManager) {
         this.assignmentService = assignmentService;
         this.roleManager = roleManager;
         this.projectManager = projectManager;
@@ -40,12 +41,10 @@ public class ProjectRoleStreamCallback {
        ProjectRole projectRole = roleManager.getProjectRole(roleToScan);
        assert projectRole!= null;
        ProjectRoleActors lastestActors = roleManager.getProjectRoleActors(projectRole, project);
-       Set<User> users = lastestActors.getUsers();
+       Set<ApplicationUser> users = lastestActors.getApplicationUsers();
        logger.info("==>" + users.size() + " users in role " + roleToScan + " to consider");
-       for (User user : lastestActors.getUsers()) {
-           allUserNamesInGroup.add(user.getName());
-       }   
-       assignmentService.updateUsersLinkedToRole(allUserNamesInGroup.toArray(new String[allUserNamesInGroup.size()]), readOnlyProjectRole);
+       
+       assignmentService.updateUsersLinkedToTeam(users, readOnlyProjectRole);
        long stop = System.currentTimeMillis();
        long duration=stop-start;
        logger.info("==>Completed Team: " + readOnlyProjectRole.getName() + ", for projectID:" + readOnlyProjectRole.getProjectId() + " in " + duration + "ms");

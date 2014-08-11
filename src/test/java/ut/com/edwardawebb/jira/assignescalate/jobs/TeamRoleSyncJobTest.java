@@ -1,13 +1,12 @@
 package ut.com.edwardawebb.jira.assignescalate.jobs;
 
-import static org.mockito.Matchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
 
-import java.util.Date;
 import java.util.Set;
 
 import net.java.ao.EntityManager;
@@ -19,8 +18,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import ut.com.edwardawebb.jira.assignescalate.ao.AssignmentServiceTest;
-
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.crowd.embedded.api.User;
@@ -29,13 +26,15 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.roles.ProjectRole;
 import com.atlassian.jira.security.roles.ProjectRoleActors;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.MockApplicationUser;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
 import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
 import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.service.DefaultAssignmentService;
-import com.edwardawebb.jira.assignescalate.jobs.SyncProjectRoleUsersMonitorImpl;
+import com.edwardawebb.jira.assignescalate.jobs.SyncProjectTeamUsersScheduler;
 import com.google.common.collect.Sets;
 
 @RunWith(ActiveObjectsJUnitRunner.class)
@@ -56,15 +55,15 @@ public class TeamRoleSyncJobTest {
     private Project project = mock(Project.class);
     private ProjectRole projectRole = mock(ProjectRole.class);
     private ProjectRoleActors actors = mock(ProjectRoleActors.class);
-    private User user1 = mock(User.class,new String("Fallon"));
-    private User user2 = mock(User.class,new String("Sam"));
-    private User user3 = mock(User.class,new String("Tammy"));
-    private Set<User> users = Sets.newHashSet(user1,user2,user3);
+    private static final ApplicationUser user1 = new MockApplicationUser("Fallon","Fallon Dude","eddie@mail.com");
+    private static final ApplicationUser user2 = new MockApplicationUser("Sam","Sam Guy","eddie@mail.com");
+    private static final ApplicationUser user3 = new MockApplicationUser("Tammy","Tammy Girl","eddie@mail.com");
+    private Set<ApplicationUser> users = Sets.newHashSet(user1,user2,user3);
     private String[] teamNames = {"Fallon","Sam","Tammy"};
     
     
 
-    SyncProjectRoleUsersMonitorImpl monitor;
+    SyncProjectTeamUsersScheduler monitor;
 
     @Before
     public void before() {
@@ -75,10 +74,10 @@ public class TeamRoleSyncJobTest {
         when(projectManager.getProjectObj(anyLong())).thenReturn(project);
         when(roleManager.getProjectRole(anyString())).thenReturn(projectRole);
         when(roleManager.getProjectRoleActors(org.mockito.Matchers.any(ProjectRole.class),org.mockito.Matchers.any(Project.class))).thenReturn(actors);
-        when(actors.getUsers()).thenReturn(users );
+        when(actors.getApplicationUsers()).thenReturn(users );
         
         
-        monitor = new SyncProjectRoleUsersMonitorImpl(pluginScheduler, assignmentService, roleManager, projectManager);
+        monitor = new SyncProjectTeamUsersScheduler(pluginScheduler, assignmentService, roleManager, projectManager);
     }
     
     @Test

@@ -10,11 +10,11 @@ import com.atlassian.sal.api.scheduling.PluginJob;
  * @ProjectRole. The users are then added to @ProjectRoleAssignmentMapping as needed.
  *
  */
-public class SyncProjectRoleUsersJob implements PluginJob {
+public class SyncProjectTeamUsersJob implements PluginJob {
 
     @Override
     public void execute(Map<String, Object> jobDataMap) {
-        final SyncProjectRoleUsersMonitorImpl monitor = (SyncProjectRoleUsersMonitorImpl)jobDataMap.get(SyncProjectRoleUsersMonitorImpl.KEY);
+        final SyncProjectTeamUsersScheduler monitor = (SyncProjectTeamUsersScheduler)jobDataMap.get(SyncProjectTeamUsersScheduler.KEY);
         assert monitor != null;
         
         monitor.scanAndUpdateProjectRoles();

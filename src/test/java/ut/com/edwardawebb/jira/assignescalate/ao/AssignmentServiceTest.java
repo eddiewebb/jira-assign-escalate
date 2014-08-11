@@ -7,6 +7,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
@@ -20,11 +22,14 @@ import org.junit.runner.RunWith;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.gzipfilter.org.apache.commons.lang.ArrayUtils;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.MockApplicationUser;
+import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
-import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.service.DefaultAssignmentService;
+import com.google.common.collect.Sets;
 
 @RunWith(ActiveObjectsJUnitRunner.class)
 @Data(AssignmentServiceTest.ConfigAssigmentTestData.class)
@@ -44,8 +49,15 @@ public class AssignmentServiceTest {
     private static final String THIRD_ASSIGNEE = "Tammy";
     private static final String FIRST_ESCALATION = "Felix";
     private static final String SECOND_ESCALATION = "Selina";
+    private static final ApplicationUser user1 = new MockApplicationUser("Fallon","Fallon Dude","eddie@mail.com");
+    private static final ApplicationUser user2 = new MockApplicationUser("Sam","Sam Guy","eddie@mail.com");
+    private static final ApplicationUser user3 = new MockApplicationUser("Tammy","Tammy Girl","eddie@mail.com");
+    private static final ApplicationUser user4 = new MockApplicationUser("Ivan","Ivan Man","eddie@mail.com");
+    private static final ApplicationUser user5 = new MockApplicationUser("Ali","Ali Lady","eddie@mail.com");
+    private static final ApplicationUser user6 = new MockApplicationUser("Felix","Felix Foreigner","eddie@mail.com");
+    private static final ApplicationUser user7 = new MockApplicationUser("Selina","Selina Standy","eddie@mail.com");
     
-    private static final String[] allDevelopers={FIRST_ASSIGNEE,SECOND_ASSIGNEE,THIRD_ASSIGNEE,FIRST_ESCALATION,SECOND_ESCALATION,"Eddie","Ivan"};
+    private static Set<ApplicationUser> allDevelopers;
 
    private SupportTeam adHocRole;
     
@@ -54,6 +66,14 @@ public class AssignmentServiceTest {
 
     @Before
     public void before() {
+        allDevelopers=new HashSet();
+        allDevelopers.add(user1);
+        allDevelopers.add(user2);
+        allDevelopers.add(user3);
+        allDevelopers.add(user4);
+        allDevelopers.add(user5);
+        allDevelopers.add(user6);
+        allDevelopers.add(user7);
         activeObjects = new TestActiveObjects(entityManager);
         assignmentService = new DefaultAssignmentService(activeObjects);             
     }
@@ -203,7 +223,7 @@ public class AssignmentServiceTest {
         SupportTeam role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(3));
 
-        assignmentService.updateUsersLinkedToRole(allDevelopers,role);
+        assignmentService.updateUsersLinkedToTeam(allDevelopers,role);
         role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(7));
     }
@@ -217,15 +237,16 @@ public class AssignmentServiceTest {
         SupportTeam role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(3));
 
-        assignmentService.updateUsersLinkedToRole(allDevelopers,role);
+        assignmentService.updateUsersLinkedToTeam(allDevelopers,role);
         role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(7));
 
-        String[] someDevelopers = (String[]) ArrayUtils.removeElement(allDevelopers, FIRST_ASSIGNEE);
-        someDevelopers = (String[]) ArrayUtils.removeElement(someDevelopers, SECOND_ASSIGNEE);
-        someDevelopers = (String[]) ArrayUtils.removeElement(someDevelopers, THIRD_ASSIGNEE);
+        Set<ApplicationUser> someDevelopers = Sets.newHashSet(allDevelopers);
+        someDevelopers.remove(user1);
+        someDevelopers.remove(user2);
+        someDevelopers.remove(user3);
         
-        assignmentService.updateUsersLinkedToRole(someDevelopers,role);
+        assignmentService.updateUsersLinkedToTeam(someDevelopers,role);
         role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(4));
     }
@@ -236,21 +257,22 @@ public class AssignmentServiceTest {
         SupportTeam role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(3));
 
-        assignmentService.updateUsersLinkedToRole(allDevelopers,role);
+        assignmentService.updateUsersLinkedToTeam(allDevelopers,role);
         role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(7));
 
         //remove some folks
-        String[] someDevelopers = (String[]) ArrayUtils.removeElement(allDevelopers, FIRST_ASSIGNEE);
-        someDevelopers = (String[]) ArrayUtils.removeElement(someDevelopers, SECOND_ASSIGNEE);
-        someDevelopers = (String[]) ArrayUtils.removeElement(someDevelopers, THIRD_ASSIGNEE);
+        Set<ApplicationUser> someDevelopers = Sets.newHashSet(allDevelopers);
+        someDevelopers.remove(user1);
+        someDevelopers.remove(user2);
+        someDevelopers.remove(user3);
         
-        assignmentService.updateUsersLinkedToRole(someDevelopers,role);
+        assignmentService.updateUsersLinkedToTeam(someDevelopers,role);
         role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(4));
         
         //re-add everyone
-        assignmentService.updateUsersLinkedToRole(allDevelopers,role);
+        assignmentService.updateUsersLinkedToTeam(allDevelopers,role);
         role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(7));
         

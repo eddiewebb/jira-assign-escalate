@@ -3,8 +3,12 @@
  */
 package com.edwardawebb.jira.assignescalate.ao.service;
 
+import java.util.Set;
+
+import com.atlassian.jira.user.ApplicationUser;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.SupportMember;
+import com.edwardawebb.jira.assignescalate.jobs.ProjectTeamAssignerCallback;
 
 
 /**
@@ -45,13 +49,13 @@ public interface AssignmentService {
 
     SupportTeam updateProjectTeam(SupportTeam team);
 
-    void updateUsersLinkedToRole(String[] usernames, SupportTeam role);
+    void updateUsersLinkedToTeam(Set<ApplicationUser> users, SupportTeam team);
 
     /**
      * Stream all available project configs.
      * @return
      */
-    void loadAllProjectTeams(ProjectRoleStreamCallback callback);
+    void loadAllProjectTeams(ProjectTeamAssignerCallback callback);
 
    
    

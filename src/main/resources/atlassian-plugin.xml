@@ -46,7 +46,7 @@
 		<interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
 	</component-import>
 	<component key="schedulerComponent"
-		class="com.edwardawebb.jira.assignescalate.jobs.SyncProjectRoleUsersMonitorImpl"
+		class="com.edwardawebb.jira.assignescalate.jobs.SyncProjectTeamUsersScheduler"
 		system="true" public="true">
 		<description>The plugin component that schedules the Twitter search.
 		</description>

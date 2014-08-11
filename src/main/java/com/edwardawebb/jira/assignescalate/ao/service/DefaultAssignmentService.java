@@ -2,19 +2,21 @@ package com.edwardawebb.jira.assignescalate.ao.service;
 
 import java.util.Date;
 import java.util.List;
-
-import org.apache.log4j.Logger;
+import java.util.Set;
 
 import net.java.ao.ActiveObjectsException;
 import net.java.ao.DBParam;
 import net.java.ao.EntityStreamCallback;
 import net.java.ao.Query;
 
+import org.apache.log4j.Logger;
+
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.jira.user.ApplicationUser;
+import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
-import com.edwardawebb.jira.assignescalate.ao.SupportMember;
-import com.edwardawebb.jira.assignescalate.jobs.SyncProjectRoleUsersMonitorImpl;
+import com.edwardawebb.jira.assignescalate.jobs.ProjectTeamAssignerCallback;
 import com.google.common.collect.Lists;
 
 public class DefaultAssignmentService implements AssignmentService {
@@ -27,7 +29,7 @@ public class DefaultAssignmentService implements AssignmentService {
     }
 
     @Override
-    public void loadAllProjectTeams(final ProjectRoleStreamCallback callback) {
+    public void loadAllProjectTeams(final ProjectTeamAssignerCallback callback) {
         ao.stream(SupportTeam.class, new EntityStreamCallback<SupportTeam,Integer>(){
             @Override
             public void onRowRead(SupportTeam t){
@@ -95,7 +97,7 @@ public class DefaultAssignmentService implements AssignmentService {
     }
 
     @Override
-    public void updateUsersLinkedToRole(String[] usersInGroup, SupportTeam role) {
+    public void updateUsersLinkedToTeam(Set<ApplicationUser> latestUsers, SupportTeam role) {
        
         //list of all currently assigned poeple. As we validate roles from the new list, they are 
         // removed from this this. Leftovers are ones who have left JIRA or moved out of the group.
@@ -107,18 +109,19 @@ public class DefaultAssignmentService implements AssignmentService {
             leftOvers = Lists.newArrayList(currentAssignments);            
         }
         
-        for (int i = 0; i < usersInGroup.length; i++) {
-            String name = usersInGroup[i];
-            SupportMember user = findOrCreateUser(name);   
+        for (ApplicationUser user : latestUsers) {
+            SupportMember teamMember = findOrCreateUser(user.getKey(), user.getName());   
             
-            TeamToUser teamToUser = findOrCreateAssignment(user,role);
+            TeamToUser teamToUser = findOrCreateAssignment(teamMember,role);
             if(teamToUser.isHidden()){
                 //previously existent but hidden, show it
                 teamToUser.setHidden(false);
                 teamToUser.save();
             }
             leftOvers.remove(teamToUser);
-        }         
+        }
+        
+              
         
         for (TeamToUser defunctAssignment : leftOvers) {
             defunctAssignment.setHidden(true);
@@ -144,8 +147,8 @@ public class DefaultAssignmentService implements AssignmentService {
        }
     }
 
-    private SupportMember findOrCreateUser(String name) {
-        SupportMember[] results = ao.find(SupportMember.class,"NAME = ?",name);
+    private SupportMember findOrCreateUser(String key, String name) {
+        SupportMember[] results = ao.find(SupportMember.class,"KEY = ? AND NAME = ?",key,name);
         if (results.length > 1)
         {
             throw new IllegalStateException("Application cannot have more than 1 user with same Principle Name");
@@ -153,7 +156,7 @@ public class DefaultAssignmentService implements AssignmentService {
         if ( results.length > 0 ){
             return results[0] ;
         }else{
-            SupportMember user = ao.create(SupportMember.class,new DBParam("NAME",name));
+            SupportMember user = ao.create(SupportMember.class,new DBParam("KEY",key),new DBParam("NAME",name));
             return user;
         }
     }

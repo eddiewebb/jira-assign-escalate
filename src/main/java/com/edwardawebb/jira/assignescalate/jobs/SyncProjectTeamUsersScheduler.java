@@ -10,13 +10,12 @@ import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
 import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
-import com.edwardawebb.jira.assignescalate.ao.service.ProjectRoleStreamCallback;
 
-public class SyncProjectRoleUsersMonitorImpl implements LifecycleAware {
+public class SyncProjectTeamUsersScheduler implements LifecycleAware {
     
-    private static final String JOB_NAME = SyncProjectRoleUsersMonitorImpl.class.getName() + ":job";
-    static final String KEY = SyncProjectRoleUsersMonitorImpl.class.getName() + ":instance";
-    private final Logger logger = Logger.getLogger(SyncProjectRoleUsersMonitorImpl.class);
+    private static final String JOB_NAME = SyncProjectTeamUsersScheduler.class.getName() + ":job";
+    static final String KEY = SyncProjectTeamUsersScheduler.class.getName() + ":instance";
+    private final Logger logger = Logger.getLogger(SyncProjectTeamUsersScheduler.class);
     private final PluginScheduler pluginScheduler;  // provided by SAL
     private final AssignmentService assignmentService;
     private final ProjectRoleManager roleManager;
@@ -31,7 +30,7 @@ public class SyncProjectRoleUsersMonitorImpl implements LifecycleAware {
     
 
     
-    public SyncProjectRoleUsersMonitorImpl(PluginScheduler pluginScheduler, AssignmentService assignmentService,
+    public SyncProjectTeamUsersScheduler(PluginScheduler pluginScheduler, AssignmentService assignmentService,
             ProjectRoleManager roleManager, ProjectManager projectManager) {
         this.pluginScheduler = pluginScheduler;
         this.assignmentService = assignmentService;
@@ -49,9 +48,9 @@ public class SyncProjectRoleUsersMonitorImpl implements LifecycleAware {
          
         pluginScheduler.scheduleJob(
                 JOB_NAME,                   // unique name of the job
-                SyncProjectRoleUsersJob.class,     // class of the job
+                SyncProjectTeamUsersJob.class,     // class of the job
                 new HashMap<String,Object>() {{
-                    put(KEY, SyncProjectRoleUsersMonitorImpl.this);
+                    put(KEY, SyncProjectTeamUsersScheduler.this);
                 }},                         // data that needs to be passed to the job
                 new Date(),                 // the time the job is to start
                 interval);                  // interval between repeats, in milliseconds
@@ -66,7 +65,7 @@ public class SyncProjectRoleUsersMonitorImpl implements LifecycleAware {
     public void scanAndUpdateProjectRoles() {
         logger.info("Assign & Escalate Team Sync STARTING - All Teams & Projects");
         long start = System.currentTimeMillis();
-        ProjectRoleStreamCallback callback = new ProjectRoleStreamCallback(assignmentService, roleManager, projectManager);
+        ProjectTeamAssignerCallback callback = new ProjectTeamAssignerCallback(assignmentService, roleManager, projectManager);
         assignmentService.loadAllProjectTeams(callback);
         long stop = System.currentTimeMillis();
         long duration = (stop - start);
