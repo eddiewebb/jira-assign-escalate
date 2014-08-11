@@ -8,8 +8,8 @@ import net.java.ao.Mutator;
 
 public interface AssignmentHistory extends Entity {
 
-    ProjectRole getProjectRole();
-    void setProjectRole(ProjectRole role);
+    SupportTeam getProjectRole();
+    void setProjectRole(SupportTeam role);
     
     SupportMember getSupportMember();
     void setSupportMember();

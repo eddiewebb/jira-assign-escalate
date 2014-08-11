@@ -15,12 +15,12 @@ import net.java.ao.schema.Table;
  *
  */
 @Table("ASRLEUSR")
-public interface ProjectRoleAssignmentMapping extends Entity {
+public interface TeamToUser extends Entity {
 
-    @Accessor("ROLE")
-    ProjectRole getProjectRole();
-    @Mutator("ROLE")
-    void setProjectRole(ProjectRole projectRole);
+    @Accessor("TEAM")
+    SupportTeam getProjectRole();
+    @Mutator("TEAM")
+    void setProjectRole(SupportTeam projectRole);
     
     @Accessor("USER")
     SupportMember getUser();

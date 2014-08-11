@@ -1,10 +1,10 @@
 package com.edwardawebb.jira.assignescalate.ao;
 
 import net.java.ao.Accessor;
-import net.java.ao.Entity;
 import net.java.ao.Mutator;
 import net.java.ao.OneToMany;
 import net.java.ao.Preload;
+import net.java.ao.RawEntity;
 import net.java.ao.schema.AutoIncrement;
 import net.java.ao.schema.NotNull;
 import net.java.ao.schema.PrimaryKey;
@@ -16,9 +16,9 @@ import net.java.ao.schema.Table;
  *  A single project may have many support teams, each grouped into their "role".
  * 
  */
-@Table("ROLE")
+@Table("TEAM")
 @Preload
-public interface ProjectRole extends Entity {
+public interface SupportTeam extends RawEntity<Integer> {
     @AutoIncrement
     @NotNull
     @PrimaryKey("ID")
@@ -50,7 +50,7 @@ public interface ProjectRole extends Entity {
     //@OneToMany(value = ProjectRoleAssignmentMapping.class,reverse="getProjectRole",through="getUser",where="HIDE = false")
     //SupportMember[] getAssignees();
     @OneToMany(reverse="getProjectRole",where="HIDE = false")
-    ProjectRoleAssignmentMapping[] getAssignments();
+    TeamToUser[] getAssignments();
 
    
     

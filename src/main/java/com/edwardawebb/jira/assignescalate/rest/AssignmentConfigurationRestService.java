@@ -25,11 +25,10 @@ import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
 public class AssignmentConfigurationRestService {
     private static final Logger LOG = LoggerFactory.getLogger(AssignmentConfigurationRestService.class);
 
-    private final AssignmentService assignmentConfigurationService;
+    private final AssignmentService assignmentService;
 
     public AssignmentConfigurationRestService(AssignmentService assignmentConfigurationService) {
-        super();
-        this.assignmentConfigurationService = assignmentConfigurationService;
+        this.assignmentService = assignmentConfigurationService;
     }
 
 

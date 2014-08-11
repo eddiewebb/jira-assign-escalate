@@ -29,6 +29,6 @@ public interface SupportMember extends Entity {
  
     
 
-    @ManyToMany(value = ProjectRoleAssignmentMapping.class,through="getProjectRole",reverse="getUser")
-    ProjectRole[] getProjectRoles();
+    @ManyToMany(value = TeamToUser.class,through="getProjectRole",reverse="getUser")
+    SupportTeam[] getProjectRoles();
 }

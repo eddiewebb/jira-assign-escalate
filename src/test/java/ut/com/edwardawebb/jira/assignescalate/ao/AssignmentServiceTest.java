@@ -19,8 +19,9 @@ import org.junit.runner.RunWith;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import com.edwardawebb.jira.assignescalate.ao.ProjectRole;
-import com.edwardawebb.jira.assignescalate.ao.ProjectRoleAssignmentMapping;
+import com.atlassian.gzipfilter.org.apache.commons.lang.ArrayUtils;
+import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
+import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
 import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.service.DefaultAssignmentService;
@@ -46,7 +47,7 @@ public class AssignmentServiceTest {
     
     private static final String[] allDevelopers={FIRST_ASSIGNEE,SECOND_ASSIGNEE,THIRD_ASSIGNEE,FIRST_ESCALATION,SECOND_ESCALATION,"Eddie","Ivan"};
 
-   private ProjectRole adHocRole;
+   private SupportTeam adHocRole;
     
     private AssignmentService assignmentService;
 
@@ -84,31 +85,32 @@ public class AssignmentServiceTest {
     
     @Test
     public void testAListOfProjectRoleRulesCanBeRetrieved(){
-        ProjectRole[] projectRoles = assignmentService.getProjectRoles(PROJECT_ONE_KEY);
+        SupportTeam[] projectRoles = assignmentService.getProjectRoles(PROJECT_ONE_KEY);
         assertThat(projectRoles.length,is(2));
     }
     
     
+    
     @Test
     public void testASpecificProjectRoleRulesCanBeRetrieved(){
-        ProjectRole[] projectRoles = assignmentService.getProjectRoles(PROJECT_ONE_KEY);
+        SupportTeam[] projectRoles = assignmentService.getProjectRoles(PROJECT_ONE_KEY);
         assertThat(projectRoles.length,is(2));
         
         for (int i = 0; i < projectRoles.length; i++) {
-            ProjectRole baseline = projectRoles[i];
-            ProjectRole projectRole = assignmentService.getProjectRole(baseline.getID());
+            SupportTeam baseline = projectRoles[i];
+            SupportTeam projectRole = assignmentService.getProjectRole(baseline.getID());
             assertThat(projectRole,notNullValue());
         }        
     }
 
     @Test
     public void testAProjectConfigCanBeCreated(){
-       ProjectRole role = assignmentService.createProjectRole(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
+       SupportTeam role = assignmentService.createProjectRole(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
        assertThat(role.getName(),is(ROLE_THREE));
        assertThat(role.getRole(),is("Admins"));
        assertThat(role.getProjectId(),is(PROJECT_ONE_KEY));       
 
-       ProjectRole queriedRole = assignmentService.getProjectRole(role.getID());
+       SupportTeam queriedRole = assignmentService.getProjectRole(role.getID());
        assertThat(queriedRole.getName(),is(ROLE_THREE));
        assertThat(queriedRole.getRole(),is("Admins"));
        assertThat(queriedRole.getProjectId(),is(PROJECT_ONE_KEY));
@@ -117,18 +119,18 @@ public class AssignmentServiceTest {
     }
     @Test(expected=net.java.ao.ActiveObjectsException.class)
     public void testARoleWithSameNameAndProjectCanNotBeCreated(){
-        ProjectRole role = assignmentService.createProjectRole(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
+        SupportTeam role = assignmentService.createProjectRole(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
         role = assignmentService.createProjectRole(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
         assertThat(role.getID(),nullValue());
     }
 
     @Test
     public void testTheSupportPoolCanBeRetreivedForAProjectRole(){
-        ProjectRole[] projectRoles = assignmentService.getProjectRoles(PROJECT_ONE_KEY);
+        SupportTeam[] projectRoles = assignmentService.getProjectRoles(PROJECT_ONE_KEY);
         assertThat(projectRoles.length,is(2));
-        ProjectRole projectRole=null;
+        SupportTeam projectRole=null;
         for (int i = 0; i < projectRoles.length; i++) {
-            ProjectRole baseline = projectRoles[i];
+            SupportTeam baseline = projectRoles[i];
              projectRole = assignmentService.getProjectRole(baseline.getID());
             assertThat(projectRole,notNullValue());
             break;
@@ -151,15 +153,19 @@ public class AssignmentServiceTest {
           assertThat(nextGuy.getPrincipleName(),is(SECOND_ASSIGNEE));
     }
     
+    
+    /** 
+     * i.e Bryan goes on FTO, Mike is heads-down on a secret project
+     */
     @Test
     public void testThatUserRosterAvailabilityCanBeUpdated(){
-        ProjectRole role = assignmentService.getProjectRole(1);
+        SupportTeam role = assignmentService.getProjectRole(1);
         assertThat(role.getAssignments().length,is(3));
         
-        ProjectRoleAssignmentMapping[] team = role.getAssignments();        
+        TeamToUser[] team = role.getAssignments();        
         int assignableCount=0;
         for (int i = 0; i < team.length; i++) {
-            ProjectRoleAssignmentMapping person = team[i];
+            TeamToUser person = team[i];
             if(person.isAssignable()){
                 assignableCount++;
                 person.setAssignable(false);
@@ -174,10 +180,10 @@ public class AssignmentServiceTest {
         //now check it worked
          role = assignmentService.getProjectRole(1);
         assertThat(role.getAssignments().length,is(3));
-        ProjectRoleAssignmentMapping[] newteam = role.getAssignments();
+        TeamToUser[] newteam = role.getAssignments();
         assignableCount=0;
         for (int i = 0; i < newteam.length; i++) {
-            ProjectRoleAssignmentMapping person = newteam[i];
+            TeamToUser person = newteam[i];
             if(person.isAssignable()){
                 assignableCount++;
                 person.setAssignable(false);
@@ -189,14 +195,64 @@ public class AssignmentServiceTest {
         
     }
     
-    
+    /**
+     * Users get added to LDAP/AD overnight.
+     */
     @Test
-    public void testThatNewUsersOfRoleCanBeAdded(){
+    public void testThatNewUsersOfGroupCanBeAdded(){
+        SupportTeam role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignments().length,is(3));
+
+        assignmentService.updateUsersLinkedToRole(allDevelopers,role);
+        role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignments().length,is(7));
+    }
+    
+    
+    /**
+     * Users get removed from LDAP/AD overnight.
+     */
+    @Test
+    public void testThatFormerUsersOfGroupCanBeHidden(){
+        SupportTeam role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignments().length,is(3));
+
+        assignmentService.updateUsersLinkedToRole(allDevelopers,role);
+        role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignments().length,is(7));
+
+        String[] someDevelopers = (String[]) ArrayUtils.removeElement(allDevelopers, FIRST_ASSIGNEE);
+        someDevelopers = (String[]) ArrayUtils.removeElement(someDevelopers, SECOND_ASSIGNEE);
+        someDevelopers = (String[]) ArrayUtils.removeElement(someDevelopers, THIRD_ASSIGNEE);
         
+        assignmentService.updateUsersLinkedToRole(someDevelopers,role);
+        role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignments().length,is(4));
     }
     
     @Test
     public void testThatFormerUsersOfRoleCanReapear(){
+        //baseline full team of 7
+        SupportTeam role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignments().length,is(3));
+
+        assignmentService.updateUsersLinkedToRole(allDevelopers,role);
+        role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignments().length,is(7));
+
+        //remove some folks
+        String[] someDevelopers = (String[]) ArrayUtils.removeElement(allDevelopers, FIRST_ASSIGNEE);
+        someDevelopers = (String[]) ArrayUtils.removeElement(someDevelopers, SECOND_ASSIGNEE);
+        someDevelopers = (String[]) ArrayUtils.removeElement(someDevelopers, THIRD_ASSIGNEE);
+        
+        assignmentService.updateUsersLinkedToRole(someDevelopers,role);
+        role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignments().length,is(4));
+        
+        //re-add everyone
+        assignmentService.updateUsersLinkedToRole(allDevelopers,role);
+        role = assignmentService.getProjectRole(1);
+        assertThat(role.getAssignments().length,is(7));
         
     }
     
@@ -214,15 +270,15 @@ public class AssignmentServiceTest {
         @Override
         public void update(EntityManager em) throws Exception
         {   
-            em.migrate(ProjectRole.class);
+            em.migrate(SupportTeam.class);
             em.migrate(SupportMember.class);
-            em.migrate(ProjectRoleAssignmentMapping.class);
+            em.migrate(TeamToUser.class);
  
             
             /**
              * Team one 3/5 developers
              */
-            final ProjectRole todo = em.create(ProjectRole.class);
+            final SupportTeam todo = em.create(SupportTeam.class);
             todo.setProjectId(PROJECT_ONE_KEY);
             todo.setName(ROLE_ONE);
             todo.setRole("Developers");
@@ -238,19 +294,19 @@ public class AssignmentServiceTest {
             max.setPrincipleName(THIRD_ASSIGNEE);
             max.save();
             
-            final ProjectRoleAssignmentMapping roleToPerson = em.create(ProjectRoleAssignmentMapping.class);
+            final TeamToUser roleToPerson = em.create(TeamToUser.class);
             roleToPerson.setAssignable(true);
             roleToPerson.setLastAssigned(new Date(10L));
             roleToPerson.setProjectRole(todo);
             roleToPerson.setUser(me);
             roleToPerson.save();
-            final ProjectRoleAssignmentMapping roleToPerson2 = em.create(ProjectRoleAssignmentMapping.class);
+            final TeamToUser roleToPerson2 = em.create(TeamToUser.class);
             roleToPerson2.setAssignable(true);
             roleToPerson2.setLastAssigned(new Date(0L));
             roleToPerson2.setProjectRole(todo);
             roleToPerson2.setUser(moe);
             roleToPerson2.save();
-            final ProjectRoleAssignmentMapping roleToPerson3 = em.create(ProjectRoleAssignmentMapping.class);
+            final TeamToUser roleToPerson3 = em.create(TeamToUser.class);
             roleToPerson3.setProjectRole(todo);
             roleToPerson3.setUser(max);
             roleToPerson3.save();
@@ -269,21 +325,21 @@ public class AssignmentServiceTest {
             selina.save();
             
             
-            final ProjectRole role2 = em.create(ProjectRole.class);
+            final SupportTeam role2 = em.create(SupportTeam.class);
             role2.setProjectId(PROJECT_ONE_KEY);
             role2.setName(ROLE_TWO);
             role2.setRole("Developers");
             role2.save();
             
-            final ProjectRoleAssignmentMapping roleToPerson6 = em.create(ProjectRoleAssignmentMapping.class);
+            final TeamToUser roleToPerson6 = em.create(TeamToUser.class);
             roleToPerson6.setProjectRole(role2);
             roleToPerson6.setUser(me);
             roleToPerson6.save();
-            final ProjectRoleAssignmentMapping roleToPerson4 = em.create(ProjectRoleAssignmentMapping.class);
+            final TeamToUser roleToPerson4 = em.create(TeamToUser.class);
             roleToPerson4.setProjectRole(role2);
             roleToPerson4.setUser(selina);
             roleToPerson4.save();
-            final ProjectRoleAssignmentMapping roleToPerson5 = em.create(ProjectRoleAssignmentMapping.class);
+            final TeamToUser roleToPerson5 = em.create(TeamToUser.class);
             roleToPerson5.setProjectRole(role2);
             roleToPerson5.setUser(felix);
             roleToPerson5.save();

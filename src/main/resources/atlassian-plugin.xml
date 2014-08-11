@@ -1,30 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
-  <plugin-info>
-    <description>${project.description}</description>
-    <version>${project.version}</version>
-    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-    <param name="plugin-icon">images/pluginIcon.png</param>
-    <param name="plugin-logo">images/pluginLogo.png</param>
-  </plugin-info>
-  <!-- add our i18n resource -->
-  <resource type="i18n" name="i18n" location="jira-assign-escalate"/>
-  <!-- add our web resources -->
-  <web-resource key="jira-assign-escalate-resources" name="jira-assign-escalate Web Resources">
-    <dependency>com.atlassian.auiplugin:ajs</dependency>
-    <resource type="download" name="jira-assign-escalate.css" location="/css/jira-assign-escalate.css"/>
-    <resource type="download" name="jira-assign-escalate.js" location="/js/jira-assign-escalate.js"/>
-    <resource type="download" name="images/" location="/images"/>
-    <context>jira-assign-escalate</context>
-  </web-resource>
-  <!-- publish our component -->
-  <component key="myPluginComponent" class="com.edwardawebb.jira.assignescalate.MyPluginComponentImpl" public="true">
-    <interface>com.edwardawebb.jira.assignescalate.MyPluginComponent</interface>
-  </component>
-  <!-- import from the product container -->
-  <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
-  	<component-import key="ao" name="Active Objects service"
+<atlassian-plugin key="${project.groupId}.${project.artifactId}"
+	name="${project.name}" plugins-version="2">
+	<plugin-info>
+		<description>${project.description}</description>
+		<version>${project.version}</version>
+		<vendor name="${project.organization.name}" url="${project.organization.url}" />
+		<param name="plugin-icon">images/pluginIcon.png</param>
+		<param name="plugin-logo">images/pluginLogo.png</param>
+	</plugin-info>
+	<!-- add our i18n resource -->
+	<resource type="i18n" name="i18n" location="jira-assign-escalate" />
+	<!-- add our web resources -->
+	<web-resource key="jira-assign-escalate-resources" name="jira-assign-escalate Web Resources">
+		<dependency>com.atlassian.auiplugin:ajs</dependency>
+		<resource type="download" name="jira-assign-escalate.css"
+			location="/css/jira-assign-escalate.css" />
+		<resource type="download" name="jira-assign-escalate.js"
+			location="/js/jira-assign-escalate.js" />
+		<resource type="download" name="images/" location="/images" />
+		<context>jira-assign-escalate</context>
+	</web-resource>
+	<!-- publish our component -->
+	<component key="myPluginComponent"
+		class="com.edwardawebb.jira.assignescalate.MyPluginComponentImpl"
+		public="true">
+		<interface>com.edwardawebb.jira.assignescalate.MyPluginComponent
+		</interface>
+	</component>
+	<!-- import from the product container -->
+	<component-import key="applicationProperties"
+		interface="com.atlassian.sal.api.ApplicationProperties" />
+	<component-import key="ao" name="Active Objects service"
 		interface="com.atlassian.activeobjects.external.ActiveObjects">
 		<description>Component to access Active Objects functionality from the
 			plugin
@@ -34,31 +41,54 @@
 		class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
 		<decription>Processes @Transactional annotations.</decription>
 	</component>
-	
-	
-	
+	<component-import key="pluginScheduler">
+		<description>SAL Scheduler</description>
+		<interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+	</component-import>
+	<component key="schedulerComponent"
+		class="com.edwardawebb.jira.assignescalate.jobs.SyncProjectRoleUsersMonitorImpl"
+		system="true" public="true">
+		<description>The plugin component that schedules the Twitter search.
+		</description>
+		<interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+	</component>
+
 	<!-- my stuff -->
-  <workflow-function key="assign-level-one-support-post-function" name="Assign Level One Support Post Function" i18n-name-key="assign-level-one-support-post-function.name" class="com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunctionFactory">
-    <description key="assign-level-one-support-post-function.description">Assign an available member from this project/components level 1 team</description>
-    <function-class>com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunction</function-class>
-    <orderable>false</orderable>
-    <unique>true</unique>
-    <deletable>true</deletable>
-    <resource type="velocity" name="view" location="templates/postfunctions/assign-level-one-support-post-function.vm"/>
-    <resource type="velocity" name="input-parameters" location="templates/postfunctions/assign-level-one-support-post-function-input.vm"/>
-    <resource type="velocity" name="edit-parameters" location="templates/postfunctions/assign-level-one-support-post-function-input.vm"/>
-  </workflow-function>
-  <workflow-function key="escalate-level-two-post-function" name="Escalate Level Two Post Function" i18n-name-key="escalate-level-two-post-function.name" class="com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunctionFactory">
-    <description key="escalate-level-two-post-function.description">Re-assign an issue to level two.</description>
-    <function-class>com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunction</function-class>
-    <orderable>false</orderable>
-    <unique>true</unique>
-    <deletable>true</deletable>
-    <resource type="velocity" name="view" location="templates/postfunctions/escalate-level-two-post-function.vm"/>
-    <resource type="velocity" name="input-parameters" location="templates/postfunctions/escalate-level-two-post-function-input.vm"/>
-    <resource type="velocity" name="edit-parameters" location="templates/postfunctions/escalate-level-two-post-function-input.vm"/>
-  </workflow-function>
-  	<!-- exposes area within project admin section to edit team -->
+	<workflow-function key="assign-level-one-support-post-function"
+		name="Assign Level One Support Post Function" i18n-name-key="assign-level-one-support-post-function.name"
+		class="com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunctionFactory">
+		<description key="assign-level-one-support-post-function.description">Assign an available member from this
+			project/components level 1 team</description>
+		<function-class>com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunction
+		</function-class>
+		<orderable>false</orderable>
+		<unique>true</unique>
+		<deletable>true</deletable>
+		<resource type="velocity" name="view"
+			location="templates/postfunctions/assign-level-one-support-post-function.vm" />
+		<resource type="velocity" name="input-parameters"
+			location="templates/postfunctions/assign-level-one-support-post-function-input.vm" />
+		<resource type="velocity" name="edit-parameters"
+			location="templates/postfunctions/assign-level-one-support-post-function-input.vm" />
+	</workflow-function>
+	<workflow-function key="escalate-level-two-post-function"
+		name="Escalate Level Two Post Function" i18n-name-key="escalate-level-two-post-function.name"
+		class="com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunctionFactory">
+		<description key="escalate-level-two-post-function.description">Re-assign an issue to level two.
+		</description>
+		<function-class>com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunction
+		</function-class>
+		<orderable>false</orderable>
+		<unique>true</unique>
+		<deletable>true</deletable>
+		<resource type="velocity" name="view"
+			location="templates/postfunctions/escalate-level-two-post-function.vm" />
+		<resource type="velocity" name="input-parameters"
+			location="templates/postfunctions/escalate-level-two-post-function-input.vm" />
+		<resource type="velocity" name="edit-parameters"
+			location="templates/postfunctions/escalate-level-two-post-function-input.vm" />
+	</workflow-function>
+	<!-- exposes area within project admin section to edit team -->
 	<project-tabpanel key="support-panel" name="Support Assignment"
 		class="com.lmig.forge.atlassian.jira.assigner.SupportDutyProjectTabPanel">
 		<description key="supportduty.project.panel.description">
@@ -78,25 +108,26 @@
 			tab panel area -->
 		<param name="noTitle">true</param>
 	</project-tabpanel>
-	
-		<!-- expose custom REST service for project config operations -->
+
+	<!-- expose custom REST service for project config operations -->
 	<rest key="supportAssginerConfigurationService" path="/support-assigner"
 		version="1.0">
 		<description>Provides endpoint to configure</description>
 		<package>com.edwardawebb.jira.assignescalate.rest</package>
 	</rest>
-	
-	
-	
-	
-	
+
+
+
+
+
 	<ao key="ao-module">
 		<description>This provides persistence to track last assigned, and
 			maybe other info
 		</description>
-		<entity>com.edwardawebb.jira.assignescalate.ao.ProjectRole</entity>
+		<entity>com.edwardawebb.jira.assignescalate.ao.SupportTeam</entity>
 		<entity>com.edwardawebb.jira.assignescalate.ao.SupportMember</entity>
-		<entity>com.edwardawebb.jira.assignescalate.ao.ProjectRoleAssignmentMapping</entity>		
+		<entity>com.edwardawebb.jira.assignescalate.ao.TeamToUser
+		</entity>
 	</ao>
-	
+
 </atlassian-plugin>
