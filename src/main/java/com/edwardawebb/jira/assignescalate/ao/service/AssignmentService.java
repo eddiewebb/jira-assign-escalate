@@ -23,27 +23,27 @@ public interface AssignmentService {
      * @param jiraProjectId - the ID provided by JIRA
      * @return
      */
-    SupportTeam[] getProjectRoles(Long jiraProjectId);
+    SupportTeam[] getProjectTeams(Long jiraProjectId);
 
     /**
      * Retreive specific role by AO ID
-     * @param projectRoleId - the unique id assigned to this object
+     * @param teamId - the unique id assigned to this object
      * @return
      */
-    SupportTeam getProjectRole(Integer projectRoleId);
+    SupportTeam getProjectTeam(Integer teamId);
 
     /**
      * 
-     * @param projectId
+     * @param projectId - JIRA project ID
      * @param name - the name of this assignment
      * @param projectRole - the Project role to pull users from
      * @return
      */
-    SupportTeam createProjectRole(Long projectOneKey, String name, String projectRole);
+    SupportTeam createProjectTeam(Long projectOneKey, String name, String projectRole);
 
-    SupportMember assignNextAvailableAssigneeForProjectRole(Long projectId, String name);
+    SupportMember assignNextAvailableAssigneeForProjectTeam(Long projectId, String name);
 
-    SupportTeam updateProjectRole(SupportTeam role);
+    SupportTeam updateProjectTeam(SupportTeam team);
 
     void updateUsersLinkedToRole(String[] usernames, SupportTeam role);
 
@@ -51,7 +51,7 @@ public interface AssignmentService {
      * Stream all available project configs.
      * @return
      */
-    void loadAllProjectRoles(ProjectRoleStreamCallback callback);
+    void loadAllProjectTeams(ProjectRoleStreamCallback callback);
 
    
    

@@ -85,7 +85,7 @@ public class TeamRoleSyncJobTest {
     public void testTheMonitorCanCallTheAssignmentServiceWithNewUsersOnAnEmptyButExistentTeam(){
         monitor.scanAndUpdateProjectRoles();
         
-        SupportTeam[] roles = assignmentService.getProjectRoles(PROJECT_ID);
+        SupportTeam[] roles = assignmentService.getProjectTeams(PROJECT_ID);
         
         
         // only a single Team should exist with 3 assignments.

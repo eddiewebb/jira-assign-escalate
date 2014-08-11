@@ -27,7 +27,7 @@ public class DefaultAssignmentService implements AssignmentService {
     }
 
     @Override
-    public void loadAllProjectRoles(final ProjectRoleStreamCallback callback) {
+    public void loadAllProjectTeams(final ProjectRoleStreamCallback callback) {
         ao.stream(SupportTeam.class, new EntityStreamCallback<SupportTeam,Integer>(){
             @Override
             public void onRowRead(SupportTeam t){
@@ -37,17 +37,17 @@ public class DefaultAssignmentService implements AssignmentService {
     }
     
     @Override
-    public SupportTeam[] getProjectRoles(Long projectId) {
+    public SupportTeam[] getProjectTeams(Long projectId) {
         return ao.find(SupportTeam.class,Query.select().where("projectId = ?",projectId));
     }
 
     @Override
-    public SupportTeam getProjectRole(Integer projectRoleId) {
+    public SupportTeam getProjectTeam(Integer projectRoleId) {
         return ao.get(SupportTeam.class, projectRoleId);
     }
 
     @Override
-    public SupportTeam createProjectRole(Long projectId, String name, String projectRole) {
+    public SupportTeam createProjectTeam(Long projectId, String name, String projectRole) {
         SupportTeam existingrole = findRoleByProjectIdAndName(projectId, name);
         if ( null == existingrole ){
             // good, does not exist
@@ -61,7 +61,7 @@ public class DefaultAssignmentService implements AssignmentService {
     }
 
     @Override
-    public SupportMember assignNextAvailableAssigneeForProjectRole(Long projectId, String name) {
+    public SupportMember assignNextAvailableAssigneeForProjectTeam(Long projectId, String name) {
         SupportTeam role = findRoleByProjectIdAndName(projectId,name);
         
         SupportMember[] members = ao.find(SupportMember.class,Query.select()
@@ -84,7 +84,7 @@ public class DefaultAssignmentService implements AssignmentService {
 
 
     @Override
-    public SupportTeam updateProjectRole(SupportTeam role) {
+    public SupportTeam updateProjectTeam(SupportTeam role) {
         role.save();
         for (int i = 0; i < role.getAssignments().length; i++) {
             TeamToUser assignment = role.getAssignments()[i];

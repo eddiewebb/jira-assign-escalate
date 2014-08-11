@@ -85,7 +85,7 @@ public class AssignmentServiceTest {
     
     @Test
     public void testAListOfProjectRoleRulesCanBeRetrieved(){
-        SupportTeam[] projectRoles = assignmentService.getProjectRoles(PROJECT_ONE_KEY);
+        SupportTeam[] projectRoles = assignmentService.getProjectTeams(PROJECT_ONE_KEY);
         assertThat(projectRoles.length,is(2));
     }
     
@@ -93,24 +93,24 @@ public class AssignmentServiceTest {
     
     @Test
     public void testASpecificProjectRoleRulesCanBeRetrieved(){
-        SupportTeam[] projectRoles = assignmentService.getProjectRoles(PROJECT_ONE_KEY);
+        SupportTeam[] projectRoles = assignmentService.getProjectTeams(PROJECT_ONE_KEY);
         assertThat(projectRoles.length,is(2));
         
         for (int i = 0; i < projectRoles.length; i++) {
             SupportTeam baseline = projectRoles[i];
-            SupportTeam projectRole = assignmentService.getProjectRole(baseline.getID());
+            SupportTeam projectRole = assignmentService.getProjectTeam(baseline.getID());
             assertThat(projectRole,notNullValue());
         }        
     }
 
     @Test
     public void testAProjectConfigCanBeCreated(){
-       SupportTeam role = assignmentService.createProjectRole(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
+       SupportTeam role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
        assertThat(role.getName(),is(ROLE_THREE));
        assertThat(role.getRole(),is("Admins"));
        assertThat(role.getProjectId(),is(PROJECT_ONE_KEY));       
 
-       SupportTeam queriedRole = assignmentService.getProjectRole(role.getID());
+       SupportTeam queriedRole = assignmentService.getProjectTeam(role.getID());
        assertThat(queriedRole.getName(),is(ROLE_THREE));
        assertThat(queriedRole.getRole(),is("Admins"));
        assertThat(queriedRole.getProjectId(),is(PROJECT_ONE_KEY));
@@ -119,19 +119,19 @@ public class AssignmentServiceTest {
     }
     @Test(expected=net.java.ao.ActiveObjectsException.class)
     public void testARoleWithSameNameAndProjectCanNotBeCreated(){
-        SupportTeam role = assignmentService.createProjectRole(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
-        role = assignmentService.createProjectRole(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
+        SupportTeam role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
+        role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
         assertThat(role.getID(),nullValue());
     }
 
     @Test
     public void testTheSupportPoolCanBeRetreivedForAProjectRole(){
-        SupportTeam[] projectRoles = assignmentService.getProjectRoles(PROJECT_ONE_KEY);
+        SupportTeam[] projectRoles = assignmentService.getProjectTeams(PROJECT_ONE_KEY);
         assertThat(projectRoles.length,is(2));
         SupportTeam projectRole=null;
         for (int i = 0; i < projectRoles.length; i++) {
             SupportTeam baseline = projectRoles[i];
-             projectRole = assignmentService.getProjectRole(baseline.getID());
+             projectRole = assignmentService.getProjectTeam(baseline.getID());
             assertThat(projectRole,notNullValue());
             break;
         }       
@@ -142,14 +142,14 @@ public class AssignmentServiceTest {
     
     @Test
     public void testTheNextAssigneeCanBeRetrieved(){
-        SupportMember nextGuy = assignmentService.assignNextAvailableAssigneeForProjectRole(PROJECT_ONE_KEY,ROLE_ONE);
+        SupportMember nextGuy = assignmentService.assignNextAvailableAssigneeForProjectTeam(PROJECT_ONE_KEY,ROLE_ONE);
         assertThat(nextGuy,notNullValue());
         assertThat(nextGuy.getPrincipleName(),notNullValue());
         //second assignee is missing an assigned date, should be oldest
          assertThat(nextGuy.getPrincipleName(),is(SECOND_ASSIGNEE));
-         nextGuy = assignmentService.assignNextAvailableAssigneeForProjectRole(PROJECT_ONE_KEY,ROLE_ONE);
+         nextGuy = assignmentService.assignNextAvailableAssigneeForProjectTeam(PROJECT_ONE_KEY,ROLE_ONE);
          assertThat(nextGuy.getPrincipleName(),is(FIRST_ASSIGNEE));
-         nextGuy = assignmentService.assignNextAvailableAssigneeForProjectRole(PROJECT_ONE_KEY,ROLE_ONE);
+         nextGuy = assignmentService.assignNextAvailableAssigneeForProjectTeam(PROJECT_ONE_KEY,ROLE_ONE);
           assertThat(nextGuy.getPrincipleName(),is(SECOND_ASSIGNEE));
     }
     
@@ -159,7 +159,7 @@ public class AssignmentServiceTest {
      */
     @Test
     public void testThatUserRosterAvailabilityCanBeUpdated(){
-        SupportTeam role = assignmentService.getProjectRole(1);
+        SupportTeam role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(3));
         
         TeamToUser[] team = role.getAssignments();        
@@ -175,10 +175,10 @@ public class AssignmentServiceTest {
         }
         assertThat(assignableCount,is(2));
         //save
-        assignmentService.updateProjectRole(role);
+        assignmentService.updateProjectTeam(role);
         
         //now check it worked
-         role = assignmentService.getProjectRole(1);
+         role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(3));
         TeamToUser[] newteam = role.getAssignments();
         assignableCount=0;
@@ -200,11 +200,11 @@ public class AssignmentServiceTest {
      */
     @Test
     public void testThatNewUsersOfGroupCanBeAdded(){
-        SupportTeam role = assignmentService.getProjectRole(1);
+        SupportTeam role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(3));
 
         assignmentService.updateUsersLinkedToRole(allDevelopers,role);
-        role = assignmentService.getProjectRole(1);
+        role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(7));
     }
     
@@ -214,11 +214,11 @@ public class AssignmentServiceTest {
      */
     @Test
     public void testThatFormerUsersOfGroupCanBeHidden(){
-        SupportTeam role = assignmentService.getProjectRole(1);
+        SupportTeam role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(3));
 
         assignmentService.updateUsersLinkedToRole(allDevelopers,role);
-        role = assignmentService.getProjectRole(1);
+        role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(7));
 
         String[] someDevelopers = (String[]) ArrayUtils.removeElement(allDevelopers, FIRST_ASSIGNEE);
@@ -226,18 +226,18 @@ public class AssignmentServiceTest {
         someDevelopers = (String[]) ArrayUtils.removeElement(someDevelopers, THIRD_ASSIGNEE);
         
         assignmentService.updateUsersLinkedToRole(someDevelopers,role);
-        role = assignmentService.getProjectRole(1);
+        role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(4));
     }
     
     @Test
     public void testThatFormerUsersOfRoleCanReapear(){
         //baseline full team of 7
-        SupportTeam role = assignmentService.getProjectRole(1);
+        SupportTeam role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(3));
 
         assignmentService.updateUsersLinkedToRole(allDevelopers,role);
-        role = assignmentService.getProjectRole(1);
+        role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(7));
 
         //remove some folks
@@ -246,12 +246,12 @@ public class AssignmentServiceTest {
         someDevelopers = (String[]) ArrayUtils.removeElement(someDevelopers, THIRD_ASSIGNEE);
         
         assignmentService.updateUsersLinkedToRole(someDevelopers,role);
-        role = assignmentService.getProjectRole(1);
+        role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(4));
         
         //re-add everyone
         assignmentService.updateUsersLinkedToRole(allDevelopers,role);
-        role = assignmentService.getProjectRole(1);
+        role = assignmentService.getProjectTeam(1);
         assertThat(role.getAssignments().length,is(7));
         
     }

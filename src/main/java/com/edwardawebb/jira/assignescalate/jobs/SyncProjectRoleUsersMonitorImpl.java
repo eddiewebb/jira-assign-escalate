@@ -67,7 +67,7 @@ public class SyncProjectRoleUsersMonitorImpl implements LifecycleAware {
         logger.info("Assign & Escalate Team Sync STARTING - All Teams & Projects");
         long start = System.currentTimeMillis();
         ProjectRoleStreamCallback callback = new ProjectRoleStreamCallback(assignmentService, roleManager, projectManager);
-        assignmentService.loadAllProjectRoles(callback);
+        assignmentService.loadAllProjectTeams(callback);
         long stop = System.currentTimeMillis();
         long duration = (stop - start);
         logger.info("Assign & Escalate TEAM Sync COMPLETED in " + duration + "ms");
