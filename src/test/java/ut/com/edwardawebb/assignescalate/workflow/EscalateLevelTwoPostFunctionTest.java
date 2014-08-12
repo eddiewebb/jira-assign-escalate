@@ -1,5 +1,16 @@
 package ut.com.edwardawebb.assignescalate.workflow;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.ofbiz.core.entity.GenericValue;
+
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.SubTaskManager;
@@ -13,20 +24,6 @@ import com.atlassian.jira.issue.security.IssueSecurityLevelManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.user.util.UserManager;
-
-import org.ofbiz.core.entity.GenericValue;
-import org.junit.Test;
-import org.junit.After;
-import org.junit.Before;
-import org.mockito.Mockito;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
-
 import com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunction;
 
 public class EscalateLevelTwoPostFunctionTest

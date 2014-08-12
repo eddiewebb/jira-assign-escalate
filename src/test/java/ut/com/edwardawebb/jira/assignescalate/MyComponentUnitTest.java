@@ -1,10 +1,11 @@
 package ut.com.edwardawebb.jira.assignescalate;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
+
 import com.edwardawebb.jira.assignescalate.MyPluginComponent;
 import com.edwardawebb.jira.assignescalate.MyPluginComponentImpl;
-
-import static org.junit.Assert.assertEquals;
 
 public class MyComponentUnitTest
 {

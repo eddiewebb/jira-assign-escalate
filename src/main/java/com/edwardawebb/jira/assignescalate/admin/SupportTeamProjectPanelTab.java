@@ -4,10 +4,8 @@
 package com.edwardawebb.jira.assignescalate.admin;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +15,11 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.browse.BrowseContext;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.roles.ProjectRole;
-import com.atlassian.jira.security.roles.ProjectRoleActors;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
-import com.google.common.collect.Lists;
 /**
  * This class just provides the front end initial UI. All heavy lifting is done
  * by our custom servlet, invokes via AJS.

@@ -1,16 +1,16 @@
 package com.edwardawebb.jira.assignescalate.workflow;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import webwork.action.ActionContext;
+
 import com.atlassian.jira.plugin.workflow.AbstractWorkflowPluginFactory;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
-import com.opensymphony.workflow.loader.*;
-import webwork.action.ActionContext;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.opensymphony.workflow.loader.AbstractDescriptor;
+import com.opensymphony.workflow.loader.FunctionDescriptor;
 
 /*
 This is the factory class responsible for dealing with the UI for the post-function.

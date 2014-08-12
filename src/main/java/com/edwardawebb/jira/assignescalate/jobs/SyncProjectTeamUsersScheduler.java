@@ -40,6 +40,8 @@ public class SyncProjectTeamUsersScheduler implements LifecycleAware {
 
     @Override
     public void onStart() {
+        logger.info(String.format("Team Sync Scheduler initated"));
+        
         reschedule( interval);
     }
  
@@ -52,7 +54,7 @@ public class SyncProjectTeamUsersScheduler implements LifecycleAware {
                 new HashMap<String,Object>() {{
                     put(KEY, SyncProjectTeamUsersScheduler.this);
                 }},                         // data that needs to be passed to the job
-                new Date(),                 // the time the job is to start
+                new Date(System.currentTimeMillis() + 5000),                 // the time the job is to start in 30 seconds
                 interval);                  // interval between repeats, in milliseconds
         logger.info(String.format("JIRA Assign & Escalate ProjectRole<>User mapping  task scheduled to run every %dms", interval));
     }

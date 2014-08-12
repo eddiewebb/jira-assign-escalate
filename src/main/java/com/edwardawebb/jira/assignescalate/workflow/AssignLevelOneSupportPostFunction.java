@@ -1,13 +1,14 @@
 package com.edwardawebb.jira.assignescalate.workflow;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.atlassian.jira.issue.Issue;
+
+import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.WorkflowException;
-import java.util.Map;
-import com.atlassian.jira.issue.MutableIssue;
 
 
 /*
