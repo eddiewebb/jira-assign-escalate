@@ -28,7 +28,8 @@ dialog.addLink("Cancel", function (dialog) {
 }, "#");
 
 // Add events to dialog trigger elements
-AJS.$("#dialog-button").click(function() {
+AJS.$("#create-support-team").enable();
+AJS.$("#create-support-team").click(function() {
     // PREPARE FOR DISPLAY
     // start first page, first panel
     dialog.gotoPanel(0);

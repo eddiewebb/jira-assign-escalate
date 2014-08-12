@@ -18,6 +18,8 @@
 			location="/css/jira-assign-escalate.css" />
 		<resource type="download" name="jira-assign-escalate.js"
 			location="/js/jira-assign-escalate.js" />
+		<resource type="download" name="new-support-team.js"
+			location="/js/dialogs/new-support-team.js" />
 		<resource type="download" name="images/" location="/images" />
 		<context>jira-assign-escalate</context>
 	</web-resource>

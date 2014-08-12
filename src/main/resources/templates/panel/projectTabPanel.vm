@@ -7,6 +7,9 @@
             <div class="aui-page-header-main">
                 <h1>Support Assigner - Support Teams</h1>
             </div>
+            <div>
+                <button id="create-support-team" class="aui-button aui-button-subtle" disabled><span class="aui-icon aui-icon-small aui-iconfont-configure">Configure </span> New Team</button>
+            </div>
         </div>
     </header>
 
@@ -17,8 +20,18 @@
                 
                 
                     <div id="aui-message-bar"></div>
+                    <div class="aui-tabs horizontal-tabs" id="tabs-example1">
+                        <ul class="tabs-menu">
+                            #foreach ($team in $projectTeams)
+                                    <li class="menu-item">
+                                        <a href="#tabs-team-$team.ID"><strong>$team.name</strong></a>
+                                    </li>
+                            #end
+                        </ul>
+
+
                     #foreach ($team in $projectTeams)
-                        <div id="team_$team.name">
+                        <div class="tabs-pane active-pane" id="tabs-team-$team.ID">
                             <h4>$team.name</h4>
                             <form class="aui" action="">
                                 <fieldset>
@@ -61,6 +74,8 @@
 
                         </div>
                     #end
+
+                </div>
                     
                         
                     
@@ -73,7 +88,8 @@
 
 
 $webResourceManager.requireResource("com.edwardawebb.jira-assign-escalate-plugin:jira-assign-escalate-plugin-resources")
-<script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate-plugin:jira-assign-escalate-plugin-resources/jira-support-assigner-plugin.js"></script>
+<script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/jira-assign-escalate.js"></script>
+<script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/new-support-team.js"></script>
 
 
 
