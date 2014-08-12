@@ -13,8 +13,8 @@ import com.atlassian.jira.security.roles.ProjectRole;
 import com.atlassian.jira.security.roles.ProjectRoleActors;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.jira.user.ApplicationUser;
+import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
-import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
 
 public class ProjectTeamAssignerCallback {
 

@@ -21,13 +21,6 @@
 		<resource type="download" name="images/" location="/images" />
 		<context>jira-assign-escalate</context>
 	</web-resource>
-	<!-- publish our component -->
-	<component key="myPluginComponent"
-		class="com.edwardawebb.jira.assignescalate.MyPluginComponentImpl"
-		public="true">
-		<interface>com.edwardawebb.jira.assignescalate.MyPluginComponent
-		</interface>
-	</component>
 	<!-- import from the product container -->
 	<component-import key="applicationProperties"
 		interface="com.atlassian.sal.api.ApplicationProperties" />
@@ -45,6 +38,9 @@
 		<description>SAL Scheduler</description>
 		<interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
 	</component-import>
+
+
+	<!-- my stuff -->	
 	<component key="schedulerComponent"
 		class="com.edwardawebb.jira.assignescalate.jobs.SyncProjectTeamUsersScheduler"
 		system="true" public="true">
@@ -52,8 +48,12 @@
 		</description>
 		<interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
 	</component>
-
-	<!-- my stuff -->
+	<component key="assignmentService"
+		class="com.edwardawebb.jira.assignescalate.ao.service.DefaultAssignmentService">
+		<description>access to ao objects for this plugin.
+		</description>
+		<interface>com.edwardawebb.jira.assignescalate.AssignmentService</interface>
+	</component>
 	<workflow-function key="assign-level-one-support-post-function"
 		name="Assign Level One Support Post Function" i18n-name-key="assign-level-one-support-post-function.name"
 		class="com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunctionFactory">
@@ -90,20 +90,20 @@
 	</workflow-function>
 	<!-- exposes area within project admin section to edit team -->
 	<project-tabpanel key="support-panel" name="Support Assignment"
-		class="com.lmig.forge.atlassian.jira.assigner.SupportDutyProjectTabPanel">
+		class="com.edwardawebb.jira.assignescalate.admin.SupportTeamProjectPanelTab">
 		<description key="supportduty.project.panel.description">
 			rules for assignable users
 		</description>
-		<label key="supportduty.project.panel.label" />
+		<label key="supportteam.project.panel.label" />
 		<!-- this is a number defining the order of all panels. The system panels 
 			are 10, 20, 30 and 40. -->
 		<order>90</order>
 		<!-- this template produces the HTML for the panel -->
 		<resource type="velocity" name="view"
-			location="templates/panel/SupportProjectTabPanel-view.vm" />
+			location="templates/panel/projectTabPanel.vm" />
 		<!-- this properties files contains i18n keys for the panel -->
 		<resource type="i18n" name="i18n"
-			location="jira-support-assigner-plugin.properties" />
+			location="jira-assign-escalate.properties" />
 		<!-- this parameter prevents the heading from appearing at the top of the 
 			tab panel area -->
 		<param name="noTitle">true</param>

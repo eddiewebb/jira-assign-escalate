@@ -21,18 +21,16 @@ import com.atlassian.jira.security.roles.ProjectRoleActors;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
+import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
-import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
 import com.google.common.collect.Lists;
 /**
  * This class just provides the front end initial UI. All heavy lifting is done
  * by our custom servlet, invokes via AJS.
  * 
- * @author n0158588
- * 
  */
-public class SupportDutyProjectTabPanel extends AbstractProjectTabPanel {
-    private static final Logger LOG = LoggerFactory.getLogger(SupportDutyProjectTabPanel.class);
+public class SupportTeamProjectPanelTab extends AbstractProjectTabPanel {
+    private static final Logger LOG = LoggerFactory.getLogger(SupportTeamProjectPanelTab.class);
 
     public final static String ADMIN_ROLE = "Administrators";
 
@@ -40,12 +38,15 @@ public class SupportDutyProjectTabPanel extends AbstractProjectTabPanel {
     private final ProjectRoleManager projectRoleManager;
     private final AssignmentService assignmentService;
 
-    public SupportDutyProjectTabPanel(UserManager userManager, ProjectRoleManager projectRoleManager,
+    private UserManager userManager;
+
+    public SupportTeamProjectPanelTab(UserManager userManager, ProjectRoleManager projectRoleManager,
             JiraAuthenticationContext authenticationContext,
             AssignmentService assignmentService) {
         this.authenticationContext = authenticationContext;
         this.projectRoleManager = projectRoleManager;
         this.assignmentService = assignmentService;
+        this.userManager = userManager;
     }
 
     @Override
@@ -82,6 +83,7 @@ public class SupportDutyProjectTabPanel extends AbstractProjectTabPanel {
 
         Project project = context.getProject();
         SupportTeam[] teams = assignmentService.getProjectTeams(project.getId());
+        
         
         return Arrays.asList(teams);     
         

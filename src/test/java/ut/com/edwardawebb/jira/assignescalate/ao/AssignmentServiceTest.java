@@ -24,10 +24,10 @@ import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.gzipfilter.org.apache.commons.lang.ArrayUtils;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.MockApplicationUser;
+import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
-import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.service.DefaultAssignmentService;
 import com.google.common.collect.Sets;
 

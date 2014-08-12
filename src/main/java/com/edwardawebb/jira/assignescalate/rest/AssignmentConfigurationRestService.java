@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
+import com.edwardawebb.jira.assignescalate.AssignmentService;
 
 /**
  * BEcause the Project Tab Panel is static, we use asynchrnous scripts to interact with this REST service.

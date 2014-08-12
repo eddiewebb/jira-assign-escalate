@@ -9,7 +9,7 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.scheduling.PluginScheduler;
-import com.edwardawebb.jira.assignescalate.ao.service.AssignmentService;
+import com.edwardawebb.jira.assignescalate.AssignmentService;
 
 public class SyncProjectTeamUsersScheduler implements LifecycleAware {
     

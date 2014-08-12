@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.edwardawebb.jira.assignescalate.ao.service;
+package com.edwardawebb.jira.assignescalate;
 
 import java.util.Set;
 
