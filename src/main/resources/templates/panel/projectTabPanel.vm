@@ -65,7 +65,6 @@
                                         </tbody>
                                     </table>
                                 </fieldset>
-                                <input id="projectId" type="hidden" value="$project.id"/>
 
                                 
                                 <button id="updateassignconfig" class="aui-button aui-button-primary">Update Assigments</button>
@@ -85,10 +84,13 @@
     </div>
 </section>
 
+<input id="projectId" type="hidden" value="$project.id"/>
+
 
 
 $webResourceManager.requireResource("com.edwardawebb.jira-assign-escalate-plugin:jira-assign-escalate-plugin-resources")
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/jira-assign-escalate.js"></script>
+<script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/new-support-team-form.js"></script>
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/new-support-team.js"></script>
 
 

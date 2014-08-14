@@ -1,0 +1,26 @@
+{namespace JIRA.Templates.AssignEscalate}
+/**
+ * Displays the new team form
+ * @param projectId
+ */
+{template .newSupportTeam}
+  <form action="#" method="post" id="newTeam" class="aui">
+    <fieldset>
+    	<input hidden="true" id="prj_id" name="prj_id" value="{$projectId}"/>
+        <div class="field-group">
+            <label for="name">Default field<span class="aui-icon icon-required"> required</span></label>
+            <input class="text" type="text" id="name" name="name" title="name">
+            <div class="description">Meaningful name for this team</div>
+        </div>
+        <div class="field-group">
+            <label for="dBase">Project Role<span class="aui-icon icon-required"> required</span></label>
+            <select class="select" id="role" name="role" title="Role">
+                <option>Select</option>
+            </select>
+            
+            <div class="description">Select the team role the list of available users should come from.</div>
+        </div>
+        
+   </fieldset>
+ </form>
+{/template}

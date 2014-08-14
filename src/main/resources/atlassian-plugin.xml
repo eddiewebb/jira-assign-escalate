@@ -14,12 +14,25 @@
 	<!-- add our web resources -->
 	<web-resource key="jira-assign-escalate-resources" name="jira-assign-escalate Web Resources">
 		<dependency>com.atlassian.auiplugin:ajs</dependency>
+		<dependency>com.atlassian.soy.soy-template-plugin:soy-deps</dependency>
+		<!-- transform calls to AJS.getText() inside JS files -->
+		<transformation extension="js">
+			<transformer key="jsI18n" />
+		</transformation>
+
+		<!-- transform Soy templates into JS -->
+		<transformation extension="soy">
+			<transformer key="soyTransformer"/>
+		</transformation>
 		<resource type="download" name="jira-assign-escalate.css"
 			location="/css/jira-assign-escalate.css" />
 		<resource type="download" name="jira-assign-escalate.js"
 			location="/js/jira-assign-escalate.js" />
 		<resource type="download" name="new-support-team.js"
 			location="/js/dialogs/new-support-team.js" />
+			
+    	<resource type="download" name="new-support-team-form.js"
+			location="/templates/soy/new-support-team-form.soy" />
 		<resource type="download" name="images/" location="/images" />
 		<context>jira-assign-escalate</context>
 	</web-resource>
@@ -38,15 +51,17 @@
 	</component>
 	<component-import key="pluginScheduler">
 		<description>SAL Scheduler</description>
-		<interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+		<interface>com.atlassian.sal.api.scheduling.PluginScheduler
+		</interface>
 	</component-import>
 
 
-	<!-- my stuff -->	
+	<!-- my stuff -->
 	<component key="schedulerComponent"
 		class="com.edwardawebb.jira.assignescalate.jobs.SyncProjectTeamUsersScheduler"
 		system="true" public="true">
-		<description>The plugin component that schedules the Twitter search.
+		<description>The plugin component that syncs user accounts with Team
+			mappings based on roles.
 		</description>
 		<interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
 	</component>
@@ -54,13 +69,15 @@
 		class="com.edwardawebb.jira.assignescalate.ao.service.DefaultAssignmentService">
 		<description>access to ao objects for this plugin.
 		</description>
-		<interface>com.edwardawebb.jira.assignescalate.AssignmentService</interface>
+		<interface>com.edwardawebb.jira.assignescalate.AssignmentService
+		</interface>
 	</component>
 	<workflow-function key="assign-level-one-support-post-function"
 		name="Assign Level One Support Post Function" i18n-name-key="assign-level-one-support-post-function.name"
 		class="com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunctionFactory">
 		<description key="assign-level-one-support-post-function.description">Assign an available member from this
-			project/components level 1 team</description>
+			project/components level 1 team
+		</description>
 		<function-class>com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunction
 		</function-class>
 		<orderable>false</orderable>
@@ -104,15 +121,14 @@
 		<resource type="velocity" name="view"
 			location="templates/panel/projectTabPanel.vm" />
 		<!-- this properties files contains i18n keys for the panel -->
-		<resource type="i18n" name="i18n"
-			location="jira-assign-escalate.properties" />
+		<resource type="i18n" name="i18n" location="jira-assign-escalate.properties" />
 		<!-- this parameter prevents the heading from appearing at the top of the 
 			tab panel area -->
 		<param name="noTitle">true</param>
 	</project-tabpanel>
 
 	<!-- expose custom REST service for project config operations -->
-	<rest key="supportAssginerConfigurationService" path="/support-assigner"
+	<rest key="supportAssginerConfigurationService" path="/support-team"
 		version="1.0">
 		<description>Provides endpoint to configure</description>
 		<package>com.edwardawebb.jira.assignescalate.rest</package>

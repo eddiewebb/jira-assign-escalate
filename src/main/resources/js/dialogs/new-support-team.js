@@ -1,3 +1,21 @@
+var selectedAjsParams = {
+            projectId: AJS.$("#projectId").val()
+        }   
+var template = JIRA.Templates.AssignEscalate.newSupportTeam(selectedAjsParams);  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Note this is a small dialog, so it fits in the Sandbox panel
 // Standard sizes are 400, 600 and 840 pixels wide
@@ -13,7 +31,7 @@ var dialog = new AJS.Dialog({
 dialog.addHeader("New Support Team");
 
 // add panel 1
-dialog.addPanel("Create Your Team", "<form><input name=\"name\"/></form>", "panel-body");
+dialog.addPanel("Create Your Team", template, "panel-body");
 // You can remove padding with:
 // dialog.get("panel:0").setPadding(0);
 

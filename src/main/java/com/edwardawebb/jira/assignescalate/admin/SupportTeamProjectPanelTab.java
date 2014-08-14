@@ -61,6 +61,7 @@ public class SupportTeamProjectPanelTab extends AbstractProjectTabPanel {
         Project project = ctx.getProject();
         Map<String, Object> params = super.createVelocityParams(ctx);
         params.put("projectTeams", teamsForProject(ctx));
+        params.put("project", project);
         return params;
     }
 
