@@ -4,6 +4,7 @@
 package com.edwardawebb.jira.assignescalate.admin;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -58,10 +59,12 @@ public class SupportTeamProjectPanelTab extends AbstractProjectTabPanel {
 
     @Override
     protected Map<String, Object> createVelocityParams(BrowseContext ctx) {
-        Project project = ctx.getProject();
         Map<String, Object> params = super.createVelocityParams(ctx);
         params.put("projectTeams", teamsForProject(ctx));
+        Project project = ctx.getProject();
         params.put("project", project);
+        Collection<ProjectRole> roles = projectRoleManager.getProjectRoles();
+        params.put("roles", roles);
         return params;
     }
 

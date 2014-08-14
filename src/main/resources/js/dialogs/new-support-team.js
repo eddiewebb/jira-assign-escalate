@@ -1,5 +1,6 @@
 var selectedAjsParams = {
-            projectId: AJS.$("#projectId").val()
+            projectId: AJS.$("#projectId").val(),
+            roles: rolesData
         }   
 var template = JIRA.Templates.AssignEscalate.newSupportTeam(selectedAjsParams);  
 

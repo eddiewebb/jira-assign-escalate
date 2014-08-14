@@ -84,9 +84,18 @@
     </div>
 </section>
 
+
+<!-- data used by soy templates -->
 <input id="projectId" type="hidden" value="$project.id"/>
 
-
+<script>
+var rolesData = [
+    #foreach ($role in $roles)
+        {name: "$role.name"},
+    #end
+];
+    
+</script>
 
 $webResourceManager.requireResource("com.edwardawebb.jira-assign-escalate-plugin:jira-assign-escalate-plugin-resources")
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/jira-assign-escalate.js"></script>
