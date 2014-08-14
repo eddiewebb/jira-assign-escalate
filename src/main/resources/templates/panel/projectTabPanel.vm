@@ -31,7 +31,7 @@
 
 
                     #foreach ($team in $projectTeams)
-                        <div class="tabs-pane active-pane" id="tabs-team-$team.ID">
+                        <div class="tabs-pane" id="tabs-team-$team.ID">
                             <h4>$team.name</h4>
                             <form class="aui" action="">
                                 <fieldset>

@@ -51,6 +51,7 @@ public class DefaultAssignmentService implements AssignmentService {
 
     @Override
     public SupportTeam createProjectTeam(Long projectId, String name, String projectRole) {
+        logger.info("Request for new team: " + name + " id " + projectId);
         SupportTeam existingrole = findRoleByProjectIdAndName(projectId, name);
         if ( null == existingrole ){
             // good, does not exist
@@ -166,7 +167,7 @@ public class DefaultAssignmentService implements AssignmentService {
         SupportTeam[] results = ao.find(SupportTeam.class,Query.select().where("PROJECTID = ? and name = ?",projectId,name));
         if (results.length > 1)
         {
-            throw new IllegalStateException("Application cannot have more than 1 blog");
+            throw new IllegalStateException("Application cannot have more than 1 team per project with marching names");
         }
         return results.length > 0 ? results[0] : null;
     }

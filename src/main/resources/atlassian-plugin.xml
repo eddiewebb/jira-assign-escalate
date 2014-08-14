@@ -128,7 +128,7 @@
 	</project-tabpanel>
 
 	<!-- expose custom REST service for project config operations -->
-	<rest key="supportAssginerConfigurationService" path="/support-team"
+	<rest key="supportAssginerConfigurationService" path="/support-teams"
 		version="1.0">
 		<description>Provides endpoint to configure</description>
 		<package>com.edwardawebb.jira.assignescalate.rest</package>

@@ -16,7 +16,7 @@ public class AbstractEndpointTest {
     protected ClientConfig clientConfig;
     protected  RestClient client;
     String baseUrl = System.getProperty("baseurl");
-    String resourceUrlTeam = baseUrl + "/rest/support-team/1.0/";
+    String resourceUrlTeam = baseUrl + "/rest/support-teams/1.0/";
     
     @Before
     public void setup(){

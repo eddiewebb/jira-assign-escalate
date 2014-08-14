@@ -35,15 +35,18 @@ public class ProjectTeamAssignerCallback {
        long start = System.currentTimeMillis();
        String roleToScan = readOnlyProjectRole.getRole();   
        logger.info("==>Scanning Team: " + readOnlyProjectRole.getName() + ", for projectID:" + readOnlyProjectRole.getProjectId());
-       List<String> allUserNamesInGroup = new ArrayList<String>();
        Project project = projectManager.getProjectObj(readOnlyProjectRole.getProjectId());
-       ProjectRole projectRole = roleManager.getProjectRole(roleToScan);
-       assert projectRole!= null;
-       ProjectRoleActors lastestActors = roleManager.getProjectRoleActors(projectRole, project);
-       Set<ApplicationUser> users = lastestActors.getApplicationUsers();
-       logger.info("==>" + users.size() + " users in role " + roleToScan + " to consider");
-       
-       assignmentService.updateUsersLinkedToTeam(users, readOnlyProjectRole);
+       if( null != project ){
+           ProjectRole projectRole = roleManager.getProjectRole(roleToScan);
+           assert projectRole!= null;
+           ProjectRoleActors lastestActors = roleManager.getProjectRoleActors(projectRole, project);
+           Set<ApplicationUser> users = lastestActors.getApplicationUsers();
+           logger.info("==>" + users.size() + " users in role " + roleToScan + " to consider");
+           
+           assignmentService.updateUsersLinkedToTeam(users, readOnlyProjectRole);
+       }else{
+           logger.error("Could not retrieve project for Support Team: " + readOnlyProjectRole.getID() +":"+readOnlyProjectRole.getName());
+       }
        long stop = System.currentTimeMillis();
        long duration=stop-start;
        logger.info("==>Completed Team: " + readOnlyProjectRole.getName() + ", for projectID:" + readOnlyProjectRole.getProjectId() + " in " + duration + "ms");
