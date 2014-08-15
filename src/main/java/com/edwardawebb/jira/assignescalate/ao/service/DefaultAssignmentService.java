@@ -66,41 +66,46 @@ public class DefaultAssignmentService implements AssignmentService {
     }
 
     @Override
-    public SupportMember assignNextAvailableAssigneeForProjectTeam(Long projectId, String name) {
-        SupportTeam role = findRoleByProjectIdAndName(projectId,name);
+    public SupportMember assignNextAvailableAssigneeForProjectTeam(final Long projectId, final String name) {
+       return ao.executeInTransaction(new TransactionCallback<SupportMember>(){
+
+            @Override
+            public SupportMember doInTransaction() {
+                SupportTeam role = findRoleByProjectIdAndName(projectId,name);
+                
+                SupportMember[] members = ao.find(SupportMember.class,Query.select()
+                        .alias(TeamToUser.class, "am")
+                        .alias(SupportMember.class, "sm")
+                        .join(TeamToUser.class,"sm.ID = USERID")
+                        .where("TEAMID = ? and HIDE = 0 and ASSIGN = 1", role.getID()).order("LASTDATE"));        
+                
+                final SupportMember next = members.length > 0 ? members[0] : null;
+                if(null != next){
+                    TeamToUser[] history = ao.find(TeamToUser.class,Query.select()
+                            .where("TEAMID = ? and USERID = ?", role.getID(),next.getID()));
+                    history[0].setLastAssigned(new Date());
+                    history[0].save();
+                }
+                
+                return next;
+            }
+            
+        });
         
-        SupportMember[] members = ao.find(SupportMember.class,Query.select()
-                .alias(TeamToUser.class, "am")
-                .alias(SupportMember.class, "sm")
-                .join(TeamToUser.class,"sm.ID = USERID")
-                .where("TEAMID = ? and HIDE = 0 and ASSIGN = 1", role.getID()).order("LASTDATE"));        
-        
-        final SupportMember next = members.length > 0 ? members[0] : null;
-        if(null != next){
-            TeamToUser[] history = ao.find(TeamToUser.class,Query.select()
-                    .where("TEAMID = ? and USERID = ?", role.getID(),next.getID()));
-            history[0].setLastAssigned(new Date());
-            history[0].save();
-        }
-        
-        return next;
     }
 
 
 
     @Override
     public SupportTeam updateProjectTeam(final SupportTeam role) {
-       return ao.executeInTransaction(new TransactionCallback<SupportTeam>(){
-            @Override
-            public SupportTeam doInTransaction() {
+            
                 role.save();
                 for (int i = 0; i < role.getAssignments().length; i++) {
                     TeamToUser assignment = role.getAssignments()[i];
                     assignment.save();
                 }
                 return role;
-            }
-        });
+           
         
     }
 

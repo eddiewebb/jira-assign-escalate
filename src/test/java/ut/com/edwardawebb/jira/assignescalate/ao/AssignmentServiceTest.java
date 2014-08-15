@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.java.ao.EntityManager;
+import net.java.ao.test.converters.NameConverters;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
@@ -65,7 +66,7 @@ public class AssignmentServiceTest {
 
     @Before
     public void before() {
-        allDevelopers=new HashSet();
+        allDevelopers=new HashSet<ApplicationUser>();
         allDevelopers.add(user1);
         allDevelopers.add(user2);
         allDevelopers.add(user3);
@@ -74,7 +75,7 @@ public class AssignmentServiceTest {
         allDevelopers.add(user6);
         allDevelopers.add(user7);
         activeObjects = new TestActiveObjects(entityManager);
-        assignmentService = new DefaultAssignmentService(activeObjects);             
+        assignmentService = new DefaultAssignmentService(activeObjects); 
     }
 
     /*
@@ -288,6 +289,7 @@ public class AssignmentServiceTest {
     
     public static class ConfigAssigmentTestData implements DatabaseUpdater
     {
+        
         @Override
         public void update(EntityManager em) throws Exception
         {   

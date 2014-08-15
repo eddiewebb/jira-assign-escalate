@@ -21,6 +21,7 @@ public class AssignmentServiceRestTest extends AbstractEndpointTest {
      *  create new team
      *  -> trigger team index
      *  update team assignments
+     *  load team users
      *  delete team
      *  
      *  ON HOLD
@@ -60,9 +61,13 @@ public class AssignmentServiceRestTest extends AbstractEndpointTest {
         String endpoint = resourceUrlTeam + "/team/" + teamId + "/reindex";
         response = client.resource(endpoint).post("1");
         assertEquals("Could not renidex team on " + endpoint,200,response.getStatusCode());
-        
-        
-        
     }
 
+    @Test
+    public void testTeamUsersCanBeRetrieved(){
+        ClientResponse response = client.resource(resourceUrlTeam + "/team").contentType(MediaType.APPLICATION_FORM_URLENCODED).accept(MediaType.APPLICATION_JSON).post(formData.toString());
+        assertEquals("Could not create team",200,response.getStatusCode());
+        SupportTeamResource team = response.getEntity(SupportTeamResource.class);        
+        
+    }
 }

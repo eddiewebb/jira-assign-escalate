@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -22,7 +23,6 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
-import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
 import com.edwardawebb.jira.assignescalate.ao.resources.SupportTeamResource;
 import com.edwardawebb.jira.assignescalate.jobs.ProjectTeamAssignerCallback;
 
@@ -66,7 +66,9 @@ public class TeamConfigurationService {
         SupportTeam team = assignmentService.getProjectTeam(teamId);
         ProjectTeamAssignerCallback updater = new ProjectTeamAssignerCallback(assignmentService, roleManager, projectManager);
         updater.valueRead(team);
-        return Response.ok().build();
+        team = assignmentService.getProjectTeam(teamId);
+        
+        return Response.ok(SupportTeamResource.from(team)).build();
     }
     
     
@@ -81,5 +83,14 @@ public class TeamConfigurationService {
         return Response.ok().build();
     }
     
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}/")
+    //TODO the responsibilities seem right, but naming and context is off using callback here.
+    public Response getTeam(@PathParam("id") Integer teamId){
+        
+        SupportTeam team = assignmentService.getProjectTeam(teamId);
+        return Response.ok(SupportTeamResource.from(team)).build();
+    }
 
 }

@@ -56,8 +56,9 @@ dialog.addButton("Create", function (dialog) {
 	     success: function(data) {
 	         AJS.messages.success({
 	            title: "Saved!",
-	            body: "New team created! Please wait while the page reloads."
+	            body: "New team created! ."
 	         }); 
+
 	         console.log(data);
 	         jQuery.ajax({
 	    	     url: configEndpoint + "/" + data.id + "/reindex",
@@ -65,17 +66,23 @@ dialog.addButton("Create", function (dialog) {
 	    	     type: 'POST',
 	    	     dataType: 'json',
 	    	     async: true,
+	    	     success: function(data){
+		   	          var selectedAjsParams = {
+		   	                  teamUsers: data.users
+		   	              }   
+		   	          var updatedUsers = JIRA.Templates.AssignEscalate.supportTeamRows(selectedAjsParams);  
+		   	          AJS.$("#tableBody-" + teamId).html(updatedUsers);
+	    	     },
 	    	     error: function(data) {
 	    	        AJS.messages.warning({
 	    	            title: "resync needed",
 	    	            body: "But Team sync failed, please try manually after the page reloads." 
 	    	         }); 
-	    	        dialog.hide();
 	    	     } 
 	    	  });
-	         //AJS.$('form#newTeam').
-	         window.onbeforeunload = null;
-	         location.reload();
+
+ 	        dialog.hide();
+	         //AJS.$('form#newTeam');
 	     } ,
 	     error: function(data) {
 	        AJS.messages.warning({

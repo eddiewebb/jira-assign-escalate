@@ -29,10 +29,6 @@ public interface TeamToUser extends Entity {
     
     
     
-    /*
-     * how to make these first clss values
-     * 
-     */
     @Default("FALSE")
     @Accessor("ASSIGN")
     public boolean isAssignable();

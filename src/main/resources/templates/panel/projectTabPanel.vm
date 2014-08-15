@@ -4,7 +4,7 @@
 
     <header class="aui-page-header">
         <div class="aui-page-header-inner">
-            <div class="aui-page-header-main">
+            <div class="aui-page-header-main" >
                 <h1>Support Assigner - Support Teams</h1>
             </div>
             <div>
@@ -46,20 +46,37 @@
                             #set($active="") 
                         #end
                         <div class="tabs-pane $active" id="tabs-team-$team.ID">
-                            <h4>$team.name</h4>
                             <form id="form-team-$team.ID" class="aui" action="">
+                            
+                            <p>&nbsp;</p>
+                            <div style="width:100%;box-sizing: border-box;display: table;table-layout: auto;">
+                                <div style="float:left;box-sizing: border-box;display: table-cell;margin: 0;padding: 0;">
+                                    <h4>$team.name</h4>
+                                </div>
+                                <div style="display: table-cell;margin: 0;padding: 0;">
+                                    <button  class="aui-button aui-dropdown2-trigger" aria-owns="dropdown2-more" aria-haspopup="true"><span class="aui-icon aui-icon-small aui-iconfont-configure">Configure </span> Team Options..</button>
+                                    <div id="dropdown2-more" class="aui-dropdown2 aui-style-default">
+                                        <ul class="aui-list-truncate">
+                                            <li><a id="resync-$team.ID" data-id="$team.ID" class="resyncButton" href="#">Re-Sync Team Members</a></li>
+                                            <li><a id="edit-$team.ID" data-id="$team.ID" class="editButton"  href="#">Edit Name</a></li>
+                                            <li><a id="delete-$team.ID" data-id="$team.ID" class="deleteButton" href="#">Delete Team</a></li>
+                                        </ul>
+                                    </div>
+                                </div>  
+
+                            </div>
                                 <fieldset>
                                     <table class="aui aui-table-sortable" width="90%">
                                         <thead>
                                             <tr>
-                                                <th width="170px">       
-                                                    <input class="checkbox" type="checkbox" name="selectAll" id="selectAll">
+                                                <th class="aui-table-column-unsortable" width="170px">       
+                                                    <input class="checkbox selectAll" type="checkbox" data-id="$team.ID" id="selectAll">
                                                     <label for="selectAll">Assignable?</label>
                                                 </th>
                                                 <th>Name</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody id="tableBody-$team.ID">
                                          #foreach ($assignment in $team.assignments)
                                             #set($person=$assignment.getUser())
                                             <tr>
@@ -69,7 +86,7 @@
                                                     #else 
                                                         #set($checked="")
                                                     #end
-                                                    <input type="checkbox" class="activatedUsers" name="activatedUsers" value="$person.getPrincipleName()" $checked >
+                                                    <input type="checkbox" class="activatedUsers-$team.ID" name="activatedUsers" value="$person.getPrincipleName()" $checked >
                                                 </td>
                                                 <td>$person.displayName ($person.principleName)</td>
                                             </tr>
@@ -79,7 +96,9 @@
                                 </fieldset>
 
                                 <input type="hidden" name="teamId" id="teamId" value="$team.ID">
-                                <button id="updateactives-$team.ID" class="aui-button aui-button-primary astupdate">Update Assigments</button>
+                                <p>
+                                    <button id="updateactives-$team.ID" data-id="$team.ID" class="aui-button aui-button-primary astupdate">Update Assigments</button>
+                                </p>
                             </form>
                         </div>
                     #end
@@ -107,6 +126,7 @@ var rolesData = [
 $webResourceManager.requireResource("com.edwardawebb.jira-assign-escalate-plugin:jira-assign-escalate-plugin-resources")
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/jira-assign-escalate.js"></script>
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/new-support-team-form.js"></script>
+<script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/support-team-rows.js"></script>
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/new-support-team.js"></script>
 
 

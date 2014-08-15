@@ -33,6 +33,8 @@
 			
     	<resource type="download" name="new-support-team-form.js"
 			location="/templates/soy/new-support-team-form.soy" />
+    	<resource type="download" name="support-team-rows.js"
+			location="/templates/soy/support-team-rows.soy" />
 		<resource type="download" name="images/" location="/images" />
 		<context>jira-assign-escalate</context>
 	</web-resource>
