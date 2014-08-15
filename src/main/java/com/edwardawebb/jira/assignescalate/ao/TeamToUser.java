@@ -5,6 +5,7 @@ import java.util.Date;
 import net.java.ao.Accessor;
 import net.java.ao.Entity;
 import net.java.ao.Mutator;
+import net.java.ao.Preload;
 import net.java.ao.schema.Default;
 import net.java.ao.schema.Table;
 
@@ -13,6 +14,7 @@ import net.java.ao.schema.Table;
  *
  */
 @Table("ASRLEUSR")
+@Preload
 public interface TeamToUser extends Entity {
 
     @Accessor("TEAM")

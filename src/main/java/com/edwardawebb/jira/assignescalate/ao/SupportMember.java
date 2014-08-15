@@ -31,6 +31,11 @@ public interface SupportMember extends Entity {
     public String getPrincipleName();
     @Mutator("NAME")
     public void setPrincipleName(String name);
+    
+    @Accessor("DISPLAY")
+    public String getDisplayName();
+    @Mutator("DISPLAY")
+    public void setDisplayName(String name);
  
     
 

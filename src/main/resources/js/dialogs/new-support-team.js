@@ -56,8 +56,25 @@ dialog.addButton("Create", function (dialog) {
 	     success: function(data) {
 	         AJS.messages.success({
 	            title: "Saved!",
-	            body: "New team created!"
+	            body: "New team created! Please wait while the page reloads."
 	         }); 
+	         console.log(data);
+	         jQuery.ajax({
+	    	     url: configEndpoint + "/" + data.id + "/reindex",
+	    	     data: "hi mr server",
+	    	     type: 'POST',
+	    	     dataType: 'json',
+	    	     async: true,
+	    	     error: function(data) {
+	    	        AJS.messages.warning({
+	    	            title: "resync needed",
+	    	            body: "But Team sync failed, please try manually after the page reloads." 
+	    	         }); 
+	    	        dialog.hide();
+	    	     } 
+	    	  });
+	         //AJS.$('form#newTeam').
+	         window.onbeforeunload = null;
 	         location.reload();
 	     } ,
 	     error: function(data) {

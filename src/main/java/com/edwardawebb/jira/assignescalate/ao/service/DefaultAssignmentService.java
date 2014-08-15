@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
@@ -45,8 +46,8 @@ public class DefaultAssignmentService implements AssignmentService {
     }
 
     @Override
-    public SupportTeam getProjectTeam(Integer projectRoleId) {
-        return ao.get(SupportTeam.class, projectRoleId);
+    public SupportTeam getProjectTeam(Integer teamId) {
+        return ao.get(SupportTeam.class, teamId);
     }
 
     @Override
@@ -88,47 +89,76 @@ public class DefaultAssignmentService implements AssignmentService {
 
 
     @Override
-    public SupportTeam updateProjectTeam(SupportTeam role) {
-        role.save();
-        for (int i = 0; i < role.getAssignments().length; i++) {
-            TeamToUser assignment = role.getAssignments()[i];
-            assignment.save();
-        }
-        return role;
+    public SupportTeam updateProjectTeam(final SupportTeam role) {
+       return ao.executeInTransaction(new TransactionCallback<SupportTeam>(){
+            @Override
+            public SupportTeam doInTransaction() {
+                role.save();
+                for (int i = 0; i < role.getAssignments().length; i++) {
+                    TeamToUser assignment = role.getAssignments()[i];
+                    assignment.save();
+                }
+                return role;
+            }
+        });
         
     }
 
     @Override
-    public void updateUsersLinkedToTeam(Set<ApplicationUser> latestUsers, SupportTeam role) {
-       
-        //list of all currently assigned poeple. As we validate roles from the new list, they are 
-        // removed from this this. Leftovers are ones who have left JIRA or moved out of the group.
-        TeamToUser[] currentAssignments = role.getAssignments();
-
-        //there may be existing assignments to consider, but it may be brand new.
-        List<TeamToUser> leftOvers = Lists.newArrayList();
-        if(null != currentAssignments){
-            leftOvers = Lists.newArrayList(currentAssignments);            
-        }
-        
-        for (ApplicationUser user : latestUsers) {
-            SupportMember teamMember = findOrCreateUser(user.getKey(), user.getName());   
-            
-            TeamToUser teamToUser = findOrCreateAssignment(teamMember,role);
-            if(teamToUser.isHidden()){
-                //previously existent but hidden, show it
-                teamToUser.setHidden(false);
-                teamToUser.save();
+    public SupportTeam updateProjectTeam(final Integer teamId, final List<String> activeUsers) {
+       return ao.executeInTransaction(new TransactionCallback<SupportTeam>(){
+            @Override
+            public SupportTeam doInTransaction() {
+                SupportTeam team = getProjectTeam(teamId);
+                for (int i = 0; i < team.getAssignments().length; i++) {
+                    logger.warn("Activating " + team.getAssignments()[i].getUser() + "? " + activeUsers.contains(team.getAssignments()[i].getUser().getPrincipleName()));
+                    team.getAssignments()[i].setAssignable(activeUsers.contains(team.getAssignments()[i].getUser().getPrincipleName()));
+                    
+                    team.getAssignments()[i].save();
+                    logger.warn("Saved assignment as:" + team.getAssignments()[i].isAssignable());
+                }
+                return team;
             }
-            leftOvers.remove(teamToUser);
-        }
+        });
         
-              
+    }
+    
+    @Override
+    public void updateUsersLinkedToTeam(final Set<ApplicationUser> latestUsers,final SupportTeam role) {
+        ao.executeInTransaction(new TransactionCallback<Object>(){
+            @Override
+            public Object doInTransaction() {
+              //list of all currently assigned poeple. As we validate roles from the new list, they are 
+                // removed from this this. Leftovers are ones who have left JIRA or moved out of the group.
+                TeamToUser[] currentAssignments = role.getAssignments();
+
+                //there may be existing assignments to consider, but it may be brand new.
+                List<TeamToUser> leftOvers = Lists.newArrayList();
+                if(null != currentAssignments){
+                    leftOvers = Lists.newArrayList(currentAssignments);            
+                }
+                
+                for (ApplicationUser user : latestUsers) {
+                    SupportMember teamMember = findOrCreateUser(user.getKey(), user.getName(),user.getDisplayName());   
+                    
+                    TeamToUser teamToUser = findOrCreateAssignment(teamMember,role);
+                    if(teamToUser.isHidden()){
+                        //previously existent but hidden, show it
+                        teamToUser.setHidden(false);
+                        teamToUser.save();
+                    }
+                    leftOvers.remove(teamToUser);
+                }                                   
+                
+                for (TeamToUser defunctAssignment : leftOvers) {
+                    defunctAssignment.setHidden(true);
+                    defunctAssignment.save();
+                }       
+                return null;
+            }
+            
+        });
         
-        for (TeamToUser defunctAssignment : leftOvers) {
-            defunctAssignment.setHidden(true);
-            defunctAssignment.save();
-        }       
     }
 
    
@@ -149,7 +179,7 @@ public class DefaultAssignmentService implements AssignmentService {
        }
     }
 
-    private SupportMember findOrCreateUser(String key, String name) {
+    private SupportMember findOrCreateUser(String key, String name, String displayName) {
         SupportMember[] results = ao.find(SupportMember.class,"KEY = ? AND NAME = ?",key,name);
         if (results.length > 1)
         {
@@ -158,7 +188,7 @@ public class DefaultAssignmentService implements AssignmentService {
         if ( results.length > 0 ){
             return results[0] ;
         }else{
-            SupportMember user = ao.create(SupportMember.class,new DBParam("KEY",key),new DBParam("NAME",name));
+            SupportMember user = ao.create(SupportMember.class,new DBParam("KEY",key),new DBParam("NAME",name),new DBParam("DISPLAY",displayName));
             return user;
         }
     }

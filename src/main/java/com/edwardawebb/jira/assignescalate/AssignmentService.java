@@ -3,6 +3,7 @@
  */
 package com.edwardawebb.jira.assignescalate;
 
+import java.util.List;
 import java.util.Set;
 
 import com.atlassian.jira.user.ApplicationUser;
@@ -55,6 +56,8 @@ public interface AssignmentService {
      * @return
      */
     void loadAllProjectTeams(ProjectTeamAssignerCallback callback);
+
+    SupportTeam updateProjectTeam(Integer teamId, List<String> activeUsers);
 
    
    

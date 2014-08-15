@@ -3,9 +3,12 @@
  */
 package com.edwardawebb.jira.assignescalate.rest;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -19,6 +22,7 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
+import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
 import com.edwardawebb.jira.assignescalate.ao.resources.SupportTeamResource;
 import com.edwardawebb.jira.assignescalate.jobs.ProjectTeamAssignerCallback;
 
@@ -52,7 +56,7 @@ public class TeamConfigurationService {
         LOG.info("Created team " + team.getID());
         return Response.ok(SupportTeamResource.from(team)).build();
     }
-    
+
     @POST
     @Consumes(MediaType.WILDCARD)
     @Produces(MediaType.APPLICATION_JSON)
@@ -62,6 +66,18 @@ public class TeamConfigurationService {
         SupportTeam team = assignmentService.getProjectTeam(teamId);
         ProjectTeamAssignerCallback updater = new ProjectTeamAssignerCallback(assignmentService, roleManager, projectManager);
         updater.valueRead(team);
+        return Response.ok().build();
+    }
+    
+    
+    @PUT
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}/")
+    //TODO the responsibilities seem right, but naming and context is off using callback here.
+    public Response updateTeam(@PathParam("id") Integer teamId, @FormParam("activatedUsers") List<String> activatedUsers){
+        
+        assignmentService.updateProjectTeam(teamId, activatedUsers);
         return Response.ok().build();
     }
     

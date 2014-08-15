@@ -22,18 +22,32 @@
                     <div id="aui-message-bar"></div>
                     <div class="aui-tabs horizontal-tabs" id="tabs-example1">
                         <ul class="tabs-menu">
+
+                            #set( $first=true )
                             #foreach ($team in $projectTeams)
-                                    <li class="menu-item">
-                                        <a href="#tabs-team-$team.ID"><strong>$team.name</strong></a>
-                                    </li>
+                                #if($first) 
+                                    #set($active="active-tab") 
+                                    #set($first=false) 
+                                #else
+                                    #set($active="") 
+                                #end
+                                <li class="menu-item $active">
+                                    <a href="#tabs-team-$team.ID"><strong>$team.name</strong></a>
+                                </li>
                             #end
                         </ul>
 
-
+                    #set( $first=true )
                     #foreach ($team in $projectTeams)
-                        <div class="tabs-pane" id="tabs-team-$team.ID">
+                        #if($first) 
+                            #set($active="active-pane") 
+                            #set($first=false) 
+                        #else
+                            #set($active="") 
+                        #end
+                        <div class="tabs-pane $active" id="tabs-team-$team.ID">
                             <h4>$team.name</h4>
-                            <form class="aui" action="">
+                            <form id="form-team-$team.ID" class="aui" action="">
                                 <fieldset>
                                     <table class="aui aui-table-sortable" width="90%">
                                         <thead>
@@ -43,41 +57,34 @@
                                                     <label for="selectAll">Assignable?</label>
                                                 </th>
                                                 <th>Name</th>
-                                                <th>Email</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                         #foreach ($person in $team.getAssignees())
+                                         #foreach ($assignment in $team.assignments)
+                                            #set($person=$assignment.getUser())
                                             <tr>
                                                 <td>
-                                                    <input type="checkbox" class="selectedPeople" name="selectedPeople[]" value="$person.getName()"
-                                                        
-                                                        #if (${person.active})
-                                                        CHECKED
-                                                        #end
-                                                        
-                                                    >
+                                                    #if (${assignment.assignable})
+                                                        #set($checked="CHECKED")
+                                                    #else 
+                                                        #set($checked="")
+                                                    #end
+                                                    <input type="checkbox" class="activatedUsers" name="activatedUsers" value="$person.getPrincipleName()" $checked >
                                                 </td>
-                                                <td>$person.displayName</td>
-                                                <td>$person.emailAddress</td>
+                                                <td>$person.displayName ($person.principleName)</td>
                                             </tr>
                                         #end
                                         </tbody>
                                     </table>
                                 </fieldset>
 
-                                
-                                <button id="updateassignconfig" class="aui-button aui-button-primary">Update Assigments</button>
+                                <input type="hidden" name="teamId" id="teamId" value="$team.ID">
+                                <button id="updateactives-$team.ID" class="aui-button aui-button-primary astupdate">Update Assigments</button>
                             </form>
-
-
                         </div>
                     #end
 
                 </div>
-                    
-                        
-                    
 
             </section>
         </div>
