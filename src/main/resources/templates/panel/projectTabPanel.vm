@@ -24,8 +24,8 @@ $webResourceManager.requireResource("com.edwardawebb.jira-assign-escalate-plugin
                 
                 
                     <div id="aui-message-bar"></div>
-                    <div class="aui-tabs horizontal-tabs" id="tabs-$team.ID">
-                        <ul class="tabs-menu" id="tabsMenu-$team.ID">
+                    <div class="aui-tabs horizontal-tabs" id="tabs">
+                        <ul class="tabs-menu" id="tabsMenu">
 
                             #set( $first=true )
                             #foreach ($team in $projectTeams)
@@ -65,7 +65,7 @@ var rolesData = [
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/jira-assign-escalate.js"></script>
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/new-support-team-form.js"></script>
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/support-team-rows.js"></script>
-<script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/support-team-tabs.js"></script>
+<script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/support-team-tab.js"></script>
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/new-support-team.js"></script>
 
 
