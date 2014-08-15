@@ -1,25 +1,27 @@
-AJS.$('.selectAll').click(function(e) {  //on click 
 
- 	var teamId = AJS.$(e.srcElement).attr("data-id");
-        if(this.checked) { // check select status
-            AJS.$('.activatedUsers-'+teamId).each(function() { //loop through each checkbox
-                this.checked = true;  //select all checkboxes with class "checkbox1"               
-            });
-        }else{
-            AJS.$('.activatedUsers-'+teamId).each(function() { //loop through each checkbox
-                this.checked = false; //deselect all checkboxes with class "checkbox1"                       
-            });         
-        }
-    });
 
 
 
 
 /*
- * Update team assignments
+ * this is a function called at the bottom of this own file, 
+ * but also by the create dialog as new teams are added
  */
 
 var updateEventBindings = function(){
+	AJS.$('.selectAll').click(function(e) {  //on click 
+
+	 	var teamId = AJS.$(e.srcElement).attr("data-id");
+	        if(this.checked) { // check select status
+	            AJS.$('.activatedUsers-'+teamId).each(function() { //loop through each checkbox
+	                this.checked = true;  //select all checkboxes with class "checkbox1"               
+	            });
+	        }else{
+	            AJS.$('.activatedUsers-'+teamId).each(function() { //loop through each checkbox
+	                this.checked = false; //deselect all checkboxes with class "checkbox1"                       
+	            });         
+	        }
+	    });
 	AJS.$(".astupdate").click(function(e){
 
 		e.preventDefault();
