@@ -6,3 +6,11 @@
         <input name="teamName" id="teamName" value="$teamName" />
     </td>
 </tr>
+<tr>
+    <td class="fieldLabelArea">
+        Attempt to use Component(s) first?
+    </td>
+    <td nowrap>
+        <input type="checkbox" name="useComponent" id="useComponent" value="$useComponent" />
+    </td>
+</tr>

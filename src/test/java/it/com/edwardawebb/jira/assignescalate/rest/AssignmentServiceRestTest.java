@@ -1,16 +1,17 @@
 package it.com.edwardawebb.jira.assignescalate.rest;
 
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import javax.ws.rs.core.MediaType;
 
 import org.apache.wink.client.ClientResponse;
-import org.hamcrest.core.IsNot;
 import org.junit.Test;
 
-import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.resources.SupportTeamResource;
 
 public class AssignmentServiceRestTest extends AbstractEndpointTest {
