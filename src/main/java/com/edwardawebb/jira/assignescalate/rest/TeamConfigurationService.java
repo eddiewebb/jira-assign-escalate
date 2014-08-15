@@ -6,6 +6,7 @@ package com.edwardawebb.jira.assignescalate.rest;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -93,4 +94,12 @@ public class TeamConfigurationService {
         return Response.ok(SupportTeamResource.from(team)).build();
     }
 
+    @DELETE
+    @Path("/{id}/")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response deleteTeam(@PathParam("id") Integer teamId){
+        
+        Integer records = assignmentService.deleteProjectTeam(teamId);
+        return Response.ok(String.valueOf(records) + " team purged").build();
+    }
 }

@@ -29,7 +29,7 @@ $webResourceManager.requireResource("com.edwardawebb.jira-assign-escalate-plugin
 
                             #set( $first=true )
                             #foreach ($team in $projectTeams)
-                                <li class="menu-item">
+                                <li class="menu-item" id="tabLink-$team.id">
                                     <a href="#tabs-team-$team.id"><strong>$team.name</strong></a>
                                 </li>
                             #end

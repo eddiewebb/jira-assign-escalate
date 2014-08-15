@@ -61,6 +61,8 @@ public interface AssignmentService {
 
     SupportTeam updateProjectTeam(Integer teamId, List<String> activeUsers);
 
+    Integer deleteProjectTeam(Integer teamId);
+
    
    
 

@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
@@ -64,6 +63,19 @@ public class DefaultAssignmentService implements AssignmentService {
             throw new ActiveObjectsException("Role names are unique to each project");
         }
     }
+
+
+    @Override
+    public Integer deleteProjectTeam(Integer teamId) {
+        logger.warn("Deleteing Project Team:" + teamId);
+        int middles = ao.deleteWithSQL(TeamToUser.class, "TEAMID = ?", teamId);
+        logger.warn("removed " + middles + " team assignments");
+        int impact = ao.deleteWithSQL(SupportTeam.class, "ID = ?", teamId);
+        logger.warn("removed " + impact + " team");
+        
+        return impact;
+    }
+
 
     @Override
     public SupportMember assignNextAvailableAssigneeForProjectTeam(final Long projectId, final String name) {
@@ -206,7 +218,6 @@ public class DefaultAssignmentService implements AssignmentService {
         }
         return results.length > 0 ? results[0] : null;
     }
-
 
 
   

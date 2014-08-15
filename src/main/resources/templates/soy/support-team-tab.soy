@@ -13,8 +13,8 @@
                                     <h4>{$team.name}</h4>
                                 </div>
                                 <div style="display: table-cell;margin: 0;padding: 0;">
-                                    <button  class="aui-button aui-dropdown2-trigger" aria-owns="dropdown2-more" aria-haspopup="true"><span class="aui-icon aui-icon-small aui-iconfont-configure">Configure </span> Team Options..</button>
-                                    <div id="dropdown2-more" class="aui-dropdown2 aui-style-default">
+                                    <button  class="aui-button aui-dropdown2-trigger" aria-owns="dropdown-team-{$team.id}" aria-haspopup="true"><span class="aui-icon aui-icon-small aui-iconfont-configure">Configure </span> Team Options..</button>
+                                    <div id="dropdown-team-{$team.id}" class="aui-dropdown2 aui-style-default">
                                         <ul class="aui-list-truncate">
                                             <li><a id="resync-{$team.id}" data-id="{$team.id}" class="resyncButton" href="#">Re-Sync Team Members</a></li>
                                             <li><a id="edit-{$team.id}" data-id="{$team.id}" class="editButton"  href="#">Edit Name</a></li>
