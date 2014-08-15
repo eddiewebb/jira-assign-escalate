@@ -67,6 +67,9 @@ AJS.$("#create-support-team").click(function() {
 		    	     dataType: 'json',
 		    	     async: true,
 		    	     success: function(data){
+		    	    	 console.log(data);
+		    	    	 AJS.$("#tabsMenu-" + data.id).append("<li class=\"menu-item active-tab\"><a href=\"#tabs-team-" + data.id + "\"><strong>" + data.name + "</strong></a></li>");
+		    	    	 AJS.$("#tabs-" + data.id).append("");
 			   	          var selectedAjsParams = {
 			   	                  teamUsers: data.users
 			   	              }   

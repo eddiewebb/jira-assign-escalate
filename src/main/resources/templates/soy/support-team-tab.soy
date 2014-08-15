@@ -1,0 +1,52 @@
+{namespace JIRA.Templates.AssignEscalate}
+/**
+ * Displays the new team form
+ * @param team
+ */
+{template .supportTeamTab}
+<div class="tabs-pane" id="tabs-team-{$team.id}">
+                            <form id="form-team-{$team.id}" class="aui" action="">
+                            
+                            <p>&nbsp;</p>
+                            <div style="width:100%;box-sizing: border-box;display: table;table-layout: auto;">
+                                <div style="float:left;box-sizing: border-box;display: table-cell;margin: 0;padding: 0;">
+                                    <h4>$team.name</h4>
+                                </div>
+                                <div style="display: table-cell;margin: 0;padding: 0;">
+                                    <button  class="aui-button aui-dropdown2-trigger" aria-owns="dropdown2-more" aria-haspopup="true"><span class="aui-icon aui-icon-small aui-iconfont-configure">Configure </span> Team Options..</button>
+                                    <div id="dropdown2-more" class="aui-dropdown2 aui-style-default">
+                                        <ul class="aui-list-truncate">
+                                            <li><a id="resync-{$team.id}" data-id="{$team.id}" class="resyncButton" href="#">Re-Sync Team Members</a></li>
+                                            <li><a id="edit-{$team.id}" data-id="{$team.id}" class="editButton"  href="#">Edit Name</a></li>
+                                            <li><a id="delete-{$team.id}" data-id="{$team.id}" class="deleteButton" href="#">Delete Team</a></li>
+                                        </ul>
+                                    </div>
+                                </div>  
+
+                            </div>
+                                <fieldset>
+                                    <table class="aui aui-table-sortable" width="90%">
+                                        <thead>
+                                            <tr>
+                                                <th class="aui-table-column-unsortable" width="170px">       
+                                                    <input class="checkbox selectAll" type="checkbox" data-id="{$team.id}" id="selectAll">
+                                                    <label for="selectAll">Assignable?</label>
+                                                </th>
+                                                <th>Name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tableBody-{$team.id}">
+                                         	{call JIRA.Templates.AssignEscalate.supportTeamRows}        
+												{param teamUsers: $team.users /}    
+											{/call}
+                                        </tbody>
+                                    </table>
+                                </fieldset>
+
+                                <input type="hidden" name="teamId" id="teamId" value="{$team.id}">
+                                <p>
+                                    <button id="updateactives-{$team.id}" data-id="{$team.id}" class="aui-button aui-button-primary astupdate">Update Assigments</button>
+                                </p>
+                            </form>
+                        </div>
+{/template}

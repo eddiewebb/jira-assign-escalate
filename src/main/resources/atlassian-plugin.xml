@@ -19,6 +19,9 @@
 		<transformation extension="js">
 			<transformer key="jsI18n" />
 		</transformation>
+		
+		
+    	<resource type="soy" name="supportTeamTab" location="/templates/soy/support-team-tab.soy"/>
 
 		<!-- transform Soy templates into JS -->
 		<transformation extension="soy">
@@ -35,6 +38,9 @@
 			location="/templates/soy/new-support-team-form.soy" />
     	<resource type="download" name="support-team-rows.js"
 			location="/templates/soy/support-team-rows.soy" />
+			
+    	<resource type="download" name="support-team-tab.js"
+			location="/templates/soy/support-team-tab.soy" />
 		<resource type="download" name="images/" location="/images" />
 		<context>jira-assign-escalate</context>
 	</web-resource>
@@ -92,6 +98,7 @@
 			location="templates/postfunctions/assign-level-one-support-post-function-input.vm" />
 		<resource type="velocity" name="edit-parameters"
 			location="templates/postfunctions/assign-level-one-support-post-function-input.vm" />
+			
 	</workflow-function>
 	<workflow-function key="escalate-level-two-post-function"
 		name="Escalate Level Two Post Function" i18n-name-key="escalate-level-two-post-function.name"
@@ -128,6 +135,8 @@
 		<!-- this parameter prevents the heading from appearing at the top of the 
 			tab panel area -->
 		<param name="noTitle">true</param>
+		
+		
 	</project-tabpanel>
 
 	<!-- expose custom REST service for project config operations -->

@@ -1,4 +1,8 @@
 
+
+$webResourceManager.requireResource("com.edwardawebb.jira-assign-escalate-plugin:jira-assign-escalate-plugin-resources")
+
+
 <section id="content" role="main">
 <!-- Page Header must go inside #content before .aui-page-panel -->
 
@@ -20,87 +24,22 @@
                 
                 
                     <div id="aui-message-bar"></div>
-                    <div class="aui-tabs horizontal-tabs" id="tabs-example1">
-                        <ul class="tabs-menu">
+                    <div class="aui-tabs horizontal-tabs" id="tabs-$team.ID">
+                        <ul class="tabs-menu" id="tabsMenu-$team.ID">
 
                             #set( $first=true )
                             #foreach ($team in $projectTeams)
-                                #if($first) 
-                                    #set($active="active-tab") 
-                                    #set($first=false) 
-                                #else
-                                    #set($active="") 
-                                #end
-                                <li class="menu-item $active">
-                                    <a href="#tabs-team-$team.ID"><strong>$team.name</strong></a>
+                                <li class="menu-item">
+                                    <a href="#tabs-team-$team.id"><strong>$team.name</strong></a>
                                 </li>
                             #end
                         </ul>
 
                     #set( $first=true )
                     #foreach ($team in $projectTeams)
-                        #if($first) 
-                            #set($active="active-pane") 
-                            #set($first=false) 
-                        #else
-                            #set($active="") 
-                        #end
-                        <div class="tabs-pane $active" id="tabs-team-$team.ID">
-                            <form id="form-team-$team.ID" class="aui" action="">
-                            
-                            <p>&nbsp;</p>
-                            <div style="width:100%;box-sizing: border-box;display: table;table-layout: auto;">
-                                <div style="float:left;box-sizing: border-box;display: table-cell;margin: 0;padding: 0;">
-                                    <h4>$team.name</h4>
-                                </div>
-                                <div style="display: table-cell;margin: 0;padding: 0;">
-                                    <button  class="aui-button aui-dropdown2-trigger" aria-owns="dropdown2-more" aria-haspopup="true"><span class="aui-icon aui-icon-small aui-iconfont-configure">Configure </span> Team Options..</button>
-                                    <div id="dropdown2-more" class="aui-dropdown2 aui-style-default">
-                                        <ul class="aui-list-truncate">
-                                            <li><a id="resync-$team.ID" data-id="$team.ID" class="resyncButton" href="#">Re-Sync Team Members</a></li>
-                                            <li><a id="edit-$team.ID" data-id="$team.ID" class="editButton"  href="#">Edit Name</a></li>
-                                            <li><a id="delete-$team.ID" data-id="$team.ID" class="deleteButton" href="#">Delete Team</a></li>
-                                        </ul>
-                                    </div>
-                                </div>  
-
-                            </div>
-                                <fieldset>
-                                    <table class="aui aui-table-sortable" width="90%">
-                                        <thead>
-                                            <tr>
-                                                <th class="aui-table-column-unsortable" width="170px">       
-                                                    <input class="checkbox selectAll" type="checkbox" data-id="$team.ID" id="selectAll">
-                                                    <label for="selectAll">Assignable?</label>
-                                                </th>
-                                                <th>Name</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tableBody-$team.ID">
-                                         #foreach ($assignment in $team.assignments)
-                                            #set($person=$assignment.getUser())
-                                            <tr>
-                                                <td>
-                                                    #if (${assignment.assignable})
-                                                        #set($checked="CHECKED")
-                                                    #else 
-                                                        #set($checked="")
-                                                    #end
-                                                    <input type="checkbox" class="activatedUsers-$team.ID" name="activatedUsers" value="$person.getPrincipleName()" $checked >
-                                                </td>
-                                                <td>$person.displayName ($person.principleName)</td>
-                                            </tr>
-                                        #end
-                                        </tbody>
-                                    </table>
-                                </fieldset>
-
-                                <input type="hidden" name="teamId" id="teamId" value="$team.ID">
-                                <p>
-                                    <button id="updateactives-$team.ID" data-id="$team.ID" class="aui-button aui-button-primary astupdate">Update Assigments</button>
-                                </p>
-                            </form>
-                        </div>
+                        $soyRenderer.render("com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources","JIRA.Templates.AssignEscalate.supportTeamTab",{
+                            'team': $team
+                        })
                     #end
 
                 </div>
@@ -123,10 +62,10 @@ var rolesData = [
     
 </script>
 
-$webResourceManager.requireResource("com.edwardawebb.jira-assign-escalate-plugin:jira-assign-escalate-plugin-resources")
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/jira-assign-escalate.js"></script>
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/new-support-team-form.js"></script>
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/support-team-rows.js"></script>
+<script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/support-team-tabs.js"></script>
 <script src="$req.contextPath/download/resources/com.edwardawebb.jira-assign-escalate:jira-assign-escalate-resources/new-support-team.js"></script>
 
 
