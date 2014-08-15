@@ -67,10 +67,10 @@ public class DefaultAssignmentService implements AssignmentService {
 
     @Override
     public SupportMember assignNextAvailableAssigneeForProjectTeam(final Long projectId, final String name) {
-       return ao.executeInTransaction(new TransactionCallback<SupportMember>(){
+      // return ao.executeInTransaction(new TransactionCallback<SupportMember>(){
 
-            @Override
-            public SupportMember doInTransaction() {
+      //      @Override
+      //      public SupportMember doInTransaction() {
                 SupportTeam role = findRoleByProjectIdAndName(projectId,name);
                 
                 SupportMember[] members = ao.find(SupportMember.class,Query.select()
@@ -88,9 +88,9 @@ public class DefaultAssignmentService implements AssignmentService {
                 }
                 
                 return next;
-            }
+       //     }
             
-        });
+       // });
         
     }
 
@@ -111,9 +111,9 @@ public class DefaultAssignmentService implements AssignmentService {
 
     @Override
     public SupportTeam updateProjectTeam(final Integer teamId, final List<String> activeUsers) {
-       return ao.executeInTransaction(new TransactionCallback<SupportTeam>(){
-            @Override
-            public SupportTeam doInTransaction() {
+//       return ao.executeInTransaction(new TransactionCallback<SupportTeam>(){
+//            @Override
+//            public SupportTeam doInTransaction() {
                 SupportTeam team = getProjectTeam(teamId);
                 for (int i = 0; i < team.getAssignments().length; i++) {
                     logger.warn("Activating " + team.getAssignments()[i].getUser() + "? " + activeUsers.contains(team.getAssignments()[i].getUser().getPrincipleName()));
@@ -123,16 +123,16 @@ public class DefaultAssignmentService implements AssignmentService {
                     logger.warn("Saved assignment as:" + team.getAssignments()[i].isAssignable());
                 }
                 return team;
-            }
-        });
+//            }
+//        });
         
     }
     
     @Override
     public void updateUsersLinkedToTeam(final Set<ApplicationUser> latestUsers,final SupportTeam role) {
-        ao.executeInTransaction(new TransactionCallback<Object>(){
-            @Override
-            public Object doInTransaction() {
+//        ao.executeInTransaction(new TransactionCallback<Object>(){
+//            @Override
+//            public Object doInTransaction() {
               //list of all currently assigned poeple. As we validate roles from the new list, they are 
                 // removed from this this. Leftovers are ones who have left JIRA or moved out of the group.
                 TeamToUser[] currentAssignments = role.getAssignments();
@@ -159,10 +159,10 @@ public class DefaultAssignmentService implements AssignmentService {
                     defunctAssignment.setHidden(true);
                     defunctAssignment.save();
                 }       
-                return null;
-            }
-            
-        });
+//                return null;
+//            }
+//            
+//        });
         
     }
 

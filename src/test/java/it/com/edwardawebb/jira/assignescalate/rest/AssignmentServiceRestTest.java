@@ -1,14 +1,13 @@
 package it.com.edwardawebb.jira.assignescalate.rest;
 
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import javax.ws.rs.core.MediaType;
 
 import org.apache.wink.client.ClientResponse;
+import org.hamcrest.core.IsNot;
 import org.junit.Test;
 
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
@@ -65,9 +64,10 @@ public class AssignmentServiceRestTest extends AbstractEndpointTest {
 
     @Test
     public void testTeamUsersCanBeRetrieved(){
-        ClientResponse response = client.resource(resourceUrlTeam + "/team").get();
-        assertEquals("Could not create team",200,response.getStatusCode());
-        SupportTeamResource team = response.getEntity(SupportTeamResource.class);        
+        ClientResponse response = client.resource(resourceUrlTeam + "/team/1").get();
+        assertEquals("Could not retrieve team",200,response.getStatusCode());
+        SupportTeamResource team = response.getEntity(SupportTeamResource.class); 
+        assertThat(team.getUsers(),notNullValue());
         
     }
 }

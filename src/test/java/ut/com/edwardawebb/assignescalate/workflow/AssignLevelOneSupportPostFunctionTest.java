@@ -1,7 +1,8 @@
 package ut.com.edwardawebb.assignescalate.workflow;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ofbiz.core.entity.GenericValue;
 
+import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.config.SubTaskManager;
@@ -24,22 +26,28 @@ import com.atlassian.jira.issue.security.IssueSecurityLevelManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.user.util.UserManager;
+import com.edwardawebb.jira.assignescalate.AssignmentService;
+import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunction;
 
 public class AssignLevelOneSupportPostFunctionTest
 {
     public static final String MESSAGE = "my message";
+    public static final SupportMember ASSIGNEE = mock(SupportMember.class);
 
     protected AssignLevelOneSupportPostFunction function;
     protected MutableIssue issue;
+    protected AssignmentService assignmentService;
 
     @Before
     public void setup() {
 
         issue = createPartialMockedIssue();
         issue.setDescription("");
+        assignmentService = mock(AssignmentService.class);
+        when(assignmentService.assignNextAvailableAssigneeForProjectTeam(anyLong(), anyString())).thenReturn(ASSIGNEE);
 
-        function = new AssignLevelOneSupportPostFunction() {
+        function = new AssignLevelOneSupportPostFunction(assignmentService) {
             protected MutableIssue getIssue(Map transientVars) throws DataAccessException {
                 return issue;
             }
@@ -47,33 +55,13 @@ public class AssignLevelOneSupportPostFunctionTest
     }
 
     @Test
-    public void testNullMessage() throws Exception
+    public void testNewAssignee() throws Exception
     {
-        Map transientVars = Collections.emptyMap();
+        Map args = new HashMap();
+        args.put("teamName","Level One");
+        function.execute(null,args,null);
 
-        function.execute(transientVars,null,null);
-
-        assertEquals("message should be empty","",issue.getDescription());
-    }
-
-    @Test
-    public void testEmptyMessage() throws Exception
-    {
-        Map transientVars = new HashMap();
-        transientVars.put("messageField","");
-        function.execute(transientVars,null,null);
-
-        assertEquals("message should be empty","",issue.getDescription());
-    }
-
-    @Test
-    public void testValidMessage() throws Exception
-    {
-        Map transientVars = new HashMap();
-        transientVars.put("messageField",MESSAGE);
-        function.execute(transientVars,null,null);
-
-        assertEquals("message not found",MESSAGE,issue.getDescription());
+       assertThat(issue.getAssigneeId(),is(ASSIGNEE.getPrincipleName()));
     }
 
     private MutableIssue createPartialMockedIssue() {
