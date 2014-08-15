@@ -3,12 +3,8 @@ package com.edwardawebb.jira.assignescalate.workflow;
 import java.util.HashMap;
 import java.util.Map;
 
-import webwork.action.ActionContext;
-
 import com.atlassian.jira.plugin.workflow.AbstractWorkflowPluginFactory;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
-import com.atlassian.jira.workflow.JiraWorkflow;
-import com.atlassian.jira.workflow.WorkflowManager;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
 
@@ -19,23 +15,16 @@ This is typically where you put default values into the velocity context and whe
 
 public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPluginFactory implements WorkflowPluginFunctionFactory{
 
-    public static final String FIELD_MESSAGE="messageField";
-    private WorkflowManager workflowManager;
+    public static final String FIELD_TEAM="teamName";
 
 
-    public AssignLevelOneSupportPostFunctionFactory(WorkflowManager workflowManager){
-            this.workflowManager=workflowManager;
-    }
 
     @Override
     protected void getVelocityParamsForInput(Map<String, Object>velocityParams){
 
-        Map<String, String[]>myParams=ActionContext.getParameters();
-
-        final JiraWorkflow jiraWorkflow=workflowManager.getWorkflow(myParams.get("workflowName")[0]);
-
+      
         //the default message
-        velocityParams.put(FIELD_MESSAGE,"Workflow Last Edited By "+jiraWorkflow.getUpdateAuthorName());
+        velocityParams.put(FIELD_TEAM,"Enter team Name:");
 
     }
 
@@ -56,13 +45,11 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
 
         FunctionDescriptor functionDescriptor=(FunctionDescriptor)descriptor;
 
-        String message=(String)functionDescriptor.getArgs().get(FIELD_MESSAGE);
+        String message=(String)functionDescriptor.getArgs().get(FIELD_TEAM);
 
-        if(message==null){
-            message="No Message";
-        }
 
-        velocityParams.put(FIELD_MESSAGE,message);
+
+        velocityParams.put(FIELD_TEAM,message);
     }
 
 
@@ -70,8 +57,8 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
         Map params=new HashMap();
 
         // Process The map
-        String message=extractSingleParam(formParams,FIELD_MESSAGE);
-        params.put(FIELD_MESSAGE,message);
+        String message=extractSingleParam(formParams,FIELD_TEAM);
+        params.put(FIELD_TEAM,message);
 
         return params;
     }

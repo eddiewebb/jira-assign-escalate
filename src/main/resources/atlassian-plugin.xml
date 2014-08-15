@@ -82,6 +82,7 @@
 		</description>
 		<function-class>com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunction
 		</function-class>
+		<!-- when used on initial create it must be before "create issue" which is counter-intuitive for users configuring. -->
 		<orderable>false</orderable>
 		<unique>true</unique>
 		<deletable>true</deletable>

@@ -1,8 +1,8 @@
 <tr>
     <td class="fieldLabelArea">
-        Message:
+        Team to Assign:
     </td>
     <td nowrap>
-        <input name="messageField" id="messageField" value="$messageField" />
+        <input name="teamName" id="teamName" value="$teamName" />
     </td>
 </tr>

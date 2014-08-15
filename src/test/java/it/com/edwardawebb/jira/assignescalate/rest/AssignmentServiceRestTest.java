@@ -65,7 +65,7 @@ public class AssignmentServiceRestTest extends AbstractEndpointTest {
 
     @Test
     public void testTeamUsersCanBeRetrieved(){
-        ClientResponse response = client.resource(resourceUrlTeam + "/team").contentType(MediaType.APPLICATION_FORM_URLENCODED).accept(MediaType.APPLICATION_JSON).post(formData.toString());
+        ClientResponse response = client.resource(resourceUrlTeam + "/team").get();
         assertEquals("Could not create team",200,response.getStatusCode());
         SupportTeamResource team = response.getEntity(SupportTeamResource.class);        
         
