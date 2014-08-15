@@ -52,7 +52,7 @@ public class DefaultAssignmentService implements AssignmentService {
 
     @Override
     public SupportTeam createProjectTeam(Long projectId, String name, String projectRole) {
-        logger.info("Request for new team: " + name + " id " + projectId);
+        logger.warn("Request for new team: " + name + " id " + projectId);
         SupportTeam existingrole = findRoleByProjectIdAndName(projectId, name);
         if ( null == existingrole ){
             // good, does not exist
@@ -185,7 +185,7 @@ public class DefaultAssignmentService implements AssignmentService {
     }
 
     private SupportMember findOrCreateUser(String key, String name, String displayName) {
-        SupportMember[] results = ao.find(SupportMember.class,"KEY = ? AND NAME = ?",key,name);
+        SupportMember[] results = ao.find(SupportMember.class,"KEY = ? AND NAME LIKE ?",key,name);
         if (results.length > 1)
         {
             throw new IllegalStateException("Application cannot have more than 1 user with same Principle Name");

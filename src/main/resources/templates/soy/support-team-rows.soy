@@ -8,13 +8,13 @@
   		<tr>
             <td>
                 {if $user.assignable}
-                	{let $checked: "CHECKED" /}
+               		<input CHECKED type="checkbox" class="activatedUsers" name="activatedUsers" value="{$user.principleName}" >
+            
                 {else}
-                	{let $checked: "" /}
-
+                	<input type="checkbox" class="activatedUsers" name="activatedUsers" value="{$user.principleName}">
+            
                 {/if}
-                <input type="checkbox" class="activatedUsers" name="activatedUsers" value="{$user.getPrincipleName()}" {$checked} >
-            </td>
+                </td>
             <td>{$user.displayName} ({$user.principleName})</td>  		
   		</tr>
     {/foreach}  
