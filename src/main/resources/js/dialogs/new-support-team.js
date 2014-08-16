@@ -69,7 +69,7 @@ var createNewTeamDialog = function(){
 			    	     async: true,
 			    	     success: function(data){
 			    	    	 console.log(data);
-			    	    	 AJS.$("#tabsMenu").append("<li class=\"menu-item\"><a href=\"#tabs-team-" + data.id + "\"><strong>" + data.name + "</strong></a></li>");
+			    	    	 AJS.$("#tabsMenu").append("<li class=\"menu-item\"  id=\"tabLink-" + data.id + "\"><a href=\"#tabs-team-" + data.id + "\"><strong>" + data.name + "</strong></a></li>");
 	
 			    	    	 var newTab = JIRA.Templates.AssignEscalate.supportTeamTab({team:data});  
 				   	          AJS.$("#tabs").append(newTab); 

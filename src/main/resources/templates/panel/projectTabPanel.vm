@@ -23,7 +23,7 @@
         <!-- Page Header must go inside #content before .aui-page-panel -->
             <div class="aui-page-panel">
                 <div class="aui-page-panel-inner">
-                    <section class="aui-page-panel-content">
+                    <section class="aui-page-panel-content teamsP">
                         
                         
                             <div id="aui-message-bar"></div>

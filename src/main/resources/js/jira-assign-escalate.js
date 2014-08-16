@@ -135,3 +135,8 @@ AJS.$( document ).ready(function() {
 	updateEventBindings();
 	createNewTeamDialog();
 });
+AJS.$(document).ajaxSuccess(function() {
+	updateEventBindings();
+	createNewTeamDialog();
+	AJS.tabs.setup();
+});
