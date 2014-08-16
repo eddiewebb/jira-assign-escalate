@@ -55,7 +55,7 @@
     <interface>com.edwardawebb.jira.assignescalate.AssignmentService</interface>
   </component>
   <workflow-function key="assign-level-one-support-post-function" name="Assign Level One Support Post Function" i18n-name-key="assign-level-one-support-post-function.name" class="com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunctionFactory">
-    <description key="assign-level-one-support-post-function.description">Assign an available member from this project/components level 1 team</description>
+    <description key="assign-level-one-support-post-function.description">Assign an available member from the specified team or by matching components</description>
     <function-class>com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunction</function-class>
     <!-- when used on initial create it must be before "create issue" which is counter-intuitive for users configuring. -->
     <orderable>false</orderable>
@@ -65,7 +65,7 @@
     <resource type="velocity" name="input-parameters" location="templates/postfunctions/assign-level-one-support-post-function-input.vm"/>
     <resource type="velocity" name="edit-parameters" location="templates/postfunctions/assign-level-one-support-post-function-input.vm"/>
   </workflow-function>
-  <workflow-function key="escalate-level-two-post-function" name="Escalate Level Two Post Function" i18n-name-key="escalate-level-two-post-function.name" class="com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunctionFactory">
+  <!--  workflow-function key="escalate-level-two-post-function" name="Escalate Level Two Post Function" i18n-name-key="escalate-level-two-post-function.name" class="com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunctionFactory">
     <description key="escalate-level-two-post-function.description">Re-assign an issue to level two.</description>
     <function-class>com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunction</function-class>
     <orderable>false</orderable>
@@ -74,7 +74,7 @@
     <resource type="velocity" name="view" location="templates/postfunctions/escalate-level-two-post-function.vm"/>
     <resource type="velocity" name="input-parameters" location="templates/postfunctions/escalate-level-two-post-function-input.vm"/>
     <resource type="velocity" name="edit-parameters" location="templates/postfunctions/escalate-level-two-post-function-input.vm"/>
-  </workflow-function>
+  </workflow-function-->
   <!-- exposes area within project admin section to edit team -->
   <project-tabpanel key="support-panel" name="Support Assignment" class="com.edwardawebb.jira.assignescalate.admin.SupportTeamProjectPanelTab">
     <description key="supportduty.project.panel.description">rules for assignable users</description>

@@ -133,10 +133,16 @@ var updateEventBindings = function(){
 
 AJS.$( document ).ready(function() {
 	updateEventBindings();
-	createNewTeamDialog();
+	bindTeamDialog();
+
 });
+
+//if the user clicks the tab link after initial load the events for binding tabs are not fired, 
+// and wont work
+// This ensures (poorly) that when jira uses AJAX to reload just the panel, tabs will work.
 AJS.$(document).ajaxSuccess(function() {
 	updateEventBindings();
-	createNewTeamDialog();
+	bindTeamDialog();
 	AJS.tabs.setup();
 });
+

@@ -15,7 +15,7 @@
                         <h1>Support Assigner - Support Teams</h1>
                     </div>
                     <div>
-                        <button id="create-support-team" class="aui-button aui-button-subtle" disabled><span class="aui-icon aui-icon-small aui-iconfont-configure">Configure </span> New Team</button>
+                        <button id="create-support-team" class="aui-button aui-button-subtle" disabled><span class="aui-icon aui-icon-small aui-iconfont-add">Configure </span> New Team</button>
                     </div>
                 </div>
             </header>

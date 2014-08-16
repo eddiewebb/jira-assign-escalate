@@ -1,4 +1,4 @@
-var createNewTeamDialog = function(){
+var bindTeamDialog = function(){
 	var selectedAjsParams = {
             projectId: AJS.$("#projectId").val(),
             roles: rolesData
@@ -27,6 +27,11 @@ var createNewTeamDialog = function(){
 		    id: "new-support-team", 
 		    closeOnOutsideClick: true
 		});
+		
+		dialog.addLink("Cancel", function (dialog) {
+		    dialog.hide();
+ 	        dialog.remove();
+		}, "#");
 	
 		// PAGE 0 (first page)
 		// adds header for first page
@@ -94,13 +99,11 @@ var createNewTeamDialog = function(){
 			     } 
 			  });
 		});
-	
-	
-		dialog.addLink("Cancel", function (dialog) {
-		    dialog.hide();
-		}, "#");
+
 	    dialog.gotoPanel(0);
 	    dialog.show();
+	
+		
 	});
 	
 	
