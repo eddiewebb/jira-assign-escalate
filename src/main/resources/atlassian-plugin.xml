@@ -1,163 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<atlassian-plugin key="${project.groupId}.${project.artifactId}"
-	name="${project.name}" plugins-version="2">
-	<plugin-info>
-		<description>${project.description}</description>
-		<version>${project.version}</version>
-		<vendor name="${project.organization.name}" url="${project.organization.url}" />
-		<param name="plugin-icon">images/pluginIcon.png</param>
-		<param name="plugin-logo">images/pluginLogo.png</param>
-	</plugin-info>
-	<!-- add our i18n resource -->
-	<resource type="i18n" name="i18n" location="jira-assign-escalate" />
-	<!-- add our web resources -->
-	<web-resource key="jira-assign-escalate-resources" name="jira-assign-escalate Web Resources">
-		<dependency>com.atlassian.auiplugin:ajs</dependency>
-		<dependency>com.atlassian.soy.soy-template-plugin:soy-deps</dependency>
-		<!-- transform calls to AJS.getText() inside JS files -->
-		<transformation extension="js">
-			<transformer key="jsI18n" />
-		</transformation>
-		
-		
-    	<resource type="soy" name="supportTeamTab" location="/templates/soy/support-team-tab.soy"/>
-
-		<!-- transform Soy templates into JS -->
-		<transformation extension="soy">
-			<transformer key="soyTransformer"/>
-		</transformation>
-		<resource type="download" name="jira-assign-escalate.css"
-			location="/css/jira-assign-escalate.css" />
-		<resource type="download" name="jira-assign-escalate.js"
-			location="/js/jira-assign-escalate.js" />
-		<resource type="download" name="new-support-team.js"
-			location="/js/dialogs/new-support-team.js" />
-			
-    	<resource type="download" name="new-support-team-form.js"
-			location="/templates/soy/new-support-team-form.soy" />
-    	<resource type="download" name="support-team-rows.js"
-			location="/templates/soy/support-team-rows.soy" />
-			
-    	<resource type="download" name="support-team-tab.js"
-			location="/templates/soy/support-team-tab.soy" />
-		<resource type="download" name="images/" location="/images" />
-		<context>jira-assign-escalate</context>
-	</web-resource>
-	<!-- import from the product container -->
-	<component-import key="applicationProperties"
-		interface="com.atlassian.sal.api.ApplicationProperties" />
-	<component-import key="ao" name="Active Objects service"
-		interface="com.atlassian.activeobjects.external.ActiveObjects">
-		<description>Component to access Active Objects functionality from the
-			plugin
-		</description>
-	</component-import>
-	<component key="tx-processor" name="Transactional Annotation Processor"
-		class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
-		<decription>Processes @Transactional annotations.</decription>
-	</component>
-	<component-import key="pluginScheduler">
-		<description>SAL Scheduler</description>
-		<interface>com.atlassian.sal.api.scheduling.PluginScheduler
-		</interface>
-	</component-import>
-
-
-	<!-- my stuff -->
-	<component key="schedulerComponent"
-		class="com.edwardawebb.jira.assignescalate.jobs.SyncProjectTeamUsersScheduler"
-		system="true" public="true">
-		<description>The plugin component that syncs user accounts with Team
-			mappings based on roles.
-		</description>
-		<interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
-	</component>
-	<component key="assignmentService"
-		class="com.edwardawebb.jira.assignescalate.ao.service.DefaultAssignmentService">
-		<description>access to ao objects for this plugin.
-		</description>
-		<interface>com.edwardawebb.jira.assignescalate.AssignmentService
-		</interface>
-	</component>
-	<workflow-function key="assign-level-one-support-post-function"
-		name="Assign Level One Support Post Function" i18n-name-key="assign-level-one-support-post-function.name"
-		class="com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunctionFactory">
-		<description key="assign-level-one-support-post-function.description">Assign an available member from this
-			project/components level 1 team
-		</description>
-		<function-class>com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunction
-		</function-class>
-		<!-- when used on initial create it must be before "create issue" which is counter-intuitive for users configuring. -->
-		<orderable>false</orderable>
-		<unique>true</unique>
-		<deletable>true</deletable>
-		<resource type="velocity" name="view"
-			location="templates/postfunctions/assign-level-one-support-post-function.vm" />
-		<resource type="velocity" name="input-parameters"
-			location="templates/postfunctions/assign-level-one-support-post-function-input.vm" />
-		<resource type="velocity" name="edit-parameters"
-			location="templates/postfunctions/assign-level-one-support-post-function-input.vm" />
-			
-	</workflow-function>
-	<workflow-function key="escalate-level-two-post-function"
-		name="Escalate Level Two Post Function" i18n-name-key="escalate-level-two-post-function.name"
-		class="com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunctionFactory">
-		<description key="escalate-level-two-post-function.description">Re-assign an issue to level two.
-		</description>
-		<function-class>com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunction
-		</function-class>
-		<orderable>false</orderable>
-		<unique>true</unique>
-		<deletable>true</deletable>
-		<resource type="velocity" name="view"
-			location="templates/postfunctions/escalate-level-two-post-function.vm" />
-		<resource type="velocity" name="input-parameters"
-			location="templates/postfunctions/escalate-level-two-post-function-input.vm" />
-		<resource type="velocity" name="edit-parameters"
-			location="templates/postfunctions/escalate-level-two-post-function-input.vm" />
-	</workflow-function>
-	<!-- exposes area within project admin section to edit team -->
-	<project-tabpanel key="support-panel" name="Support Assignment"
-		class="com.edwardawebb.jira.assignescalate.admin.SupportTeamProjectPanelTab">
-		<description key="supportduty.project.panel.description">
-			rules for assignable users
-		</description>
-		<label key="supportteam.project.panel.label" />
-		<!-- this is a number defining the order of all panels. The system panels 
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+  <plugin-info>
+    <description>${project.description}</description>
+    <version>${project.version}</version>
+    <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    <param name="plugin-icon">images/pluginIcon.png</param>
+    <param name="plugin-logo">images/pluginLogo.png</param>
+  </plugin-info>
+  <!-- add our i18n resource -->
+  <resource type="i18n" name="i18n" location="jira-assign-escalate"/>
+  <!-- add our web resources -->
+  <web-resource key="jira-assign-escalate-resources" name="jira-assign-escalate Web Resources">
+    <context>jira.browse.project</context>
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <dependency>com.atlassian.soy.soy-template-plugin:soy-deps</dependency>
+    <!-- transform calls to AJS.getText() inside JS files -->
+    <transformation extension="js">
+      <transformer key="jsI18n"/>
+    </transformation>
+    <resource type="soy" name="supportTeamTab" location="/templates/soy/support-team-tab.soy"/>
+    <!-- transform Soy templates into JS -->
+    <transformation extension="soy">
+      <transformer key="soyTransformer"/>
+    </transformation>
+    <resource type="download" name="jira-assign-escalate.css" location="/css/jira-assign-escalate.css"/>
+    <resource type="download" name="jira-assign-escalate.js" location="/js/jira-assign-escalate.js"/>
+    <resource type="download" name="new-support-team.js" location="/js/dialogs/new-support-team.js"/>
+    <resource type="download" name="new-support-team-form.js" location="/templates/soy/new-support-team-form.soy"/>
+    <resource type="download" name="support-team-rows.js" location="/templates/soy/support-team-rows.soy"/>
+    <resource type="download" name="support-team-tab.js" location="/templates/soy/support-team-tab.soy"/>
+    <resource type="download" name="images/" location="/images"/>
+    <context>jira-assign-escalate</context>
+  </web-resource>
+  <!-- import from the product container -->
+  <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+  <component-import key="ao" name="Active Objects service" interface="com.atlassian.activeobjects.external.ActiveObjects">
+    <description>Component to access Active Objects functionality from the plugin</description>
+  </component-import>
+  <component key="tx-processor" name="Transactional Annotation Processor" class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
+    <decription>Processes @Transactional annotations.</decription>
+  </component>
+  <component-import key="pluginScheduler">
+    <description>SAL Scheduler</description>
+    <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+  </component-import>
+  <!-- my stuff -->
+  <component key="schedulerComponent" class="com.edwardawebb.jira.assignescalate.jobs.SyncProjectTeamUsersScheduler" system="true" public="true">
+    <description>The plugin component that syncs user accounts with Team mappings based on roles.</description>
+    <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+  </component>
+  <component key="assignmentService" class="com.edwardawebb.jira.assignescalate.ao.service.DefaultAssignmentService">
+    <description>access to ao objects for this plugin.</description>
+    <interface>com.edwardawebb.jira.assignescalate.AssignmentService</interface>
+  </component>
+  <workflow-function key="assign-level-one-support-post-function" name="Assign Level One Support Post Function" i18n-name-key="assign-level-one-support-post-function.name" class="com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunctionFactory">
+    <description key="assign-level-one-support-post-function.description">Assign an available member from this project/components level 1 team</description>
+    <function-class>com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunction</function-class>
+    <!-- when used on initial create it must be before "create issue" which is counter-intuitive for users configuring. -->
+    <orderable>false</orderable>
+    <unique>true</unique>
+    <deletable>true</deletable>
+    <resource type="velocity" name="view" location="templates/postfunctions/assign-level-one-support-post-function.vm"/>
+    <resource type="velocity" name="input-parameters" location="templates/postfunctions/assign-level-one-support-post-function-input.vm"/>
+    <resource type="velocity" name="edit-parameters" location="templates/postfunctions/assign-level-one-support-post-function-input.vm"/>
+  </workflow-function>
+  <workflow-function key="escalate-level-two-post-function" name="Escalate Level Two Post Function" i18n-name-key="escalate-level-two-post-function.name" class="com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunctionFactory">
+    <description key="escalate-level-two-post-function.description">Re-assign an issue to level two.</description>
+    <function-class>com.edwardawebb.jira.assignescalate.workflow.EscalateLevelTwoPostFunction</function-class>
+    <orderable>false</orderable>
+    <unique>true</unique>
+    <deletable>true</deletable>
+    <resource type="velocity" name="view" location="templates/postfunctions/escalate-level-two-post-function.vm"/>
+    <resource type="velocity" name="input-parameters" location="templates/postfunctions/escalate-level-two-post-function-input.vm"/>
+    <resource type="velocity" name="edit-parameters" location="templates/postfunctions/escalate-level-two-post-function-input.vm"/>
+  </workflow-function>
+  <!-- exposes area within project admin section to edit team -->
+  <project-tabpanel key="support-panel" name="Support Assignment" class="com.edwardawebb.jira.assignescalate.admin.SupportTeamProjectPanelTab">
+    <description key="supportduty.project.panel.description">rules for assignable users</description>
+    <label key="supportteam.project.panel.label"/>
+    <!-- this is a number defining the order of all panels. The system panels 
 			are 10, 20, 30 and 40. -->
-		<order>90</order>
-		<!-- this template produces the HTML for the panel -->
-		<resource type="velocity" name="view"
-			location="templates/panel/projectTabPanel.vm" />
-		<!-- this properties files contains i18n keys for the panel -->
-		<resource type="i18n" name="i18n" location="jira-assign-escalate.properties" />
-		<!-- this parameter prevents the heading from appearing at the top of the 
+    <order>90</order>
+    <!-- this template produces the HTML for the panel -->
+    <resource type="velocity" name="view" location="templates/panel/projectTabPanel.vm"/>
+    <!-- this properties files contains i18n keys for the panel -->
+    <resource type="i18n" name="i18n" location="jira-assign-escalate.properties"/>
+    <!-- this parameter prevents the heading from appearing at the top of the 
 			tab panel area -->
-		<param name="noTitle">true</param>
-		
-		
-	</project-tabpanel>
-
-	<!-- expose custom REST service for project config operations -->
-	<rest key="supportAssginerConfigurationService" path="/support-teams"
-		version="1.0">
-		<description>Provides endpoint to configure</description>
-		<package>com.edwardawebb.jira.assignescalate.rest</package>
-	</rest>
-
-
-
-
-
-	<ao key="ao-module">
-		<description>This provides persistence to track last assigned, and
-			maybe other info
-		</description>
-		<entity>com.edwardawebb.jira.assignescalate.ao.SupportTeam</entity>
-		<entity>com.edwardawebb.jira.assignescalate.ao.SupportMember</entity>
-		<entity>com.edwardawebb.jira.assignescalate.ao.TeamToUser
-		</entity>
-	</ao>
-
+    <param name="noTitle">true</param>
+  </project-tabpanel>
+  <!-- expose custom REST service for project config operations -->
+  <rest key="supportAssginerConfigurationService" path="/support-teams" version="1.0">
+    <description>Provides endpoint to configure</description>
+    <package>com.edwardawebb.jira.assignescalate.rest</package>
+  </rest>
+  <ao key="ao-module">
+    <description>This provides persistence to track last assigned, and maybe other info</description>
+    <entity>com.edwardawebb.jira.assignescalate.ao.SupportTeam</entity>
+    <entity>com.edwardawebb.jira.assignescalate.ao.SupportMember</entity>
+    <entity>com.edwardawebb.jira.assignescalate.ao.TeamToUser</entity>
+  </ao>
 </atlassian-plugin>

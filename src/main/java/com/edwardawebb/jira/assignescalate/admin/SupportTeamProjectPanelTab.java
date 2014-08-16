@@ -36,15 +36,13 @@ public class SupportTeamProjectPanelTab extends AbstractProjectTabPanel {
     private final ProjectRoleManager projectRoleManager;
     private final AssignmentService assignmentService;
 
-    private UserManager userManager;
 
-    public SupportTeamProjectPanelTab(UserManager userManager, ProjectRoleManager projectRoleManager,
+    public SupportTeamProjectPanelTab(ProjectRoleManager projectRoleManager,
             JiraAuthenticationContext authenticationContext,
             AssignmentService assignmentService) {
         this.authenticationContext = authenticationContext;
         this.projectRoleManager = projectRoleManager;
         this.assignmentService = assignmentService;
-        this.userManager = userManager;
     }
 
     @Override

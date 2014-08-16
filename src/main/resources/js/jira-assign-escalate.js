@@ -131,5 +131,7 @@ var updateEventBindings = function(){
 	 });
 }
 
-
-updateEventBindings();
+AJS.$( document ).ready(function() {
+	updateEventBindings();
+	createNewTeamDialog();
+});
