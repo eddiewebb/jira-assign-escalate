@@ -6,12 +6,13 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.java.ao.EntityManager;
-import net.java.ao.test.converters.NameConverters;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
@@ -56,7 +57,7 @@ public class AssignmentServiceTest {
     private static final ApplicationUser user5 = new MockApplicationUser("Ali","Ali Lady","eddie@mail.com");
     private static final ApplicationUser user6 = new MockApplicationUser("Felix","Felix Foreigner","eddie@mail.com");
     private static final ApplicationUser user7 = new MockApplicationUser("Selina","Selina Standy","eddie@mail.com");
-    
+    private static List<String> componentIds = new ArrayList<String>();
     private static Set<ApplicationUser> allDevelopers;
 
    private SupportTeam adHocRole;
@@ -76,6 +77,9 @@ public class AssignmentServiceTest {
         allDevelopers.add(user7);
         activeObjects = new TestActiveObjects(entityManager);
         assignmentService = new DefaultAssignmentService(activeObjects); 
+        componentIds.clear();
+        componentIds.add("10000");
+        componentIds.add("10001");
     }
 
     /*
@@ -125,7 +129,7 @@ public class AssignmentServiceTest {
 
     @Test
     public void testAProjectConfigCanBeCreated(){
-       SupportTeam role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins",null);
+       SupportTeam role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins",componentIds);
        assertThat(role.getName(),is(ROLE_THREE));
        assertThat(role.getRole(),is("Admins"));
        assertThat(role.getProjectId(),is(PROJECT_ONE_KEY));       
@@ -134,6 +138,7 @@ public class AssignmentServiceTest {
        assertThat(queriedRole.getName(),is(ROLE_THREE));
        assertThat(queriedRole.getRole(),is("Admins"));
        assertThat(queriedRole.getProjectId(),is(PROJECT_ONE_KEY));
+       assertThat(queriedRole.getComponents(),is("10000,10001"));
        
        adHocRole = queriedRole;
     }

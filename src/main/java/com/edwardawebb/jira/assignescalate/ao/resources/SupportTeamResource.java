@@ -40,7 +40,7 @@ public class SupportTeamResource  {
             teamResource.users.add(UserResource.from(assignment));
         }
         if(null != team.getComponents()){
-            teamResource.componentIds=Arrays.asList(StringUtils.split(team.getComponents()));
+            teamResource.componentIds=Arrays.asList(StringUtils.split(team.getComponents(),","));
         }else{
             teamResource.componentIds=new ArrayList<String>();
         }

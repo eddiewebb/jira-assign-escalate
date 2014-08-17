@@ -3,10 +3,12 @@
  */
 package com.edwardawebb.jira.assignescalate;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import com.atlassian.activeobjects.tx.Transactional;
+import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.user.ApplicationUser;
 import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
@@ -63,6 +65,8 @@ public interface AssignmentService {
     SupportTeam updateProjectTeam(Integer teamId, List<String> activeUsers);
 
     Integer deleteProjectTeam(Integer teamId);
+
+    SupportTeam[] findAllTeamsWith(Long projectId, Collection<ProjectComponent> components);
 
    
    

@@ -16,6 +16,7 @@ This is typically where you put default values into the velocity context and whe
 public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPluginFactory implements WorkflowPluginFunctionFactory{
 
     public static final String FIELD_TEAM="teamName";
+    public static final String FIELD_COMPONENT = "componentMatch";
 
 
 
@@ -25,6 +26,7 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
       
         //the default message
         velocityParams.put(FIELD_TEAM,"Enter team Name:");
+        velocityParams.put(FIELD_COMPONENT,"Match Components first?");
 
     }
 
@@ -46,10 +48,12 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
         FunctionDescriptor functionDescriptor=(FunctionDescriptor)descriptor;
 
         String message=(String)functionDescriptor.getArgs().get(FIELD_TEAM);
+        boolean isComponentMatch=(Boolean)functionDescriptor.getArgs().get(FIELD_COMPONENT);
 
 
 
         velocityParams.put(FIELD_TEAM,message);
+        velocityParams.put(FIELD_COMPONENT,isComponentMatch);
     }
 
 
@@ -58,8 +62,9 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
 
         // Process The map
         String message=extractSingleParam(formParams,FIELD_TEAM);
+        boolean isComponentMatch=Boolean.getBoolean(extractSingleParam(formParams,FIELD_COMPONENT));
         params.put(FIELD_TEAM,message);
-
+        params.put(FIELD_COMPONENT, isComponentMatch);
         return params;
     }
 

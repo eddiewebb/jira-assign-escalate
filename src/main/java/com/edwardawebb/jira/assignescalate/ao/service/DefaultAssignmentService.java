@@ -1,6 +1,7 @@
 package com.edwardawebb.jira.assignescalate.ao.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.user.ApplicationUser;
 import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportMember;
@@ -63,7 +65,7 @@ public class DefaultAssignmentService implements AssignmentService {
             }
             final SupportTeam role = ao.create(SupportTeam.class, new DBParam("NAME",name),
                     new DBParam("ROLE",projectRole),new DBParam("PROJECTID", projectId),
-                    new DBParam("CMPNTS",StringUtils.join(components.toArray())));
+                    new DBParam("CMPNTS",StringUtils.join(components.toArray(),",")));
             return role;
         }else{
             throw new ActiveObjectsException("Role names are unique to each project");
@@ -223,6 +225,12 @@ public class DefaultAssignmentService implements AssignmentService {
             throw new IllegalStateException("Application cannot have more than 1 team per project with marching names");
         }
         return results.length > 0 ? results[0] : null;
+    }
+
+    @Override
+    public SupportTeam[] findAllTeamsWith(Long projectId, Collection<ProjectComponent> components) {
+       SupportTeam[] results = ao.find(SupportTeam.class,Query.select().where("PRJ_ID = ? AND CMPNTS in ?",projectId,components));
+       return results;
     }
 
    
