@@ -11,6 +11,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.atlassian.jira.ComponentManager;
+import com.atlassian.jira.bc.project.component.ProjectComponent;
+import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.atlassian.jira.plugin.projectpanel.impl.AbstractProjectTabPanel;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.browse.BrowseContext;
@@ -18,7 +21,6 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.roles.ProjectRole;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.util.UserManager;
 import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.resources.SupportTeamResource;
@@ -35,14 +37,17 @@ public class SupportTeamProjectPanelTab extends AbstractProjectTabPanel {
     private final JiraAuthenticationContext authenticationContext;
     private final ProjectRoleManager projectRoleManager;
     private final AssignmentService assignmentService;
+    private final ProjectComponentManager projectComponentManager;
+    
 
 
     public SupportTeamProjectPanelTab(ProjectRoleManager projectRoleManager,
             JiraAuthenticationContext authenticationContext,
-            AssignmentService assignmentService) {
+            AssignmentService assignmentService,ProjectComponentManager projectComponentManager) {
         this.authenticationContext = authenticationContext;
         this.projectRoleManager = projectRoleManager;
         this.assignmentService = assignmentService;
+        this.projectComponentManager = projectComponentManager;
     }
 
     @Override
@@ -64,6 +69,8 @@ public class SupportTeamProjectPanelTab extends AbstractProjectTabPanel {
         params.put("project", project);
         Collection<ProjectRole> roles = projectRoleManager.getProjectRoles();
         params.put("roles", roles);
+        Collection<ProjectComponent> components = projectComponentManager.findAllForProject(project.getId());
+        params.put("components", components);
         return params;
     }
 

@@ -1,6 +1,9 @@
 Assign & Escalate Plugin for Atlassian JIRA
 -------------------------------------------
 
+For the latest docs and more details please head over to https://eddiewebb.atlassian.net/wiki/display/AEFJ/Assign+and+Escalate+for+JIRA+Home
+
+
 
 
 WHat it do
@@ -33,3 +36,6 @@ These 2 modules work together to regularly update the member listings for teams 
 
 
 
+
+
+This page is just a teaser, did it work?

@@ -52,6 +52,9 @@ public interface SupportTeam extends RawEntity<Integer> {
     @OneToMany(reverse="getProjectRole",where="HIDE = false")
     TeamToUser[] getAssignments();
 
-   
+    @Accessor("CMPNTS")
+    String getComponents();
+    @Mutator("CPMNTS")
+    void setComponents(String name);
     
 }

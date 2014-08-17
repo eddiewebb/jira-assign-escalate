@@ -10,7 +10,7 @@
         <url>http://www.edwardawebb.com/</url>
     </organization>
     <name>jira-assign-escalate</name>
-    <description>Provides assignment and esclation workflow functions.</description>
+    <description>Provide the ability to define and assign support teams within projects.</description>
     <packaging>atlassian-plugin</packaging>
     <scm>
         <connection>scm:git:ssh://git@bitbucket.org/eddiewebb/jira-assign-escalate-plugin.git</connection>

@@ -1,12 +1,15 @@
 package com.edwardawebb.jira.assignescalate.ao.resources;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
@@ -23,6 +26,8 @@ public class SupportTeamResource  {
 
     @XmlElement(type=UserResource.class)
     private List<UserResource> users;
+    
+    private List<String> componentIds;
 
     public static SupportTeamResource from(SupportTeam team){
         SupportTeamResource teamResource = new SupportTeamResource();
@@ -33,6 +38,11 @@ public class SupportTeamResource  {
         teamResource.users = new ArrayList<UserResource>();
         for (TeamToUser assignment : team.getAssignments()) {
             teamResource.users.add(UserResource.from(assignment));
+        }
+        if(null != team.getComponents()){
+            teamResource.componentIds=Arrays.asList(StringUtils.split(team.getComponents()));
+        }else{
+            teamResource.componentIds=new ArrayList<String>();
         }
         return teamResource;
     }
@@ -59,6 +69,10 @@ public class SupportTeamResource  {
 
     public void setUsers(List<UserResource> users) {
         this.users = users;
+    }
+
+    public List<String> getComponentIds() {
+        return componentIds;
     }
     
     

@@ -1,7 +1,8 @@
 var bindTeamDialog = function(){
 	var selectedAjsParams = {
             projectId: AJS.$("#projectId").val(),
-            roles: rolesData
+            roles: rolesData,
+            components: componentsData
         }   
 	var template = JIRA.Templates.AssignEscalate.newSupportTeam(selectedAjsParams);  
 	
@@ -29,7 +30,6 @@ var bindTeamDialog = function(){
 		});
 		
 		dialog.addLink("Cancel", function (dialog) {
-		    dialog.hide();
  	        dialog.remove();
 		}, "#");
 	
@@ -96,6 +96,8 @@ var bindTeamDialog = function(){
 			            title: "Oh no!",
 			            body: "Recieved error code: " + data.status + ", " + data.statusText
 			         }); 
+
+		 	        dialog.remove();
 			     } 
 			  });
 		});

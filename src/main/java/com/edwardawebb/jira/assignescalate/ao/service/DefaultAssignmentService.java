@@ -1,5 +1,6 @@
 package com.edwardawebb.jira.assignescalate.ao.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +10,7 @@ import net.java.ao.DBParam;
 import net.java.ao.EntityStreamCallback;
 import net.java.ao.Query;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
@@ -50,14 +52,18 @@ public class DefaultAssignmentService implements AssignmentService {
     }
 
     @Override
-    public SupportTeam createProjectTeam(Long projectId, String name, String projectRole) {
+    public SupportTeam createProjectTeam(Long projectId, String name, String projectRole, List<String> components) {
         logger.warn("Request for new team: " + name + " id " + projectId);
         SupportTeam existingrole = findRoleByProjectIdAndName(projectId, name);
+        
         if ( null == existingrole ){
             // good, does not exist
-        
+            if (null == components){
+                components = new ArrayList<String>();
+            }
             final SupportTeam role = ao.create(SupportTeam.class, new DBParam("NAME",name),
-                    new DBParam("ROLE",projectRole),new DBParam("PROJECTID", projectId));
+                    new DBParam("ROLE",projectRole),new DBParam("PROJECTID", projectId),
+                    new DBParam("CMPNTS",StringUtils.join(components.toArray())));
             return role;
         }else{
             throw new ActiveObjectsException("Role names are unique to each project");
@@ -218,6 +224,8 @@ public class DefaultAssignmentService implements AssignmentService {
         }
         return results.length > 0 ? results[0] : null;
     }
+
+   
 
 
   

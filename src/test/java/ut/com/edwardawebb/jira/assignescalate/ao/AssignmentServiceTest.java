@@ -125,7 +125,7 @@ public class AssignmentServiceTest {
 
     @Test
     public void testAProjectConfigCanBeCreated(){
-       SupportTeam role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
+       SupportTeam role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins",null);
        assertThat(role.getName(),is(ROLE_THREE));
        assertThat(role.getRole(),is("Admins"));
        assertThat(role.getProjectId(),is(PROJECT_ONE_KEY));       
@@ -139,8 +139,8 @@ public class AssignmentServiceTest {
     }
     @Test(expected=net.java.ao.ActiveObjectsException.class)
     public void testARoleWithSameNameAndProjectCanNotBeCreated(){
-        SupportTeam role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
-        role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins");
+        SupportTeam role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins",null);
+        role = assignmentService.createProjectTeam(PROJECT_ONE_KEY,ROLE_THREE,"Admins",null);
         assertThat(role.getID(),nullValue());
     }
 

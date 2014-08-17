@@ -43,9 +43,10 @@ public interface AssignmentService {
      * @param projectId - JIRA project ID
      * @param name - the name of this assignment
      * @param projectRole - the Project role to pull users from
+     * @param components 
      * @return
      */
-    SupportTeam createProjectTeam(Long projectOneKey, String name, String projectRole);
+    SupportTeam createProjectTeam(Long projectOneKey, String name, String projectRole, List<String> components);
 
     SupportMember assignNextAvailableAssigneeForProjectTeam(Long projectId, String name);
 

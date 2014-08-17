@@ -52,8 +52,8 @@ public class TeamConfigurationService {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response createNewTeam(@FormParam("prj_id") Long projectId,@FormParam("name") String name, @FormParam("role") String role){
-        SupportTeam team = assignmentService.createProjectTeam(projectId, name, role);
+    public Response createNewTeam(@FormParam("prj_id") Long projectId,@FormParam("name") String name, @FormParam("role") String role, @FormParam("components") List<String> components){
+        SupportTeam team = assignmentService.createProjectTeam(projectId, name, role, components);
         LOG.info("Created team " + team.getID());
         return Response.ok(SupportTeamResource.from(team)).build();
     }
