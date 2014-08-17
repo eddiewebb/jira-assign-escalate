@@ -10,10 +10,14 @@
                             <p>&nbsp;</p>
                             <div style="width:100%;box-sizing: border-box;display: table;table-layout: auto;">
                                 <div style="float:left;box-sizing: border-box;display: table-cell;margin: 0;padding: 0;">
-                                    <h4>{$team.name}</h4>
-                                     {foreach $componentId in $team.componentIds}
-                                      {$componentId}
-                                     {/foreach}
+                                    <h4>
+                                    	{$team.name}
+	                                     {if length($team.components) > 0}
+	                                     	 {foreach $component in $team.components}
+		                                      <span class="aui-lozenge aui-lozenge-subtle">{$component.name}</span>
+		                                     {/foreach}
+		                                 {/if}
+	                                 </h4>
                                 </div>
                                 <div style="display: table-cell;margin: 0;padding: 0;">
                                     <button  class="aui-button aui-dropdown2-trigger" aria-owns="dropdown-team-{$team.id}" aria-haspopup="true"><span class="aui-icon aui-icon-small aui-iconfont-configure">Configure </span> Team Options..</button>

@@ -8,10 +8,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.atlassian.jira.ComponentManager;
+import com.atlassian.jira.bc.EntityNotFoundException;
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.atlassian.jira.plugin.projectpanel.impl.AbstractProjectTabPanel;
@@ -84,6 +86,7 @@ public class SupportTeamProjectPanelTab extends AbstractProjectTabPanel {
      * returns list of ApplicationUser in the configured role and project.
      * 
      * @return
+     * @throws EntityNotFoundException 
      */
     private List<SupportTeamResource> teamsForProject(BrowseContext context) {
 
@@ -92,7 +95,11 @@ public class SupportTeamProjectPanelTab extends AbstractProjectTabPanel {
 
         List<SupportTeamResource> teamResources = new ArrayList<SupportTeamResource>();
         for (SupportTeam supportTeam : teams) {
-            teamResources.add(SupportTeamResource.from(supportTeam));
+            try {
+                teamResources.add(SupportTeamResource.from(supportTeam, projectComponentManager));
+            } catch (EntityNotFoundException e) {
+                Log.error("Could not add team : " + supportTeam, e);
+            }
         }
         
         return teamResources;     

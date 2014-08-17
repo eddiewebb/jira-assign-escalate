@@ -20,6 +20,8 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.atlassian.jira.bc.EntityNotFoundException;
+import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.edwardawebb.jira.assignescalate.AssignmentService;
@@ -37,14 +39,18 @@ public class TeamConfigurationService {
 
     private final AssignmentService assignmentService;
 
-    private ProjectRoleManager roleManager;
+    private final ProjectRoleManager roleManager;
 
-    private ProjectManager projectManager;
+    private final ProjectManager projectManager;
 
-    public TeamConfigurationService(AssignmentService assignmentConfigurationService,ProjectRoleManager roleManager, ProjectManager projectManager) {
+    private final ProjectComponentManager componentManager;
+
+    public TeamConfigurationService(AssignmentService assignmentConfigurationService,
+            ProjectRoleManager roleManager, ProjectManager projectManager,ProjectComponentManager componentManager) {
         this.assignmentService = assignmentConfigurationService;
         this.roleManager = roleManager;
         this.projectManager = projectManager;
+        this.componentManager = componentManager;
     }
 
 
@@ -52,10 +58,10 @@ public class TeamConfigurationService {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
-    public Response createNewTeam(@FormParam("prj_id") Long projectId,@FormParam("name") String name, @FormParam("role") String role, @FormParam("components") List<String> components){
+    public Response createNewTeam(@FormParam("prj_id") Long projectId,@FormParam("name") String name, @FormParam("role") String role, @FormParam("components") List<String> components) throws EntityNotFoundException{
         SupportTeam team = assignmentService.createProjectTeam(projectId, name, role, components);
         LOG.info("Created team " + team.getID());
-        return Response.ok(SupportTeamResource.from(team)).build();
+        return Response.ok(SupportTeamResource.from(team, componentManager)).build();
     }
 
     @POST
@@ -69,7 +75,12 @@ public class TeamConfigurationService {
         updater.valueRead(team);
         team = assignmentService.getProjectTeam(teamId);
         
-        return Response.ok(SupportTeamResource.from(team)).build();
+        try {
+            return Response.ok(SupportTeamResource.from(team, componentManager)).build();
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+            return Response.serverError().build();
+        }
     }
     
     
@@ -91,7 +102,12 @@ public class TeamConfigurationService {
     public Response getTeam(@PathParam("id") Integer teamId){
         
         SupportTeam team = assignmentService.getProjectTeam(teamId);
-        return Response.ok(SupportTeamResource.from(team)).build();
+        try {
+            return Response.ok(SupportTeamResource.from(team, componentManager)).build();
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+            return Response.serverError().build();
+        }
     }
 
     @DELETE
