@@ -3,6 +3,10 @@ package com.edwardawebb.jira.assignescalate.workflow;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jfree.util.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.atlassian.jira.plugin.workflow.AbstractWorkflowPluginFactory;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
@@ -14,7 +18,8 @@ This is typically where you put default values into the velocity context and whe
  */
 
 public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPluginFactory implements WorkflowPluginFunctionFactory{
-
+    private static final Logger log = LoggerFactory.getLogger(AssignLevelOneSupportPostFunction.class);
+    
     public static final String FIELD_TEAM="teamName";
     public static final String FIELD_COMPONENT = "componentMatch";
 
@@ -26,7 +31,6 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
       
         //the default message
         velocityParams.put(FIELD_TEAM,"Enter team Name:");
-        velocityParams.put(FIELD_COMPONENT,"Match Components first?");
 
     }
 
@@ -48,12 +52,19 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
         FunctionDescriptor functionDescriptor=(FunctionDescriptor)descriptor;
 
         String message=(String)functionDescriptor.getArgs().get(FIELD_TEAM);
-        boolean isComponentMatch=(Boolean)functionDescriptor.getArgs().get(FIELD_COMPONENT);
+        boolean isComponentMatch=false;
+        if(functionDescriptor.getArgs().containsKey(FIELD_COMPONENT)){
+            log.warn("Component check field has value: ==" + (String)functionDescriptor.getArgs().get(FIELD_COMPONENT) +"==");
+            isComponentMatch = Boolean.parseBoolean((String)functionDescriptor.getArgs().get(FIELD_COMPONENT));
+            log.warn("Show as matcher: " + isComponentMatch);
+        }
 
 
 
         velocityParams.put(FIELD_TEAM,message);
-        velocityParams.put(FIELD_COMPONENT,isComponentMatch);
+        if(isComponentMatch){
+            velocityParams.put(FIELD_COMPONENT,"checked");
+        }
     }
 
 
@@ -62,7 +73,8 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
 
         // Process The map
         String message=extractSingleParam(formParams,FIELD_TEAM);
-        boolean isComponentMatch=Boolean.getBoolean(extractSingleParam(formParams,FIELD_COMPONENT));
+        boolean isComponentMatch=formParams.containsKey(FIELD_COMPONENT);
+        log.warn("Will use comp: " + isComponentMatch);
         params.put(FIELD_TEAM,message);
         params.put(FIELD_COMPONENT, isComponentMatch);
         return params;

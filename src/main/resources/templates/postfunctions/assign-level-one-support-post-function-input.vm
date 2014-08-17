@@ -11,6 +11,6 @@
         Attempt to use Component(s) first?
     </td>
     <td nowrap>
-        <input type="checkbox" name="useComponent" id="useComponent" value="$useComponent" />
+        <input type="checkbox" name="componentMatch" id="componentMatch" $componentMatch />
     </td>
 </tr>

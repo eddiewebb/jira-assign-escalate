@@ -1,4 +1,4 @@
-#if($useComponent)
+#if($componentMatch)
  Using the selected component if possible first. Falling back to
 #end
 Assigning round-robin to team:'$teamName' 

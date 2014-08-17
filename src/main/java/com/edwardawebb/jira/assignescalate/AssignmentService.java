@@ -66,7 +66,7 @@ public interface AssignmentService {
 
     Integer deleteProjectTeam(Integer teamId);
 
-    SupportTeam[] findAllTeamsWith(Long projectId, Collection<ProjectComponent> components);
+    SupportTeam[] findAllTeamsWith(Long projectId, ProjectComponent component);
 
    
    

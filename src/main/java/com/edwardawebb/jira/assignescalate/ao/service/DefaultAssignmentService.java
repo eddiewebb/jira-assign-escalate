@@ -1,7 +1,5 @@
 package com.edwardawebb.jira.assignescalate.ao.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -60,12 +58,16 @@ public class DefaultAssignmentService implements AssignmentService {
         
         if ( null == existingrole ){
             // good, does not exist
-            if (null == components){
-                components = new ArrayList<String>();
+            StringBuilder componentIds=new StringBuilder();
+            if (null != components && components.size() > 0){
+                for (String id : components) {
+                    componentIds.append("COMP-").append(id).append(",");                    
+                }
+                componentIds.deleteCharAt(componentIds.length()-1);
             }
             final SupportTeam role = ao.create(SupportTeam.class, new DBParam("NAME",name),
                     new DBParam("ROLE",projectRole),new DBParam("PROJECTID", projectId),
-                    new DBParam("CMPNTS",StringUtils.join(components.toArray(),",")));
+                    new DBParam("CMPNTS",componentIds.toString()));
             return role;
         }else{
             throw new ActiveObjectsException("Role names are unique to each project");
@@ -92,22 +94,25 @@ public class DefaultAssignmentService implements AssignmentService {
       //      @Override
       //      public SupportMember doInTransaction() {
                 SupportTeam role = findRoleByProjectIdAndName(projectId,name);
-                
-                SupportMember[] members = ao.find(SupportMember.class,Query.select()
-                        .alias(TeamToUser.class, "am")
-                        .alias(SupportMember.class, "sm")
-                        .join(TeamToUser.class,"sm.ID = USERID")
-                        .where("TEAMID = ? and HIDE = 0 and ASSIGN = 1", role.getID()).order("LASTDATE"));        
-                
-                final SupportMember next = members.length > 0 ? members[0] : null;
-                if(null != next){
-                    TeamToUser[] history = ao.find(TeamToUser.class,Query.select()
-                            .where("TEAMID = ? and USERID = ?", role.getID(),next.getID()));
-                    history[0].setLastAssigned(new Date());
-                    history[0].save();
+                if(null != role){
+                    SupportMember[] members = ao.find(SupportMember.class,Query.select()
+                            .alias(TeamToUser.class, "am")
+                            .alias(SupportMember.class, "sm")
+                            .join(TeamToUser.class,"sm.ID = USERID")
+                            .where("TEAMID = ? and HIDE = 0 and ASSIGN = 1", role.getID()).order("LASTDATE"));        
+                    
+                    final SupportMember next = members.length > 0 ? members[0] : null;
+                    if(null != next){
+                        TeamToUser[] history = ao.find(TeamToUser.class,Query.select()
+                                .where("TEAMID = ? and USERID = ?", role.getID(),next.getID()));
+                        history[0].setLastAssigned(new Date());
+                        history[0].save();
+                    }
+                    
+                    return next;
+                }else{
+                    return null;//no team defined
                 }
-                
-                return next;
        //     }
             
        // });
@@ -228,8 +233,10 @@ public class DefaultAssignmentService implements AssignmentService {
     }
 
     @Override
-    public SupportTeam[] findAllTeamsWith(Long projectId, Collection<ProjectComponent> components) {
-       SupportTeam[] results = ao.find(SupportTeam.class,Query.select().where("PRJ_ID = ? AND CMPNTS in ?",projectId,components));
+    public SupportTeam[] findAllTeamsWith(Long projectId, ProjectComponent component) {
+       SupportTeam[] results =  ao.find(SupportTeam.class,Query.select().where("PROJECTID = ? AND CMPNTS like ?", projectId,"%COMP-" + component.getId() + "%"));
+           
+       
        return results;
     }
 

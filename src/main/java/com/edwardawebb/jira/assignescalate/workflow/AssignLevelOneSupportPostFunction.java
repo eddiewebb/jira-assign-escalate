@@ -1,6 +1,7 @@
 package com.edwardawebb.jira.assignescalate.workflow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportMember;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
+import com.google.common.collect.Lists;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.WorkflowException;
 
@@ -49,11 +51,12 @@ public class AssignLevelOneSupportPostFunction extends AbstractJiraFunctionProvi
     private void assignIssue(Map args, MutableIssue issue) throws WorkflowException, UnconfiguredWorkflowFunctionException {
         log.warn("Auto Assign to SUpport Person Post Workflow Function Running for team " + issue);
         Long projectId = issue.getProjectId();
-        log.warn("========="+projectId);
-
+        
         String teamName = getAppropriateTeam(args,issue, projectId);
+        log.warn("Grabbing next person from " + teamName);
         SupportMember sucker = assignmentService.assignNextAvailableAssigneeForProjectTeam(projectId, teamName);
         if(null == sucker){
+            log.error("No available members or team does not exist!!  teamName:" + teamName + " for project: " +projectId);
             throw new UnconfiguredWorkflowFunctionException();
         }
         log.warn("Assigning: " + sucker.getPrincipleName());
@@ -63,9 +66,9 @@ public class AssignLevelOneSupportPostFunction extends AbstractJiraFunctionProvi
         String fallbackTeam = (String) args.get(AssignLevelOneSupportPostFunctionFactory.FIELD_TEAM);
         
         if(args.containsKey(AssignLevelOneSupportPostFunctionFactory.FIELD_COMPONENT)){
-            boolean isMatching = (Boolean)args.get(AssignLevelOneSupportPostFunctionFactory.FIELD_COMPONENT);
+            boolean isMatching = Boolean.parseBoolean((String)args.get(AssignLevelOneSupportPostFunctionFactory.FIELD_COMPONENT));
             if (isMatching){
-                log.debug("Attempring component match");
+                log.warn("Attempring component match, using fallback of:" + fallbackTeam);
                return attemptTeamForComponentsOf(projectId, issue,fallbackTeam);
             }
         }
@@ -79,13 +82,19 @@ public class AssignLevelOneSupportPostFunction extends AbstractJiraFunctionProvi
             log.debug("Looking for component macth,but no components define on ticket");
             return fallbackTeam;
         }
-        SupportTeam[] teams = assignmentService.findAllTeamsWith(projectId, components);
-        if(null == teams || teams.length != 1){
-            log.warn("Unexpected results for component: {}. count: {}",components,teams.length);
+        List<SupportTeam> matchingTeams = new ArrayList<SupportTeam>();
+        for (ProjectComponent component : components) {
+            SupportTeam[] teams = assignmentService.findAllTeamsWith(projectId, component);
+            if (null != teams){
+                matchingTeams.addAll(Arrays.asList(teams));
+            }
+        }
+        if(matchingTeams.size() != 1){
+            log.warn("Too many or not enough support teams found for: {}. count: {}",components,matchingTeams.size());
             return fallbackTeam;
         }else{
-            log.debug("Returning mtching team {} for components {}",teams[0],components);
-            return teams[0].getName();
+            log.warn("Returning mtching team {} for components {}",matchingTeams.get(0),components);
+            return matchingTeams.get(0).getName();
         }
         
         
