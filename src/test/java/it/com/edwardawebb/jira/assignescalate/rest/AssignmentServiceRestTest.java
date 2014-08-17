@@ -47,19 +47,11 @@ public class AssignmentServiceRestTest extends AbstractEndpointTest {
     
     @Test
     public void testANewSupportTeamCanBeReindexed(){
-        StringBuilder formData = new StringBuilder();
-        formData.append("prj_id=10001");
-        formData.append("&name=Level Two Team - Experts");
-        formData.append("&role=Developers");
-        ClientResponse response = client.resource(resourceUrlTeam + "/team").contentType(MediaType.APPLICATION_FORM_URLENCODED).accept(MediaType.APPLICATION_JSON).post(formData.toString());
-        assertEquals("Could not create team",200,response.getStatusCode());
-        SupportTeamResource team = response.getEntity(SupportTeamResource.class);        
-        assertThat(team.getId(),not(is(0)));
-        teamId=team.getId();
         
         
-        String endpoint = resourceUrlTeam + "/team/" + teamId + "/reindex";
-        response = client.resource(endpoint).post("1");
+        
+        String endpoint = resourceUrlTeam + "/team/" + 1 + "/reindex";
+        ClientResponse response = client.resource(endpoint).post("1");
         assertEquals("Could not renidex team on " + endpoint,200,response.getStatusCode());
     }
 
