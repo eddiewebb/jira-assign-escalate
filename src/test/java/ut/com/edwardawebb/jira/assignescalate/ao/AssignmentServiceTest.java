@@ -138,7 +138,7 @@ public class AssignmentServiceTest {
        assertThat(queriedRole.getName(),is(ROLE_THREE));
        assertThat(queriedRole.getRole(),is("Admins"));
        assertThat(queriedRole.getProjectId(),is(PROJECT_ONE_KEY));
-       assertThat(queriedRole.getComponents(),is("10000,10001"));
+       assertThat(queriedRole.getComponents(),is("COMP-10000,COMP-10001"));
        
        adHocRole = queriedRole;
     }

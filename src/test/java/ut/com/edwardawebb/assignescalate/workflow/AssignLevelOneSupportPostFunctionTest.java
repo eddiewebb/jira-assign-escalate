@@ -71,7 +71,7 @@ public class AssignLevelOneSupportPostFunctionTest
         assignmentService = mock(AssignmentService.class);
         when(assignmentService.assignNextAvailableAssigneeForProjectTeam(0L, "Level One")).thenReturn(ASSIGNEE);
         when(assignmentService.assignNextAvailableAssigneeForProjectTeam(0L, "Component Team")).thenReturn(COMPONENT_ASSIGNEE);
-        when(assignmentService.findAllTeamsWith(0L, components)).thenReturn(getComponentTeams(1));
+        when(assignmentService.findAllTeamsWith(0L, components.get(0))).thenReturn(getComponentTeams(1));
         function = new AssignLevelOneSupportPostFunction(assignmentService) {
             protected MutableIssue getIssue(Map transientVars) throws DataAccessException {
                 return issue;
@@ -105,7 +105,7 @@ public class AssignLevelOneSupportPostFunctionTest
         issue.setComponentObjects(components);
         Map args = new HashMap();
         args.put("teamName","Level One");// Yes, wrong name!  we want compoent match to overide.
-        args.put(AssignLevelOneSupportPostFunctionFactory.FIELD_COMPONENT,true);
+        args.put(AssignLevelOneSupportPostFunctionFactory.FIELD_COMPONENT,"true");
         function.execute(null,args,null);
 
          assertThat(issue.getAssigneeId(),is(COMPONENT_ASSIGNEE.getPrincipleName()));
