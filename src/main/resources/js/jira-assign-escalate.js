@@ -137,12 +137,24 @@ AJS.$( document ).ready(function() {
 
 });
 
-//if the user clicks the tab link after initial load the events for binding tabs are not fired, 
-// and wont work
-// This ensures (poorly) that when jira uses AJAX to reload just the panel, tabs will work.
-//AJS.$(document).ajaxSuccess(function() {
-	//updateEventBindings();
-	//bindTeamDialog();
-	//AJS.tabs.setup();
-//});
+
+
+// AEFJ-6 - when already viewing any other priject tab, only ajax is used to load additonal tabs.
+// We need to re-bind our events.
+AJS.$(document).ajaxSuccess(function (e,jqXHR,ajaxOptions){
+	   //console.log(e);
+	   //console.log(jqXHR);
+	   //console.log(ajaxOptions);
+	   var requestUrl = ajaxOptions.url;
+	   console.log(requestUrl);
+	   if(requestUrl.indexOf("selectedTab=com.edwardawebb.jira-assign-escalate:support-panel") > -1){
+		   //they are loading the panel from another panel
+		  console.log("=======JS Reloading for Support Team Bidnings===========")
+		  
+		  updateEventBindings();
+		  bindTeamDialog();
+		  AJS.tabs.setup();
+		  
+	   }
+});
 
