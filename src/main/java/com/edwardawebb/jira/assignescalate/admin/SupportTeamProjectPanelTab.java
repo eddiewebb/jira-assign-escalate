@@ -95,11 +95,8 @@ public class SupportTeamProjectPanelTab extends AbstractProjectTabPanel {
 
         List<SupportTeamResource> teamResources = new ArrayList<SupportTeamResource>();
         for (SupportTeam supportTeam : teams) {
-            try {
-                teamResources.add(SupportTeamResource.from(supportTeam, projectComponentManager));
-            } catch (EntityNotFoundException e) {
-                Log.error("Could not add team : " + supportTeam, e);
-            }
+            teamResources.add(SupportTeamResource.from(supportTeam, projectComponentManager));
+           
         }
         
         return teamResources;     

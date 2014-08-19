@@ -75,12 +75,8 @@ public class TeamConfigurationService {
         updater.valueRead(team);
         team = assignmentService.getProjectTeam(teamId);
         
-        try {
-            return Response.ok(SupportTeamResource.from(team, componentManager)).build();
-        } catch (EntityNotFoundException e) {
-            e.printStackTrace();
-            return Response.serverError().build();
-        }
+        return Response.ok(SupportTeamResource.from(team, componentManager)).build();
+        
     }
     
     
@@ -102,12 +98,9 @@ public class TeamConfigurationService {
     public Response getTeam(@PathParam("id") Integer teamId){
         
         SupportTeam team = assignmentService.getProjectTeam(teamId);
-        try {
-            return Response.ok(SupportTeamResource.from(team, componentManager)).build();
-        } catch (EntityNotFoundException e) {
-            e.printStackTrace();
-            return Response.serverError().build();
-        }
+        
+        return Response.ok(SupportTeamResource.from(team, componentManager)).build();
+        
     }
 
     @DELETE

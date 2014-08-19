@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 
+@XmlRootElement(name = "component")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ComponentResource {
 
     private long id;
@@ -26,7 +32,7 @@ public class ComponentResource {
     public void setName(String name) {
         this.name = name;
     }
-    public static Collection<? extends ComponentResource> listFrom(List<ProjectComponent> components) {
+    public static Collection<ComponentResource> listFrom(List<ProjectComponent> components) {
         List<ComponentResource> resources = new ArrayList<ComponentResource>();
         for (ProjectComponent projectComponent : components) {
             resources.add(new ComponentResource(projectComponent));

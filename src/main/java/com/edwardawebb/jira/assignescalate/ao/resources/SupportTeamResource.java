@@ -1,6 +1,7 @@
 package com.edwardawebb.jira.assignescalate.ao.resources;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,11 +13,10 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.atlassian.jira.bc.EntityNotFoundException;
+import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
-import com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFunction;
 
 @XmlRootElement(name = "supportTeam")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -66,7 +66,7 @@ public class SupportTeamResource  {
 
     
     
-    public static SupportTeamResource from(SupportTeam team, ProjectComponentManager componentManager) throws EntityNotFoundException{
+    public static SupportTeamResource from(SupportTeam team, ProjectComponentManager componentManager) {
         SupportTeamResource teamResource = new SupportTeamResource();
         teamResource.id = team.getID();
         teamResource.name = team.getName();
@@ -80,13 +80,22 @@ public class SupportTeamResource  {
         if(null != team.getComponents()){
            List<Long> componentIds = new ArrayList<Long>();
            for (String componentKey : StringUtils.split(team.getComponents(),",")) {
-               log.warn("Looking up component: " + componentKey);
+               log.debug("Looking up component: " + componentKey);
                String justId = componentKey.substring(5, componentKey.length());
-               log.warn("ID: " + justId);
-               componentIds.add(Long.parseLong(justId));
+               log.debug("ID: " + justId);
+               Long id = Long.parseLong(justId);
+               log.debug("as long:" + id);
+               componentIds.add(id);
            }
-           
-           teamResource.components.addAll(ComponentResource.listFrom(componentManager.getComponents(componentIds) ));
+           try{
+               List<ProjectComponent> componentList = componentManager.getComponents(componentIds);
+               log.debug("Found {} matching components from JIRA manager",componentList.size());
+               Collection<ComponentResource> componentResources = ComponentResource.listFrom(componentList);
+               log.debug("which have been converted to COmponentResources: {}", componentResources);
+               teamResource.components.addAll(componentResources);
+           }catch(Exception e){
+               log.error("Error converting JIRA Components to simple ComponnentResource",e);
+           }
         }
         return teamResource;
     }
