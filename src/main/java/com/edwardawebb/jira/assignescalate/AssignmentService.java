@@ -3,11 +3,9 @@
  */
 package com.edwardawebb.jira.assignescalate;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.user.ApplicationUser;
 import com.edwardawebb.jira.assignescalate.ao.SupportMember;
@@ -23,7 +21,6 @@ import com.edwardawebb.jira.assignescalate.jobs.ProjectTeamAssignerCallback;
  * implementing classes are responsible to manage transaction boundaries.
  * 
  */
-@Transactional
 public interface AssignmentService {
 
     /**
