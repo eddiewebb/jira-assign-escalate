@@ -132,8 +132,11 @@ var updateEventBindings = function(){
 }
 
 AJS.$( document ).ready(function() {
-	updateEventBindings();
-	bindTeamDialog();
+
+	if(window.location.href.indexOf("selectedTab=com.edwardawebb.jira-assign-escalate:support-panel") > -1){
+		updateEventBindings();
+		bindTeamDialog();
+	}
 
 });
 

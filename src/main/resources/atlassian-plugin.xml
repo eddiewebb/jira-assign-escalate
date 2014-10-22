@@ -12,6 +12,9 @@
   <resource type="i18n" name="i18n" location="jira-assign-escalate"/>
   <!-- add our web resources -->
   <web-resource key="jira-assign-escalate-resources" name="jira-assign-escalate Web Resources">
+    <!-- doesnt work, see comment in vm templat4
+    <context>com.edwardawebb.jira.browse.project.supportteam</context>
+     -->
     <context>jira.browse.project</context>
     <dependency>com.atlassian.auiplugin:ajs</dependency>
     <dependency>com.atlassian.soy.soy-template-plugin:soy-deps</dependency>

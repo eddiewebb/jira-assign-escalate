@@ -1,9 +1,11 @@
 
-
-    
-
-   
-
+#*
+    This does not work due to the nature in which JIRA loads project panels.
+    IF linked directly, the entire page is rendered, including our custom context.
+    HOWEVER if the panel tab is clicked while viewing another tab, it is only an AJAX operation
+    and this resource is NOT loaded.
+    $webResourceManager.requireResourcesForContext("com.edwardawebb.jira.browse.project.supportteam")
+*#
 
 
         <section id="content" role="main">
