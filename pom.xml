@@ -163,7 +163,7 @@
         </extensions>
     </build>
     <properties>
-        <jira.version>6.3.1</jira.version>
+        <jira.version>6.4.1</jira.version>
         <amps.version>4.2.20</amps.version>
         <plugin.testrunner.version>1.1.4</plugin.testrunner.version>
         <!-- TestKit version 5.x for JIRA 5.x, 6.x for JIRA 6.x -->

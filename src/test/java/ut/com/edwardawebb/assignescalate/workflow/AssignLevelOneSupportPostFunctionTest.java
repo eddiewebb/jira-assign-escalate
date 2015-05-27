@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import net.java.ao.RawEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.ofbiz.core.entity.GenericValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
@@ -49,7 +52,8 @@ import com.edwardawebb.jira.assignescalate.workflow.AssignLevelOneSupportPostFun
  */
 public class AssignLevelOneSupportPostFunctionTest
 {
-    public static final String MESSAGE = "my message";
+    private static final Logger log = LoggerFactory.getLogger(AssignLevelOneSupportPostFunctionTest.class);
+     public static final String MESSAGE = "my message";
     public static final SupportMember ASSIGNEE = new AssignLevelOneSupportPostFunctionTest.MockSupportMember("eddie", "Eddie Webb", 0);
     public static final SupportMember COMPONENT_ASSIGNEE = new AssignLevelOneSupportPostFunctionTest.MockSupportMember("joey", "Joey Other Guy", 0);
 
@@ -62,18 +66,21 @@ public class AssignLevelOneSupportPostFunctionTest
     @Before
     public void setup() {
 
+        components = new ArrayList<ProjectComponent>();
+         components.add(componentToMatch);
+
         issue = createPartialMockedIssue();
         issue.setDescription("");
 
-       components = new ArrayList<ProjectComponent>();
-        components.add(componentToMatch);
-        issue.setComponentObjects(components);
         assignmentService = mock(AssignmentService.class);
         when(assignmentService.assignNextAvailableAssigneeForProjectTeam(0L, "Level One")).thenReturn(ASSIGNEE);
         when(assignmentService.assignNextAvailableAssigneeForProjectTeam(0L, "Component Team")).thenReturn(COMPONENT_ASSIGNEE);
         when(assignmentService.findAllTeamsWith(0L, components.get(0))).thenReturn(getComponentTeams(1));
         function = new AssignLevelOneSupportPostFunction(assignmentService) {
+            @Override
             protected MutableIssue getIssue(Map transientVars) throws DataAccessException {
+                log.warn("returning fake issufor testing!");
+                issue.getComponentObjects();
                 return issue;
             }
         };
@@ -102,7 +109,6 @@ public class AssignLevelOneSupportPostFunctionTest
 
         ArrayList<ProjectComponent> components = new ArrayList<ProjectComponent>();
         components.add(componentToMatch);
-        issue.setComponentObjects(components);
         Map args = new HashMap();
         args.put("teamName","Level One");// Yes, wrong name!  we want compoent match to overide.
         args.put(AssignLevelOneSupportPostFunctionFactory.FIELD_COMPONENT,"true");
@@ -138,8 +144,10 @@ public class AssignLevelOneSupportPostFunctionTest
         when(projectComponentManager.containsName(anyString(), any(Long.class))).thenReturn(true);
         when(projectComponentManager.findComponentsByIssue(any(Issue.class))).thenReturn(components);
         
+        MutableIssue mockedIssue = spy( new IssueImpl(genericValue, issueManager, projectManager, versionManager, issueSecurityLevelManager, constantsManager, subTaskManager, attachmentManager, labelManager, projectComponentManager, userManager,null));
+        when(mockedIssue.getComponentObjects()).thenReturn(components);
         
-        return new IssueImpl(genericValue, issueManager, projectManager, versionManager, issueSecurityLevelManager, constantsManager, subTaskManager, attachmentManager, labelManager, projectComponentManager, userManager,null);
+        return mockedIssue;
     }
 
     private static class MockSupportMember implements SupportMember{
