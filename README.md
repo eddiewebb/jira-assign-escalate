@@ -35,7 +35,19 @@ Will assign the next available support member making sure it is not the same as 
 These 2 modules work together to regularly update the member listings for teams based on the selected role. Users will be added or removed as the underlying User Directory evolves.
 
 
+## LIcense
+    Copyright (C) 2015  Edward A Webb
 
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-This page is just a teaser, did it work?
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+
