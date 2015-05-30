@@ -109,6 +109,7 @@ public class AssignLevelOneSupportPostFunctionTest
 
         ArrayList<ProjectComponent> components = new ArrayList<ProjectComponent>();
         components.add(componentToMatch);
+        when(issue.getComponentObjects()).thenReturn(components);
         Map args = new HashMap();
         args.put("teamName","Level One");// Yes, wrong name!  we want compoent match to overide.
         args.put(AssignLevelOneSupportPostFunctionFactory.FIELD_COMPONENT,"true");
