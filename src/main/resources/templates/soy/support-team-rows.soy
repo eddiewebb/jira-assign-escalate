@@ -1,17 +1,17 @@
 {namespace JIRA.Templates.AssignEscalate}
 /**
  * Displays the new team form
- * @param teamUsers
+ * @param team
  */
 {template .supportTeamRows}
-  	{foreach $user in $teamUsers}
+  	{foreach $user in $team.users}
   		<tr>
             <td>
                 {if $user.assignable}
-               		<input CHECKED type="checkbox" class="activatedUsers" name="activatedUsers" value="{$user.principleName}" >
+               		<input CHECKED type="checkbox" class="activatedUsers-{$team.id}" name="activatedUsers" value="{$user.principleName}" >
             
                 {else}
-                	<input type="checkbox" class="activatedUsers" name="activatedUsers" value="{$user.principleName}">
+                	<input type="checkbox" class="activatedUsers-{$team.id}" name="activatedUsers" value="{$user.principleName}">
             
                 {/if}
                 </td>

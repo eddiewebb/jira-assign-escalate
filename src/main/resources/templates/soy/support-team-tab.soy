@@ -44,7 +44,7 @@
                                         </thead>
                                         <tbody id="tableBody-{$team.id}">
                                          	{call JIRA.Templates.AssignEscalate.supportTeamRows}        
-												{param teamUsers: $team.users /}    
+												{param team: $team /}    
 											{/call}
                                         </tbody>
                                     </table>

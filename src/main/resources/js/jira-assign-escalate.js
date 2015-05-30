@@ -9,14 +9,18 @@
  */
 
 var updateEventBindings = function(){
+	//console.log("DEBUG: updating event bdinings");
 	AJS.$('.selectAll').click(function(e) {  //on click 
-
+		console.log("selectAll clicked");
 	 	var teamId = AJS.$(e.srcElement).attr("data-id");
 	        if(this.checked) { // check select status
+
+	    		console.log("selecting all");
 	            AJS.$('.activatedUsers-'+teamId).each(function() { //loop through each checkbox
 	                this.checked = true;  //select all checkboxes with class "checkbox1"               
 	            });
 	        }else{
+	    		console.log("UNselectAll clicked");
 	            AJS.$('.activatedUsers-'+teamId).each(function() { //loop through each checkbox
 	                this.checked = false; //deselect all checkboxes with class "checkbox1"                       
 	            });         
@@ -133,7 +137,7 @@ var updateEventBindings = function(){
 
 AJS.$( document ).ready(function() {
 
-	if(window.location.href.indexOf("selectedTab=com.edwardawebb.jira-assign-escalate:support-panel") > -1){
+	if(window.location.href.indexOf("com.edwardawebb.jira-assign-escalate:support-panel") > -1){
 		updateEventBindings();
 		bindTeamDialog();
 	}
@@ -144,16 +148,10 @@ AJS.$( document ).ready(function() {
 
 // AEFJ-6 - when already viewing any other priject tab, only ajax is used to load additonal tabs.
 // We need to re-bind our events.
+// only needed for JIRA < 6.4, as new project dashboard uses full page reloads.
 AJS.$(document).ajaxSuccess(function (e,jqXHR,ajaxOptions){
-	   //console.log(e);
-	   //console.log(jqXHR);
-	   //console.log(ajaxOptions);
 	   var requestUrl = ajaxOptions.url;
-	   console.log(requestUrl);
 	   if(requestUrl.indexOf("selectedTab=com.edwardawebb.jira-assign-escalate:support-panel") > -1){
-		   //they are loading the panel from another panel
-		  console.log("=======JS Reloading for Support Team Bidnings===========")
-		  
 		  updateEventBindings();
 		  bindTeamDialog();
 		  AJS.tabs.setup();
