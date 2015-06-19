@@ -12,7 +12,7 @@ var updateEventBindings = function(){
 	//console.log("DEBUG: updating event bdinings");
 	AJS.$('.selectAll').click(function(e) {  //on click 
 		console.log("selectAll clicked");
-	 	var teamId = AJS.$(e.srcElement).attr("data-id");
+	 	var teamId = AJS.$(e.target).attr("data-id");
 	        if(this.checked) { // check select status
 
 	    		console.log("selecting all");
@@ -31,11 +31,14 @@ var updateEventBindings = function(){
 		e.preventDefault();
 		//JS used to submit changes on button click
 		console.log(e);
-	 	var teamId = AJS.$(e.srcElement).attr("data-id");
+	 	//var teamId = AJS.$(e.srcElement).attr("data-id");
+		var btnElement = e.target || e.srcElement;
+	 	var teamId = AJS.$(btnElement).attr("data-id");
+	 	console.log("Team ID is " + teamId);
 		var configEndpoint = AJS.contextPath() + "/rest/support-teams/1.0/team/" + teamId;
 	 jQuery.ajax({
 	     url: configEndpoint,
-	     data: AJS.$(AJS.$(e.srcElement).parents("form")).serialize()
+	     data: AJS.$(AJS.$(e.target).parents("form")).serialize()
 	     ,
 	     type: 'PUT',
 	     dataType: 'json',
@@ -68,7 +71,7 @@ var updateEventBindings = function(){
 	 	e.preventDefault();
 	 	//JS used to submit changes on button click
 	 	console.log(e);
-	 	var teamId = AJS.$(e.srcElement).attr("data-id");
+	 	var teamId = AJS.$(e.target).attr("data-id");
 	 	var configEndpoint = AJS.contextPath() + "/rest/support-teams/1.0/team/" + teamId + "/reindex";
 	  jQuery.ajax({
 	      url: configEndpoint,
@@ -106,7 +109,7 @@ var updateEventBindings = function(){
 	 	e.preventDefault();
 	 	//JS used to submit changes on button click
 	 	console.log(e);
-	 	var teamId = AJS.$(e.srcElement).attr("data-id");
+	 	var teamId = AJS.$(e.target).attr("data-id");
 	 	var configEndpoint = AJS.contextPath() + "/rest/support-teams/1.0/team/" + teamId ;
 		  jQuery.ajax({
 		      url: configEndpoint,
