@@ -12,6 +12,7 @@ import net.java.ao.Query;
 import org.apache.log4j.Logger;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.activeobjects.internal.ActiveObjectsSqlException;
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.transaction.TransactionCallback;
@@ -43,7 +44,12 @@ public class DefaultAssignmentService implements AssignmentService {
 
     @Override
     public SupportTeam[] getProjectTeams(Long projectId) {
-        return ao.find(SupportTeam.class, Query.select().where("projectId = ?", projectId));
+        try{
+            return ao.find(SupportTeam.class, Query.select().where("PROJECTID = ?", projectId));
+        }catch (ActiveObjectsException aoException){
+            logger.error("exception using uppercase lowercase colums as fallback");
+            return ao.find(SupportTeam.class, Query.select().where("projectId = ?", projectId));
+        }
     }
 
     @Override
