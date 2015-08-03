@@ -229,7 +229,7 @@ public class DefaultAssignmentService implements AssignmentService {
 
     private SupportTeam findRoleByProjectIdAndName(Long projectId, String name) {
         SupportTeam[] results = ao.find(SupportTeam.class,
-                Query.select().where("PROJECTID = ? and name = ?", projectId, name));
+                Query.select().where("PROJECTID = ? and NAME = ?", projectId, name));
         if (results.length > 1) {
             throw new IllegalStateException("Application cannot have more than 1 team per project with marching names");
         }
