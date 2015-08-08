@@ -12,6 +12,7 @@ import java.util.Set;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
+import net.java.ao.test.jdbc.Jdbc;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 
 import org.junit.Before;
@@ -37,8 +38,9 @@ import com.edwardawebb.jira.assignescalate.jobs.SyncProjectTeamUsersScheduler;
 import com.google.common.collect.Sets;
 
 @RunWith(ActiveObjectsJUnitRunner.class)
-@Data(TeamRoleSyncJobTest.TestData.class)
-public class TeamRoleSyncJobTest {
+@Data(TeamRoleSyncJobAOTezt.TestData.class)
+@Jdbc(net.java.ao.test.jdbc.DynamicJdbcConfiguration.class)
+public class TeamRoleSyncJobAOTezt {
     
     //gets injected thanks to ActiveObjectsJUnitRunner.class  
     private EntityManager entityManager;

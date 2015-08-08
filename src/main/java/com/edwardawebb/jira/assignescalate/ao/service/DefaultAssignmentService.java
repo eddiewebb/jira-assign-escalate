@@ -93,34 +93,35 @@ public class DefaultAssignmentService implements AssignmentService {
 
     @Override
     public SupportMember assignNextAvailableAssigneeForProjectTeam(final Long projectId, final String name) {
-        return ao.executeInTransaction(new TransactionCallback<SupportMember>() {
-
-            @Override
-            public SupportMember doInTransaction() {
-                SupportTeam role = findRoleByProjectIdAndName(projectId, name);
+       
+                final SupportTeam role = findRoleByProjectIdAndName(projectId, name);
                 if (null != role) {
                     SupportMember[] members = ao.find(
                             SupportMember.class,
                             Query.select().alias(TeamToUser.class, "am").alias(SupportMember.class, "sm")
                                     .join(TeamToUser.class, "sm.ID = USERID")
-                                    .where("TEAMID = ? and HIDE = 0 and ASSIGN = 1", role.getID()).order("LASTDATE"));
+                                    .where("TEAMID = ? and HIDE = ? and ASSIGN = ?", role.getID(),false,true).order("LASTDATE"));
 
                     final SupportMember next = members.length > 0 ? members[0] : null;
                     if (null != next) {
-                        TeamToUser[] history = ao.find(TeamToUser.class,
+                        final TeamToUser[] history = ao.find(TeamToUser.class,
                                 Query.select().where("TEAMID = ? and USERID = ?", role.getID(), next.getID()));
-                        history[0].setLastAssigned(new Date());
-                        history[0].save();
-                    }
-
+                        
+                        ao.executeInTransaction(new TransactionCallback<Void>() {
+                            @Override
+                            public Void doInTransaction() {
+                                history[0].setLastAssigned(new Date());
+                                history[0].save();
+                                return null;
+                            }
+                        });                   
                     return next;
                 } else {
                     return null;// no team defined
                 }
+            }else{
+                return null;
             }
-
-        });
-
     }
 
     @Override
