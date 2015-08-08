@@ -191,14 +191,18 @@ public class AssignmentServiceAOTezt {
     @Test
     @NonTransactional
     //@Ignore("If you want this test to pass, comment out the ao.executeInTransaction of service, not compatible with unit testing but needed for prod use.")
-    public void testTheNextAssigneeCanBeRetrieved(){
+    public void testTheNextAssigneeCanBeRetrieved() throws InterruptedException{
         SupportMember nextGuy = assignmentService.assignNextAvailableAssigneeForProjectTeam(PROJECT_ONE_KEY,ROLE_ONE);
         assertThat(nextGuy,notNullValue());
         assertThat(nextGuy.getPrincipleName(),notNullValue());
         //second assignee is missing an assigned date, should be oldest
          assertThat(nextGuy.getPrincipleName(),is(SECOND_ASSIGNEE));
+         //mysql uses DATETIME so we need atleast 1 second diff in order.
+         Thread.sleep(1500L);
          nextGuy = assignmentService.assignNextAvailableAssigneeForProjectTeam(PROJECT_ONE_KEY,ROLE_ONE);
          assertThat(nextGuy.getPrincipleName(),is(FIRST_ASSIGNEE));
+         //mysql uses DATETIME so we need atleast 1 second diff in order.
+         Thread.sleep(1500L);
          nextGuy = assignmentService.assignNextAvailableAssigneeForProjectTeam(PROJECT_ONE_KEY,ROLE_ONE);
           assertThat(nextGuy.getPrincipleName(),is(SECOND_ASSIGNEE));
     }
@@ -353,7 +357,7 @@ public class AssignmentServiceAOTezt {
             
             final TeamToUser roleToPerson = em.create(TeamToUser.class);
             roleToPerson.setAssignable(true);
-            roleToPerson.setLastAssigned(new Date(100000L));
+            roleToPerson.setLastAssigned(new Date(1000000L));
             roleToPerson.setProjectRole(todo);
             roleToPerson.setUser(me);
             roleToPerson.save();

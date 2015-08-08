@@ -262,6 +262,9 @@
 				</dependency>
 			</dependencies>
 		</profile>
+		<profile>
+			<id>db-mssql</id>
+		</profile>
 
 	</profiles>
 </project>
