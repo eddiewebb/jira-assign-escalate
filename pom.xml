@@ -182,14 +182,7 @@
 	</distributionManagement>
 	<profiles>
 		<profile>
-			<id>db-postgres</id>
-			<dependencies>
-				<dependency>
-					<groupId>org.postgresql</groupId>
-					<artifactId>postgresql</artifactId>
-					<version>9.3-1100-jdbc41</version>
-				</dependency>
-			</dependencies>
+			<id>db</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -200,6 +193,9 @@
 						</configuration>
 					</plugin>
 					<plugin>
+						<!-- provide runtime arguments for tests. NOt all engines need all 
+							arguments -->
+						<!-- http://grepcode.com/file/repo1.maven.org/maven2/net.java.dev.activeobjects/activeobjects-test/0.23.0/net/java/ao/test/jdbc/DynamicJdbcConfiguration.java#DynamicJdbcConfiguration.0jdbcSupplier -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<version>2.18.1</version>
@@ -211,15 +207,18 @@
 								<include>**/*AOTezt.java</include>
 							</includes>
 							<systemPropertyVariables>
-								<ao.test.database>postgres</ao.test.database>
+								<!-- postgres,hsql,hsql-file,mysql, oracle, sqlserver,derby-embedded -->
+								<ao.test.database>${db.engine}</ao.test.database>
 								<db.url>${db.url}</db.url>
-								<db.schema>public</db.schema>
+								<db.schema>${db.schema}</db.schema>
 								<db.username>${db.username}</db.username>
 								<db.password>${db.password}</db.password>
 							</systemPropertyVariables>
 						</configuration>
 					</plugin>
 					<plugin>
+						<!-- allows us to use AWS CLI to spin up RDS and save URL to a file 
+							read by maven -->
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>properties-maven-plugin</artifactId>
 						<version>1.0-alpha-2</version>
@@ -240,5 +239,29 @@
 				</plugins>
 			</build>
 		</profile>
+
+		<!-- -->
+		<!-- NOw specific database profiles, should only be dependent drivers -->
+		<profile>
+			<id>db-postgres</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.postgresql</groupId>
+					<artifactId>postgresql</artifactId>
+					<version>9.3-1100-jdbc41</version>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>db-mysql</id>
+			<dependencies>
+				<dependency>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<version>5.1.36</version>
+				</dependency>
+			</dependencies>
+		</profile>
+
 	</profiles>
 </project>

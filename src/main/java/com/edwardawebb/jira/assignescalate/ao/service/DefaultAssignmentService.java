@@ -100,7 +100,8 @@ public class DefaultAssignmentService implements AssignmentService {
                             SupportMember.class,
                             Query.select().alias(TeamToUser.class, "am").alias(SupportMember.class, "sm")
                                     .join(TeamToUser.class, "sm.ID = USERID")
-                                    .where("TEAMID = ? and HIDE = ? and ASSIGN = ?", role.getID(),false,true).order("LASTDATE"));
+                                    .where("TEAMID = ? and HIDE = ? and ASSIGN = ? ", role.getID(),Boolean.FALSE,Boolean.TRUE)
+                                    .order("LASTDATE"));
 
                     final SupportMember next = members.length > 0 ? members[0] : null;
                     if (null != next) {
