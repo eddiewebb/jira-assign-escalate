@@ -102,7 +102,9 @@ public class DefaultAssignmentService implements AssignmentService {
                                     .join(TeamToUser.class, "sm.ID = USERID")
                                     .where("TEAMID = ? and HIDE = ? and ASSIGN = ? ", role.getID(),Boolean.FALSE,Boolean.TRUE)
                                     .order("LASTDATE"));
-
+                    logger.debug("There are " + members.length +" assignables");
+                    logger.debug("oldest (expected): " + members[0].getPrincipleName() );
+                    logger.debug("latest: " + members[1].getPrincipleName());
                     final SupportMember next = members.length > 0 ? members[0] : null;
                     if (null != next) {
                         final TeamToUser[] history = ao.find(TeamToUser.class,

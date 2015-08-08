@@ -353,13 +353,13 @@ public class AssignmentServiceAOTezt {
             
             final TeamToUser roleToPerson = em.create(TeamToUser.class);
             roleToPerson.setAssignable(true);
-            roleToPerson.setLastAssigned(new Date(10L));
+            roleToPerson.setLastAssigned(new Date(100000L));
             roleToPerson.setProjectRole(todo);
             roleToPerson.setUser(me);
             roleToPerson.save();
             final TeamToUser roleToPerson2 = em.create(TeamToUser.class);
             roleToPerson2.setAssignable(true);
-            roleToPerson2.setLastAssigned(new Date(0L));
+            roleToPerson2.setLastAssigned(new Date(1L));
             roleToPerson2.setProjectRole(todo);
             roleToPerson2.setUser(moe);
             roleToPerson2.save();
