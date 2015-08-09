@@ -96,15 +96,33 @@ public class DefaultAssignmentService implements AssignmentService {
        
                 final SupportTeam role = findRoleByProjectIdAndName(projectId, name);
                 if (null != role) {
-                    SupportMember[] members = ao.find(
+                    //some engines :cough: postgres :cough: do funny soritng on dates with null, trating them larger then dates
+                    // See AEFJ-18
+                    SupportMember[] members = {};
+                    try{
+                        members = ao.find(
+                            SupportMember.class,
+                            Query.select().alias(TeamToUser.class, "am").alias(SupportMember.class, "sm")
+                                    .join(TeamToUser.class, "sm.ID = USERID")
+                                    .where("TEAMID = ? and HIDE = ? and ASSIGN = ? and LASTDATE IS NULL", role.getID(),Boolean.FALSE,Boolean.TRUE)
+                                   );
+
+                        logger.debug("There are " + members.length +" assignables with null dates");
+                    }catch(ActiveObjectsSqlException aoe){
+                        //empty results will be populated below using alternate DB query
+                    }
+                    //
+                    if(members.length < 1){
+                        members = ao.find(
                             SupportMember.class,
                             Query.select().alias(TeamToUser.class, "am").alias(SupportMember.class, "sm")
                                     .join(TeamToUser.class, "sm.ID = USERID")
                                     .where("TEAMID = ? and HIDE = ? and ASSIGN = ? ", role.getID(),Boolean.FALSE,Boolean.TRUE)
                                     .order("LASTDATE"));
-                    logger.debug("There are " + members.length +" assignables");
-                    logger.debug("oldest (expected): " + members[0].getPrincipleName() );
-                    logger.debug("latest: " + members[1].getPrincipleName());
+                        logger.debug("There are " + members.length +" assignables with existing dates");
+                        logger.debug("oldest (expected): " + members[0].getPrincipleName() );
+                        logger.debug("latest: " + members[1].getPrincipleName());
+                    }
                     final SupportMember next = members.length > 0 ? members[0] : null;
                     if (null != next) {
                         final TeamToUser[] history = ao.find(TeamToUser.class,

@@ -1,11 +1,10 @@
 package ut.com.edwardawebb.jira.assignescalate.ao;
 
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -53,11 +52,13 @@ public class AssignmentServiceAOTezt {
     private EntityManager entityManager;
 
     private ActiveObjects activeObjects ;
-    
+
     private static final Long PROJECT_ONE_KEY = 10000L;
+    private static final Long PROJECT_ZETA_KEY = 90000L;
     private static final String ROLE_ONE = "Support";
     private static final String ROLE_TWO = "Experts";
     private static final String ROLE_THREE = "Used by Tests";
+    private static final String ROLE_ZETA = "Totally Noobs";
     private static final String FIRST_ASSIGNEE = "Fallon";
     private static final String SECOND_ASSIGNEE = "Sam";
     private static final String THIRD_ASSIGNEE = "Tammy";
@@ -320,6 +321,72 @@ public class AssignmentServiceAOTezt {
         
     }
     
+    /**
+     * AEFJ-18 reported that postgres treats null dates > a real date. 
+     * So after the first assignee of a team is poplualted they are awys on the hook
+     * @throws SQLException 
+     * @throws InterruptedException 
+     */
+    @Test
+    @NonTransactional
+    public void testThatNullDatesDoNotBreakAssignment() throws SQLException, InterruptedException{
+        
+        // create a new dataset with all new team
+        final SupportTeam todo = entityManager.create(SupportTeam.class);
+        todo.setProjectId(PROJECT_ZETA_KEY);
+        todo.setName(ROLE_ZETA);
+        todo.setRole("Developers");
+        todo.save();
+
+        final SupportMember me = entityManager.create(SupportMember.class);
+        me.setPrincipleName(FIRST_ASSIGNEE);
+        me.save();
+        final SupportMember moe = entityManager.create(SupportMember.class);
+        moe.setPrincipleName(SECOND_ASSIGNEE);
+        moe.save();
+        final SupportMember max = entityManager.create(SupportMember.class);
+        max.setPrincipleName(THIRD_ASSIGNEE);
+        max.save();
+        
+        // all dates left empty! only 2 assignable
+        final TeamToUser roleToPerson = entityManager.create(TeamToUser.class);
+        roleToPerson.setAssignable(true);
+        roleToPerson.setProjectRole(todo);
+        roleToPerson.setUser(me);
+        roleToPerson.save();
+        final TeamToUser roleToPerson2 = entityManager.create(TeamToUser.class);
+        roleToPerson2.setAssignable(true);
+        roleToPerson2.setProjectRole(todo);
+        roleToPerson2.setUser(moe);
+        roleToPerson2.save();
+        final TeamToUser roleToPerson3 = entityManager.create(TeamToUser.class);
+        roleToPerson3.setProjectRole(todo);
+        roleToPerson3.setUser(max);
+        roleToPerson3.save();
+        
+        //we won't know who we'll get first, as long as they rotate
+        String lastPick="";
+        
+        //first pull, could be anyone, as long as its someone.
+        SupportMember nextGuy = assignmentService.assignNextAvailableAssigneeForProjectTeam(PROJECT_ZETA_KEY,ROLE_ZETA);
+        assertThat(nextGuy,notNullValue());
+        assertThat(nextGuy.getPrincipleName(),notNullValue());
+        lastPick = nextGuy.getPrincipleName();
+        
+        //second assignee must not be the first!
+         Thread.sleep(1500L);
+         nextGuy = assignmentService.assignNextAvailableAssigneeForProjectTeam(PROJECT_ZETA_KEY,ROLE_ZETA);
+         assertThat(nextGuy.getPrincipleName(),not(lastPick));
+         lastPick = nextGuy.getPrincipleName();
+         
+         //3rd assignment should be back to the first
+         Thread.sleep(1500L);
+         nextGuy = assignmentService.assignNextAvailableAssigneeForProjectTeam(PROJECT_ZETA_KEY,ROLE_ZETA);
+          assertThat(nextGuy.getPrincipleName(),not(lastPick));
+        
+        
+        
+    }
     
     
     
