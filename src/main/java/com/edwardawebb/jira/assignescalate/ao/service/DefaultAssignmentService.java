@@ -120,8 +120,6 @@ public class DefaultAssignmentService implements AssignmentService {
                                     .where("TEAMID = ? and HIDE = ? and ASSIGN = ? ", role.getID(),Boolean.FALSE,Boolean.TRUE)
                                     .order("LASTDATE"));
                         logger.debug("There are " + members.length +" assignables with existing dates");
-                        logger.debug("oldest (expected): " + members[0].getPrincipleName() );
-                        logger.debug("latest: " + members[1].getPrincipleName());
                     }
                     final SupportMember next = members.length > 0 ? members[0] : null;
                     if (null != next) {
