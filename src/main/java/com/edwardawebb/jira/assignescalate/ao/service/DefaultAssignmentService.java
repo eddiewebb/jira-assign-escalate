@@ -12,7 +12,6 @@ import net.java.ao.Query;
 import org.apache.log4j.Logger;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.activeobjects.internal.ActiveObjectsSqlException;
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.sal.api.transaction.TransactionCallback;
@@ -108,7 +107,7 @@ public class DefaultAssignmentService implements AssignmentService {
                                    );
 
                         logger.debug("There are " + members.length +" assignables with null dates");
-                    }catch(ActiveObjectsSqlException aoe){
+                    }catch(ActiveObjectsException aoe){
                         //empty results will be populated below using alternate DB query
                     }
                     //
