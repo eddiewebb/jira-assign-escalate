@@ -50,18 +50,26 @@ public class AssignLevelOneSupportPostFunction extends AbstractJiraFunctionProvi
 
     private void assignIssue(Map args, MutableIssue issue) throws WorkflowException, UnconfiguredWorkflowFunctionException {
         log.warn("Auto Assign to SUpport Person Post Workflow Function Running for team " + issue);
-        Long projectId = issue.getProjectId();
-        
-        String teamName = getAppropriateTeam(args,issue, projectId);
-        log.warn("Grabbing next person from " + teamName);
-        SupportMember sucker = assignmentService.assignNextAvailableAssigneeForProjectTeam(projectId, teamName);
-        if(null == sucker){
-            log.error("No available members or team does not exist!!  teamName:" + teamName + " for project: " +projectId);
-            throw new UnconfiguredWorkflowFunctionException();
+        if(null == issue.getAssigneeId() || issue.getAssigneeId() == "" || isOverrideAllowed(args)) {
+            Long projectId = issue.getProjectId();
+            String teamName = getAppropriateTeam(args, issue, projectId);
+            log.warn("Grabbing next person from " + teamName);
+            SupportMember sucker = assignmentService.assignNextAvailableAssigneeForProjectTeam(projectId, teamName);
+            if (null == sucker) {
+                log.error("No available members or team does not exist!!  teamName:" + teamName + " for project: " + projectId);
+                throw new UnconfiguredWorkflowFunctionException();
+            }
+            log.warn("Assigning: " + sucker.getPrincipleName());
+            issue.setAssigneeId(sucker.getPrincipleName());
+        }else{
+            log.debug("SKipping assignment as assignee is not empty and override not set.");
         }
-        log.warn("Assigning: " + sucker.getPrincipleName());
-        issue.setAssigneeId(sucker.getPrincipleName());
     }
+
+    private boolean isOverrideAllowed(Map args) {
+        return Boolean.valueOf((String)args.get(AssignLevelOneSupportPostFunctionFactory.FIELD_OVERRIDE)) == true;
+    }
+
     private String getAppropriateTeam(Map args, MutableIssue issue, Long projectId) {
         String fallbackTeam = (String) args.get(AssignLevelOneSupportPostFunctionFactory.FIELD_TEAM);
         

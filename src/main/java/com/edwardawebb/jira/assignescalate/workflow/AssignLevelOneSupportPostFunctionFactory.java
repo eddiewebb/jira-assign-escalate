@@ -22,16 +22,16 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
     
     public static final String FIELD_TEAM="teamName";
     public static final String FIELD_COMPONENT = "componentMatch";
+    public static final String FIELD_OVERRIDE = "overrideAssignee";
 
 
 
     @Override
     protected void getVelocityParamsForInput(Map<String, Object>velocityParams){
 
-      
+
         //the default message
         velocityParams.put(FIELD_TEAM,"Enter team Name:");
-
     }
 
     @Override
@@ -48,22 +48,27 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
         {
             throw new IllegalArgumentException("Descriptor must be a FunctionDescriptor.");
         }
-
         FunctionDescriptor functionDescriptor=(FunctionDescriptor)descriptor;
 
         String message=(String)functionDescriptor.getArgs().get(FIELD_TEAM);
+        velocityParams.put(FIELD_TEAM,message);
+
         boolean isComponentMatch=false;
         if(functionDescriptor.getArgs().containsKey(FIELD_COMPONENT)){
             log.warn("Component check field has value: ==" + (String)functionDescriptor.getArgs().get(FIELD_COMPONENT) +"==");
             isComponentMatch = Boolean.parseBoolean((String)functionDescriptor.getArgs().get(FIELD_COMPONENT));
             log.warn("Show as matcher: " + isComponentMatch);
         }
-
-
-
-        velocityParams.put(FIELD_TEAM,message);
         if(isComponentMatch){
             velocityParams.put(FIELD_COMPONENT,"checked");
+        }
+
+        boolean isOverrideAllowed=false;
+        if(functionDescriptor.getArgs().containsKey(FIELD_OVERRIDE)){
+            isOverrideAllowed = Boolean.parseBoolean((String)functionDescriptor.getArgs().get(FIELD_OVERRIDE));
+        }
+        if(isOverrideAllowed){
+            velocityParams.put(FIELD_OVERRIDE,"checked");
         }
     }
 
@@ -74,9 +79,11 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
         // Process The map
         String message=extractSingleParam(formParams,FIELD_TEAM);
         boolean isComponentMatch=formParams.containsKey(FIELD_COMPONENT);
+        boolean isOverrideAllowed=formParams.containsKey(FIELD_OVERRIDE);
         log.warn("Will use comp: " + isComponentMatch);
         params.put(FIELD_TEAM,message);
         params.put(FIELD_COMPONENT, isComponentMatch);
+        params.put(FIELD_OVERRIDE, isOverrideAllowed);
         return params;
     }
 
