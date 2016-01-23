@@ -17,7 +17,7 @@
 <tr>
     <td class="fieldLabelArea">
        Do not override Assignee from creator or JIRA default logic?</br>
-        NOTE: You most likely don't want this box checked, see <a href="https://eddiewebb.atlassian.net/wiki/x/C4B0Ag">docs</a>.
+        NOTE: You most likely don't want this box checked, see <a target="_blank" href="https://eddiewebb.atlassian.net/wiki/x/C4B0Ag">docs</a>.
     </td>
     <td nowrap>
         <input type="checkbox" name="overrideBlocked" id="overrideBlocked" $overrideBlocked />
