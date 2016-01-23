@@ -22,7 +22,7 @@ public class AssignLevelOneSupportPostFunctionFactory extends AbstractWorkflowPl
     
     public static final String FIELD_TEAM="teamName";
     public static final String FIELD_COMPONENT = "componentMatch";
-    public static final String FIELD_OVERRIDE = "overrideAssignee";
+    public static final String FIELD_OVERRIDE = "overrideBlocked";
 
 
 

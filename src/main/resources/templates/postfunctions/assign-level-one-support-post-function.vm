@@ -1,4 +1,9 @@
 #if($componentMatch)
  Using the selected component if possible first. Falling back to
 #end
-Assigning round-robin to team:'$teamName' 
+Assigning round-robin to team:'$teamName'
+#if( $overrideBlocked)
+ (unless creator or JIRA assigned a user already)
+#else
+ (regardless of default or user selected assignee)
+#end

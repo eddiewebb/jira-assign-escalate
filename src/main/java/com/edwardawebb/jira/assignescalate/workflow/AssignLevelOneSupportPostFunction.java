@@ -49,7 +49,7 @@ public class AssignLevelOneSupportPostFunction extends AbstractJiraFunctionProvi
     }
 
     private void assignIssue(Map args, MutableIssue issue) throws WorkflowException, UnconfiguredWorkflowFunctionException {
-        log.warn("Auto Assign to SUpport Person Post Workflow Function Running for team " + issue);
+        log.warn("Auto Assign to SUpport Person Post Workflow Function Running for team " + issue.getKey());
         if(null == issue.getAssigneeId() || issue.getAssigneeId() == "" || isOverrideAllowed(args)) {
             Long projectId = issue.getProjectId();
             String teamName = getAppropriateTeam(args, issue, projectId);
@@ -62,12 +62,16 @@ public class AssignLevelOneSupportPostFunction extends AbstractJiraFunctionProvi
             log.warn("Assigning: " + sucker.getPrincipleName());
             issue.setAssigneeId(sucker.getPrincipleName());
         }else{
-            log.debug("SKipping assignment as assignee is not empty and override not set.");
+            log.warn("SKipping assignment as assignee is not empty and override not set.");
         }
     }
 
     private boolean isOverrideAllowed(Map args) {
-        return Boolean.valueOf((String)args.get(AssignLevelOneSupportPostFunctionFactory.FIELD_OVERRIDE)) == true;
+        if(args.containsKey(AssignLevelOneSupportPostFunctionFactory.FIELD_OVERRIDE)) {
+            return !Boolean.parseBoolean((String) args.get(AssignLevelOneSupportPostFunctionFactory.FIELD_OVERRIDE));
+        }else{
+            return true;
+        }
     }
 
     private String getAppropriateTeam(Map args, MutableIssue issue, Long projectId) {
@@ -76,7 +80,7 @@ public class AssignLevelOneSupportPostFunction extends AbstractJiraFunctionProvi
         if(args.containsKey(AssignLevelOneSupportPostFunctionFactory.FIELD_COMPONENT)){
             boolean isMatching = Boolean.parseBoolean((String)args.get(AssignLevelOneSupportPostFunctionFactory.FIELD_COMPONENT));
             if (isMatching){
-                log.warn("Attempring component match, using fallback of:" + fallbackTeam);
+                log.warn("Attempting component match, using fallback of:" + fallbackTeam);
                return attemptTeamForComponentsOf(projectId, issue,fallbackTeam);
             }
         }
