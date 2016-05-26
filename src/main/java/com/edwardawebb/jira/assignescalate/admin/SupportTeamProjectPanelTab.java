@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.permission.ProjectPermissions;
+import com.atlassian.sal.api.user.UserManager;
 import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,30 +40,34 @@ public class SupportTeamProjectPanelTab extends AbstractProjectTabPanel {
     public final static String ADMIN_ROLE = "Administrators";
 
     private final JiraAuthenticationContext authenticationContext;
-    private final ProjectRoleManager projectRoleManager;
     private final AssignmentService assignmentService;
     private final ProjectComponentManager projectComponentManager;
-    
+    private final UserManager userManager;
+    private final PermissionManager permissionManager;
+    private final ProjectRoleManager projectRoleManager;
 
 
-    public SupportTeamProjectPanelTab(ProjectRoleManager projectRoleManager,
+    public SupportTeamProjectPanelTab(PermissionManager permissionManager,
             JiraAuthenticationContext authenticationContext,
-            AssignmentService assignmentService,ProjectComponentManager projectComponentManager) {
+            AssignmentService assignmentService,ProjectComponentManager projectComponentManager, UserManager userManager, ProjectRoleManager projectRoleManager) {
         this.authenticationContext = authenticationContext;
-        this.projectRoleManager = projectRoleManager;
         this.assignmentService = assignmentService;
         this.projectComponentManager = projectComponentManager;
+        this.userManager = userManager;
+        this.permissionManager = permissionManager;
+        this.projectRoleManager = projectRoleManager;
+
     }
 
     @Override
     /**
-     * only show to admins
+     * only show to admins (project or system)
      */
     public boolean showPanel(BrowseContext browseContext) {
         ApplicationUser user = authenticationContext.getUser();
         Project project = browseContext.getProject();
-        ProjectRole projectRole = projectRoleManager.getProjectRole(ADMIN_ROLE);
-        return projectRoleManager.isUserInProjectRole(user, projectRole, project);
+        LOG.warn("sysadmin?: {}",userManager.isSystemAdmin(user.getUsername()));
+        return userManager.isSystemAdmin(user.getUsername()) || permissionManager.hasPermission(ProjectPermissions.ADMINISTER_PROJECTS,project,user);
     }
 
     @Override
