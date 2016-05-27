@@ -157,6 +157,18 @@
 						</pluginArtifact> </pluginArtifacts> -->
                     <productDataPath>${basedir}/src/test/resources/generated-test-resources.zip</productDataPath>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                          <groupId>org.apache.tomcat</groupId>
+                          <artifactId>apache-tomcat</artifactId>
+                         <exclusions>
+                            <exclusion>
+                                <artifactId>jta</artifactId>
+                                <groupId>jta</groupId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -202,23 +214,6 @@
             <id>db</id>
             <build>
                 <plugins>
-                    <plugin>  
-                        <groupId>com.atlassian.maven.plugins</groupId>
-                        <artifactId>maven-jira-plugin</artifactId>
-                        <dependencies>
-                            <dependency>
-                                  <groupId>org.apache.tomcat</groupId>
-                                  <artifactId>apache-tomcat</artifactId>
-                                 <exclusions>
-                                    <exclusion>
-                                        <artifactId>jta</artifactId>
-                                        <groupId>jta</groupId>
-                                    </exclusion>
-                                </exclusions>
-                            </dependency>
-                        </dependencies>
-
-                    </plugin>
                     <plugin>
                         <!-- provide runtime arguments for tests. NOt all engines need all 
 							arguments -->
