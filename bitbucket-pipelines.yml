@@ -9,10 +9,8 @@ pipelines:
           - mkdir -p ~/.ssh
           - echo -e $EAWMVNKEY > ~/.ssh/eawmvn
           - chmod 0600 ~/.ssh/eawmvn
-          - wc -l ~/.ssh/eawmvn
-          - wc -c ~/.ssh/eawmvn
           - eval "$(ssh-agent)"
           - ssh-add ~/.ssh/eawmvn
           - mvn --batch-mode --version
-          - mvn --batch-mode clean install 
-          - mvn --batch-mode deploy
+          - mvn --batch-mode clean install -DskipTests
+          - mvn --batch-mode deploy -DskipTests

@@ -17,6 +17,7 @@
         <developerConnection>scm:git:ssh://git@bitbucket.org/eddiewebb/jira-assign-escalate-plugin.git</developerConnection>
         <url>https://bitbucket.org/eddiewebb/jira-assign-escalate-plugin</url>
     </scm>
+           
     <dependencies>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
