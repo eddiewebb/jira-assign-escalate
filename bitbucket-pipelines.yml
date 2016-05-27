@@ -10,10 +10,10 @@ pipelines:
           - echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
           - cat /etc/ssh/ssh_config
           - mkdir -p ~/.ssh
-          - echo -e $EAWMVNKEY > ~/.ssh/eawmvn
-          - chmod 0600 ~/.ssh/eawmvn
+          - echo -e $EAWMVNKEY > ~/.ssh/id_rsa
+          - chmod 0600 ~/.ssh/id_rsa
           - eval "$(ssh-agent)"
-          - ssh-add ~/.ssh/eawmvn
+          - ssh-add ~/.ssh/id_rsa
           - ssh eawmvn@maven.edwardawebb.com 'whoami'  #validate SSH works before wasting time downloading internet
           - mvn --batch-mode --version
           - mvn --batch-mode deploy -DskipTests
