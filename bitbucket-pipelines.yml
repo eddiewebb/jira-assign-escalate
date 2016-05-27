@@ -9,6 +9,7 @@ pipelines:
           - mkdir -p ~/.ssh
           - echo $EAWMVNKEY > ~/.ssh/eawmvn
           - chmod 0600 ~/.ssh/eawmvn
+          - eval "$(ssh-agent)"
           - ssh-add ~/.ssh/eawmvn
     - step:
         script: # Modify the commands below to build your repository.
