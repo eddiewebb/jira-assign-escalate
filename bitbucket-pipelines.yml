@@ -5,6 +5,12 @@ image: maven:3.3.3
 pipelines:
   default:
     - step:
+        script: # enable access to publish to maven repo
+          - echo $eawmvn.key > ~/.ssh/eawmvn
+          - chmod 0600 ~/.ssh/eawmvn
+          - ssh-add ~/.ssh/eawmvn
+    - step:
         script: # Modify the commands below to build your repository.
           - mvn --batch-mode --version
-          - mvn --batch-mode clean install
+          - mvn --batch-mode clean install 
+          - mvn --batch-mode deploy
