@@ -13,6 +13,7 @@ pipelines:
           - chmod 0600 ~/.ssh/eawmvn
           - eval "$(ssh-agent)"
           - ssh-add ~/.ssh/eawmvn
+          - ssh eawmvn@maven.edwardawebb.com 'whoami'  #validate SSH works before wasting time downloading internet
           - mvn --batch-mode --version
           - mvn --batch-mode clean install -DskipTests
           - mvn --batch-mode deploy -DskipTests
