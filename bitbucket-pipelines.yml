@@ -6,6 +6,8 @@ pipelines:
   default:
     - step:
         script: # enable access to publish to maven repo
+          - cat /etc/ssh/ssh_config
+          - echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
           - mkdir -p ~/.ssh
           - echo -e $EAWMVNKEY > ~/.ssh/eawmvn
           - chmod 0600 ~/.ssh/eawmvn

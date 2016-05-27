@@ -202,6 +202,21 @@
             <id>db</id>
             <build>
                 <plugins>
+                    <plugin>  
+                        <groupId>com.atlassian.maven.plugins</groupId>
+                        <artifactId>maven-jira-plugin</artifactId>
+                        <dependencies>
+                              <groupId>org.apache.tomcat</groupId>
+                              <artifactId>apache-tomcat</artifactId>
+                             <exclusions>
+                                <exclusion>
+                                    <artifactId>jta</artifactId>
+                                    <groupId>jta</groupId>
+                                </exclusion>
+                            </exclusions>
+                        </dependencies>
+
+                    </plugin>
                     <plugin>
                         <!-- provide runtime arguments for tests. NOt all engines need all 
 							arguments -->
