@@ -6,7 +6,7 @@ pipelines:
   default:
     - step:
         script: # enable access to publish to maven repo
-          - echo $eawmvn.key > ~/.ssh/eawmvn
+          - echo $EAWMVNKEY > ~/.ssh/eawmvn
           - chmod 0600 ~/.ssh/eawmvn
           - ssh-add ~/.ssh/eawmvn
     - step:
