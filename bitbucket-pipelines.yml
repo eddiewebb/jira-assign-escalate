@@ -13,8 +13,6 @@ pipelines:
           - wc -c ~/.ssh/eawmvn
           - eval "$(ssh-agent)"
           - ssh-add ~/.ssh/eawmvn
-    - step:
-        script: # Modify the commands below to build your repository.
           - mvn --batch-mode --version
           - mvn --batch-mode clean install 
           - mvn --batch-mode deploy
