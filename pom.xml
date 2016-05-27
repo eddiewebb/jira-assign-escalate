@@ -157,7 +157,7 @@
 						</pluginArtifact> </pluginArtifacts> -->
                     <productDataPath>${basedir}/src/test/resources/generated-test-resources.zip</productDataPath>
                 </configuration>
-                <dependencies>
+                <!--dependencies>
                     <dependency>
                           <groupId>org.apache.tomcat</groupId>
                           <artifactId>apache-tomcat</artifactId>
@@ -168,7 +168,7 @@
                             </exclusion>
                         </exclusions>
                     </dependency>
-                </dependencies>
+                </dependencies-->
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
