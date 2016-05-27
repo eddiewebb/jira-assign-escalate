@@ -7,9 +7,10 @@ pipelines:
     - step:
         script: # enable access to publish to maven repo
           - mkdir -p ~/.ssh
-          - echo $EAWMVNKEY > ~/.ssh/eawmvn
+          - echo -e $EAWMVNKEY > ~/.ssh/eawmvn
           - chmod 0600 ~/.ssh/eawmvn
-          - cat ~/.ssh/eawmvn
+          - wc -l ~/.ssh/eawmvn
+          - wc -c ~/.ssh/eawmvn
           - eval "$(ssh-agent)"
           - ssh-add ~/.ssh/eawmvn
     - step:
