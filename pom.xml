@@ -182,7 +182,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh</artifactId>
-                <version>2.4</version>
+                <version>2.10</version>
             </extension>
         </extensions>
     </build>
@@ -195,18 +195,17 @@
         <ao.version>0.28.0</ao.version>
     </properties>
     <distributionManagement>
-        <downloadUrl>http://maven.edwardawebb.com/repository/</downloadUrl>
         <repository>
             <uniqueVersion>false</uniqueVersion>
             <id>eawReleases</id>
             <name>eawReleases</name>
-            <url>scp://eawmvn@maven.edwardawebb.com:/home/eawmvn/webroot/repository/releases</url>
+            <url>scp://eawmvn@maven.edwardawebb.com/home/eawmvn/webroot/repository/releases</url>
             <layout>default</layout>
         </repository>
         <snapshotRepository>
             <uniqueVersion>true</uniqueVersion>
             <id>eawSnapshots</id>
-            <url>scp://eawmvn@maven.edwardawebb.com:/home/eawmvn/webroot/repository/snapshots</url>
+            <url>scp://eawmvn@maven.edwardawebb.com/home/eawmvn/webroot/repository/snapshots</url>
             <name>eawSnapshots</name>
         </snapshotRepository>
     </distributionManagement>

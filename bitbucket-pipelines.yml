@@ -1,7 +1,7 @@
 # You can use a Docker image from Docker Hub or your own container
 # registry for your build environment.
-# codenvy/debian_jdk8
 image: maven:3.3.3-jdk-7
+
 pipelines:
   default:
     - step:
@@ -14,8 +14,6 @@ pipelines:
           - chmod 0600 ~/.ssh/id_rsa
           - eval "$(ssh-agent)"
           - ssh-add ~/.ssh/id_rsa
-          - ssh eawmvn@maven.edwardawebb.com "echo 2>&1" && echo $host SSH_OK || echo $host SSH_NOK  #validate SSH works before wasting time downloading internet
-          - ping -c 10 maven.edwardawebb.com
-          - ping -c 10 maven.atlassian.com
+          - ssh eawmvn@maven.edwardawebb.com 'whoami'  #validate SSH works before wasting time downloading internet
           - mvn --batch-mode --version
-          - mvn --batch-mode deploy -DskipTests
+          - mvn --batch-mode -X deploy -DskipTests
