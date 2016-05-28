@@ -17,7 +17,5 @@ pipelines:
           - ssh eawmvn@maven.edwardawebb.com "echo 2>&1" && echo $host SSH_OK || echo $host SSH_NOK  #validate SSH works before wasting time downloading internet
           - ping -c 10 maven.edwardawebb.com
           - ping -c 10 maven.atlassian.com
-          - traceroute maven.edwardawebb.com
-          - traceroute maven.atlassian.com
           - mvn --batch-mode --version
           - mvn --batch-mode deploy -DskipTests
