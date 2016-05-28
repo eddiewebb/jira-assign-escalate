@@ -15,7 +15,9 @@ pipelines:
           - eval "$(ssh-agent)"
           - ssh-add ~/.ssh/id_rsa
           - ssh eawmvn@maven.edwardawebb.com "echo 2>&1" && echo $host SSH_OK || echo $host SSH_NOK  #validate SSH works before wasting time downloading internet
-          - traceroute maven.edwardawebb.com
           - ping -c 10 maven.edwardawebb.com
+          - ping -c 10 maven.atlassian.com
+          - /usr/bin/traceroute maven.edwardawebb.com
+          - /usr/bin/traceroute maven.atlassian.com
           - mvn --batch-mode --version
           - mvn --batch-mode deploy -DskipTests
