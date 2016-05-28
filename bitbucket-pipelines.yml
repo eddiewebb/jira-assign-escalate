@@ -6,9 +6,6 @@ pipelines:
   default:
     - step:
         script: # enable access to publish to maven repo
-          - cat /etc/ssh/ssh_config
-          - echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-          - cat /etc/ssh/ssh_config
           - mkdir -p ~/.ssh
           - echo -e $EAWMVNKEY > ~/.ssh/id_rsa
           - chmod 0600 ~/.ssh/id_rsa
@@ -17,7 +14,7 @@ pipelines:
           - ssh eawmvn@maven.edwardawebb.com "echo 2>&1" && echo $host SSH_OK || echo $host SSH_NOK  #validate SSH works before wasting time downloading internet
           - ping -c 10 maven.edwardawebb.com
           - ping -c 10 maven.atlassian.com
-          - /usr/bin/traceroute maven.edwardawebb.com
-          - /usr/bin/traceroute maven.atlassian.com
+          - traceroute maven.edwardawebb.com
+          - traceroute maven.atlassian.com
           - mvn --batch-mode --version
           - mvn --batch-mode deploy -DskipTests
