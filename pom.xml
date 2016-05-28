@@ -181,7 +181,7 @@
         <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh-external</artifactId>
+                <artifactId>wagon-ssh</artifactId>
                 <version>2.4</version>
             </extension>
         </extensions>
@@ -195,6 +195,7 @@
         <ao.version>0.28.0</ao.version>
     </properties>
     <distributionManagement>
+        <downloadUrl>http://maven.edwardawebb.com/repository/</downloadUrl>
         <repository>
             <uniqueVersion>false</uniqueVersion>
             <id>eawReleases</id>
