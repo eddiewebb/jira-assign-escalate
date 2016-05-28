@@ -1,7 +1,7 @@
 # You can use a Docker image from Docker Hub or your own container
 # registry for your build environment.
-image: jamesdbloom/docker-java7-maven
-
+# codenvy/debian_jdk8
+image: maven:3.3.3-jdk-7
 pipelines:
   default:
     - step:
