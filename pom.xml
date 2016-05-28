@@ -200,13 +200,13 @@
             <uniqueVersion>false</uniqueVersion>
             <id>eawReleases</id>
             <name>eawReleases</name>
-            <url>scp://eawmvn@maven.edwardawebb.com/home/eawmvn/webroot/repository/releases</url>
+            <url>scp://eawmvn@maven.edwardawebb.com:/home/eawmvn/webroot/repository/releases</url>
             <layout>default</layout>
         </repository>
         <snapshotRepository>
             <uniqueVersion>true</uniqueVersion>
             <id>eawSnapshots</id>
-            <url>scp://eawmvn@maven.edwardawebb.com/home/eawmvn/webroot/repository/snapshots</url>
+            <url>scp://eawmvn@maven.edwardawebb.com:/home/eawmvn/webroot/repository/snapshots</url>
             <name>eawSnapshots</name>
         </snapshotRepository>
     </distributionManagement>
