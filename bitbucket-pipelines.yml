@@ -12,7 +12,8 @@ pipelines:
       - step:
           script: 
             - bash pipelines/setupSsh.sh  #validate SSH works before wasting time downloading internet
-            - mvn --batch-mode deploy # this deploys a snapshot to the repo
+            - mvn --batch-mode test
+            - mvn --batch-mode deploy  -DskipTests # this deploys a snapshot to the repo
     shipit:
       - step:
           script: # updates version as release
