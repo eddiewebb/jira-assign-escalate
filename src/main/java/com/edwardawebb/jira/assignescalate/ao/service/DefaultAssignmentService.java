@@ -60,9 +60,9 @@ public class DefaultAssignmentService implements AssignmentService {
     public SupportTeam createProjectTeam(Long projectId, String name, String projectRole, List<String> components) {
 
         logger.warn("Request for new team: " + name + " id " + projectId);
-        SupportTeam existingrole = findRoleByProjectIdAndName(projectId, name);
+        SupportTeam existingTeam = findSupportTeamByProjectIdAndName(projectId, name);
 
-        if (null == existingrole) {
+        if (null == existingTeam) {
             // good, does not exist
             StringBuilder componentIds = new StringBuilder();
             if (null != components && components.size() > 0) {
@@ -75,7 +75,7 @@ public class DefaultAssignmentService implements AssignmentService {
                     projectRole), new DBParam("PROJECTID", projectId), new DBParam("CMPNTS", componentIds.toString()));
             return role;
         } else {
-            throw new ActiveObjectsException("Role names are unique to each project");
+            throw new ActiveObjectsException("Team names are unique to each project");
         }
     }
 
@@ -93,7 +93,7 @@ public class DefaultAssignmentService implements AssignmentService {
     @Override
     public SupportMember assignNextAvailableAssigneeForProjectTeam(final Long projectId, final String name) {
        
-                final SupportTeam role = findRoleByProjectIdAndName(projectId, name);
+                final SupportTeam role = findSupportTeamByProjectIdAndName(projectId, name);
                 if (null != role) {
                     //some engines :cough: postgres :cough: do funny soritng on dates with null, trating them larger then dates
                     // See AEFJ-18
@@ -195,7 +195,7 @@ public class DefaultAssignmentService implements AssignmentService {
         }
 
         for (ApplicationUser user : latestUsers) {
-            SupportMember teamMember = findOrCreateUser(user.getKey(), user.getName(), user.getDisplayName());
+            SupportMember teamMember = createOrUpdateUser(user.getKey(), user.getName(), user.getDisplayName());
 
             TeamToUser teamToUser = findOrCreateAssignment(teamMember, role);
             if (teamToUser.isHidden()) {
@@ -232,13 +232,22 @@ public class DefaultAssignmentService implements AssignmentService {
         }
     }
 
-    private SupportMember findOrCreateUser(String key, String name, String displayName) {
-        SupportMember[] results = ao.find(SupportMember.class, "KEY = ? AND NAME LIKE ?", key, name);
+    private SupportMember createOrUpdateUser(String key, String name, String displayName) {
+        SupportMember[] results = ao.find(SupportMember.class, "KEY = ?", key);
         if (results.length > 1) {
-            throw new IllegalStateException("Application cannot have more than 1 user with same Principle Name");
+            throw new IllegalStateException("Application cannot have more than 1 user with same user key. Conflict:" + key);
         }
         if (results.length > 0) {
-            return results[0];
+            SupportMember user = results[0];
+            if( ! user.getDisplayName().equals(displayName) ){
+                user.setDisplayName(displayName);
+                user.save();
+            }
+            if( ! user.getPrincipleName().equals(name) ){
+                user.setPrincipleName(name);
+                user.save();
+            }
+            return user;
         } else {
             SupportMember user = ao.create(SupportMember.class, new DBParam("KEY", key), new DBParam("NAME", name),
                     new DBParam("DISPLAY", displayName));
@@ -246,7 +255,7 @@ public class DefaultAssignmentService implements AssignmentService {
         }
     }
 
-    private SupportTeam findRoleByProjectIdAndName(Long projectId, String name) {
+    private SupportTeam findSupportTeamByProjectIdAndName(Long projectId, String name) {
         SupportTeam[] results = ao.find(SupportTeam.class,
                 Query.select().where("PROJECTID = ? and NAME = ?", projectId, name));
         if (results.length > 1) {

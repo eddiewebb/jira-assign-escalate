@@ -5,15 +5,16 @@ image: maven:3.3.3-jdk-7
 pipelines:
   default:
     - step:
-        script: # enable access to publish to maven repo
-          - cat /etc/ssh/ssh_config
-          - echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-          - cat /etc/ssh/ssh_config
-          - mkdir -p ~/.ssh
-          - echo -e $EAWMVNKEY > ~/.ssh/id_rsa
-          - chmod 0600 ~/.ssh/id_rsa
-          - eval "$(ssh-agent)"
-          - ssh-add ~/.ssh/id_rsa
-          - ssh eawmvn@maven.edwardawebb.com 'whoami'  #validate SSH works before wasting time downloading internet
-          - mvn --batch-mode --version
-          - mvn --batch-mode -X deploy -DskipTests
+        script: # this Doesn't run on any branches matched below.
+          - mvn --batch-mode clean install
+  branches:
+    master:
+      - step:
+          script: 
+            - bash pipelines/setupSsh.sh  #validate SSH works before wasting time downloading internet
+            - mvn --batch-mode deploy # this deploys a snapshot to the repo
+    shipit:
+      - step:
+          script: # updates version as release
+            - bash pipelines/setupSsh.sh  #validate SSH works before wasting time downloading internet
+            - bash pipelines/shipit.sh #this script performs a release and publishes to marketplace

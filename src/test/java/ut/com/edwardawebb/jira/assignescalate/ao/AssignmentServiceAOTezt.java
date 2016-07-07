@@ -1,23 +1,26 @@
 package ut.com.edwardawebb.jira.assignescalate.ao;
 
-
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.arrayContaining;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import net.java.ao.EntityManager;
+import net.java.ao.RawEntity;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.jdbc.Jdbc;
 import net.java.ao.test.jdbc.NonTransactional;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
 
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,13 +67,13 @@ public class AssignmentServiceAOTezt {
     private static final String THIRD_ASSIGNEE = "Tammy";
     private static final String FIRST_ESCALATION = "Felix";
     private static final String SECOND_ESCALATION = "Selina";
-    private static final ApplicationUser user1 = new MockApplicationUser("Fallon","Fallon Dude","eddie@mail.com");
-    private static final ApplicationUser user2 = new MockApplicationUser("Sam","Sam Guy","eddie@mail.com");
-    private static final ApplicationUser user3 = new MockApplicationUser("Tammy","Tammy Girl","eddie@mail.com");
-    private static final ApplicationUser user4 = new MockApplicationUser("Ivan","Ivan Man","eddie@mail.com");
-    private static final ApplicationUser user5 = new MockApplicationUser("Ali","Ali Lady","eddie@mail.com");
-    private static final ApplicationUser user6 = new MockApplicationUser("Felix","Felix Foreigner","eddie@mail.com");
-    private static final ApplicationUser user7 = new MockApplicationUser("Selina","Selina Standy","eddie@mail.com");
+    private static final ApplicationUser user1 = new MockApplicationUser("fdude", "Fallon","Fallon Dude","eddie@mail.com");
+    private static final ApplicationUser user2 = new MockApplicationUser("sguy","Sam","Sam Guy","eddie@mail.com");
+    private static final ApplicationUser user3 = new MockApplicationUser("tgirl","Tammy","Tammy Girl","eddie@mail.com");
+    private static final ApplicationUser user4 = new MockApplicationUser("iman","Ivan","Ivan Man","eddie@mail.com");
+    private static final ApplicationUser user5 = new MockApplicationUser("alady","Ali","Ali Lady","eddie@mail.com");
+    private static final ApplicationUser user6 = new MockApplicationUser("fforeigner","Felix","Felix Foreigner","eddie@mail.com");
+    private static final ApplicationUser user7 = new MockApplicationUser("sstandy","Selina","Selina Standy","eddie@mail.com");
     private static List<String> componentIds = new ArrayList<String>();
     private static Set<ApplicationUser> allDevelopers;
 
@@ -387,22 +390,56 @@ public class AssignmentServiceAOTezt {
         
         
     }
-    
-    
+
+
+
+    /**
+     * Allow user info (display name and 'username" - NOT key) to be updated instead of duplicating
+     */
+    @Test
+    @NonTransactional
+    // @Ignore("If you want this test to pass, comment out the ao.executeInTransaction of service, not compatible with unit testing but needed for prod use.")
+    public void testThatUserDataCanBeUpdatedFromLatestJIRA(){
+        SupportTeam role = assignmentService.getProjectTeam(1);
+        assertThat(role.getAssignments().length,is(3));
+
+        assignmentService.updateUsersLinkedToTeam(allDevelopers,role);
+        role = assignmentService.getProjectTeam(1);
+        assertThat(role.getAssignments().length,is(7));
+
+       ApplicationUser updateduser1 = new MockApplicationUser("fdude", "BetterFallon","A Better Fallon Dude","eddie@mail.com");
+       ApplicationUser updateduser2 = new MockApplicationUser("sguy","SmarterSam","A More Intelligent Sam","eddie@mail.com");
+       ApplicationUser updateduser3 = new MockApplicationUser("tgirl","ThoughtfulTammy","Tammy the thoughtful Girl","eddie@mail.com");
+        Set<ApplicationUser> updatedUsers = new HashSet<ApplicationUser>();
+        updatedUsers.add(user1); // keep old 1-3 data
+        updatedUsers.add(user2);
+        updatedUsers.add(user3);
+        updatedUsers.add(user4); // 4-7 same data as before
+        updatedUsers.add(user5);
+        updatedUsers.add(user6);
+        updatedUsers.add(user7);
+        updatedUsers.add(updateduser1); // 1-3 have new data from JIRA!
+        updatedUsers.add(updateduser2);
+        updatedUsers.add(updateduser3);
+        assignmentService.updateUsersLinkedToTeam(updatedUsers,role);
+
+        //despite passing in 10 users, our susyem should realize 3 are updates.
+        role = assignmentService.getProjectTeam(1);
+        assertThat(role.getAssignments().length,is(7));
+
+    }
     
 
     
-    public static class ConfigAssigmentTestData implements DatabaseUpdater
-    {
-        
+    public static class ConfigAssigmentTestData implements DatabaseUpdater {
+
         @Override
-        public void update(EntityManager em) throws Exception
-        {   
+        public void update(EntityManager em) throws Exception {
             em.migrate(SupportTeam.class);
             em.migrate(SupportMember.class);
             em.migrate(TeamToUser.class);
- 
-            
+
+
             /**
              * Team one 3/5 developers
              */
@@ -421,7 +458,7 @@ public class AssignmentServiceAOTezt {
             final SupportMember max = em.create(SupportMember.class);
             max.setPrincipleName(THIRD_ASSIGNEE);
             max.save();
-            
+
             final TeamToUser roleToPerson = em.create(TeamToUser.class);
             roleToPerson.setAssignable(true);
             roleToPerson.setLastAssigned(new Date(1000000L));
@@ -438,10 +475,10 @@ public class AssignmentServiceAOTezt {
             roleToPerson3.setProjectRole(todo);
             roleToPerson3.setUser(max);
             roleToPerson3.save();
-            
+
             /**
              * Team 2, 3/5 developers
-             * 
+             *
              */
 
 
@@ -451,14 +488,14 @@ public class AssignmentServiceAOTezt {
             final SupportMember selina = em.create(SupportMember.class);
             selina.setPrincipleName(SECOND_ESCALATION);
             selina.save();
-            
-            
+
+
             final SupportTeam role2 = em.create(SupportTeam.class);
             role2.setProjectId(PROJECT_ONE_KEY);
             role2.setName(ROLE_TWO);
             role2.setRole("Developers");
             role2.save();
-            
+
             final TeamToUser roleToPerson6 = em.create(TeamToUser.class);
             roleToPerson6.setProjectRole(role2);
             roleToPerson6.setUser(me);
@@ -471,8 +508,8 @@ public class AssignmentServiceAOTezt {
             roleToPerson5.setProjectRole(role2);
             roleToPerson5.setUser(felix);
             roleToPerson5.save();
-            
-        }
-    }
 
+        }
+
+    }
 }
