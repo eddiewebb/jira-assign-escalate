@@ -29,7 +29,8 @@ function findReleaseVersion {
 
 #deploy to configured repository and tagg with version
 function deployAndTag {
-	mvn --batch-mode deploy scm:tag
+	mvn --batch-mode test 
+	mvn --batch-mode -DskipTests deploy scm:tag
 }
 
 # with artifact available at URL this publishes the details to markeplce
