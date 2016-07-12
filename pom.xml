@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.edwardawebb</groupId>
     <artifactId>jira-assign-escalate</artifactId>
-    <version>1.4.8-SNAPSHOT</version>
+    <version>1.4.8</version>
     <organization>
         <name>Edward A Webb</name>
         <url>http://www.edwardawebb.com/</url>
@@ -189,6 +189,13 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>1.9.4</version>
+                <configuration>
+                    <tag>${project.artifactId}-${project.version}</tag>
                 </configuration>
             </plugin>
         </plugins>
