@@ -60,7 +60,7 @@ public class AssignLevelOneSupportPostFunction extends AbstractJiraFunctionProvi
                 throw new UnconfiguredWorkflowFunctionException();
             }
             log.warn("Assigning: " + sucker.getPrincipleName());
-            issue.setAssigneeId(sucker.getPrincipleName());
+            issue.setAssigneeId(sucker.getJiraKey());
         }else{
             log.warn("SKipping assignment as assignee is not empty and override not set.");
         }
