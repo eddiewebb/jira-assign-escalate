@@ -36,7 +36,7 @@ function deployAndTag {
 # with artifact available at URL this publishes the details to markeplce
 function publishToMarketplace {
 	#public available URL to find our plugin (NOTE - marketplace provides means to upload via API first if you dont have a public repo)
-	URL="http://maven.edwardawebb.com/repository/releases/com/edwardawebb/ass-gn/${releaseVersion}/bamboo-agent-apis-${releaseVersion}.jar"
+	URL="http://maven.edwardawebb.com/repository/releases/com/edwardawebb/jira-assign-escalate/${releaseVersion}/jira-assign-escalate-${releaseVersion}.jar"
 	#setup and replace values in json template
 	TODAY=`date +%Y-%m-%d`
 	RLSSUMMARY=`git log -1 --pretty=%B`

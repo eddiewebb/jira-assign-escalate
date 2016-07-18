@@ -104,4 +104,9 @@
     <entity>com.edwardawebb.jira.assignescalate.ao.SupportMember</entity>
     <entity>com.edwardawebb.jira.assignescalate.ao.TeamToUser</entity>
   </ao>
+  <component key="user-rename-event-listener-impl" class="com.edwardawebb.jira.assignescalate.events.UserRenameEventListenerImpl" name="User Rename Event Listener Impl" i18n-name-key="user-rename-event-listener-impl.name">
+    <description key="user-rename-event-listener-impl.description">The User Rename Event Listener Impl Plugin</description>
+    <interface>com.edwardawebb.jira.assignescalate.events.UserRenameEventListener</interface>
+  </component>
+  <component-import key="userManager" interface="com.atlassian.jira.user.util.UserManager" filter=""/>
 </atlassian-plugin>

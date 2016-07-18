@@ -195,7 +195,14 @@ public class DefaultAssignmentService implements AssignmentService {
         }
 
         for (ApplicationUser user : latestUsers) {
-            SupportMember teamMember = createOrUpdateUser(user.getKey(), user.getName(), user.getDisplayName());
+            SupportMember teamMember =  updateUserNameIfExistingUser(user.getKey(), user.getName(), user.getDisplayName());
+
+
+            if( null == teamMember ){
+                teamMember = ao.create(SupportMember.class, new DBParam("KEY", user.getKey()), new DBParam("NAME", user.getUsername()),
+                        new DBParam("DISPLAY", user.getDisplayName()));
+            }
+
 
             TeamToUser teamToUser = findOrCreateAssignment(teamMember, role);
             if (teamToUser.isHidden()) {
@@ -232,7 +239,7 @@ public class DefaultAssignmentService implements AssignmentService {
         }
     }
 
-    private SupportMember createOrUpdateUser(String key, String name, String displayName) {
+    public SupportMember updateUserNameIfExistingUser(String key, String username, String displayName) {
         SupportMember[] results = ao.find(SupportMember.class, "KEY = ?", key);
         if (results.length > 1) {
             throw new IllegalStateException("Application cannot have more than 1 user with same user key. Conflict:" + key);
@@ -243,17 +250,16 @@ public class DefaultAssignmentService implements AssignmentService {
                 user.setDisplayName(displayName);
                 user.save();
             }
-            if( ! user.getPrincipleName().equals(name) ){
-                user.setPrincipleName(name);
+            if( ! user.getPrincipleName().equals(username) ){
+                user.setPrincipleName(username);
                 user.save();
             }
             return user;
-        } else {
-            SupportMember user = ao.create(SupportMember.class, new DBParam("KEY", key), new DBParam("NAME", name),
-                    new DBParam("DISPLAY", displayName));
-            return user;
         }
+        return null;
     }
+
+
 
     private SupportTeam findSupportTeamByProjectIdAndName(Long projectId, String name) {
         SupportTeam[] results = ao.find(SupportTeam.class,

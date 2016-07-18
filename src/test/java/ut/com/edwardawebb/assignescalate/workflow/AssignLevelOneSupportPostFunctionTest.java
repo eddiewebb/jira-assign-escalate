@@ -54,8 +54,8 @@ public class AssignLevelOneSupportPostFunctionTest
 {
     private static final Logger log = LoggerFactory.getLogger(AssignLevelOneSupportPostFunctionTest.class);
      public static final String MESSAGE = "my message";
-    public static final SupportMember ASSIGNEE = new AssignLevelOneSupportPostFunctionTest.MockSupportMember("eddie", "Eddie Webb", 0);
-    public static final SupportMember COMPONENT_ASSIGNEE = new AssignLevelOneSupportPostFunctionTest.MockSupportMember("joey", "Joey Other Guy", 0);
+    public static final SupportMember ASSIGNEE = new AssignLevelOneSupportPostFunctionTest.MockSupportMember("eddie","eddie", "Eddie Webb", 0);
+    public static final SupportMember COMPONENT_ASSIGNEE = new AssignLevelOneSupportPostFunctionTest.MockSupportMember("joey","joey", "Joey Other Guy", 0);
 
     protected ProjectComponent componentToMatch = mock(ProjectComponent.class);
     protected AssignLevelOneSupportPostFunction function;
@@ -100,7 +100,7 @@ public class AssignLevelOneSupportPostFunctionTest
         Map args = new HashMap();
         args.put("teamName","Level One");
         function.execute(null,args,null);
-       assertThat(issue.getAssigneeId(),is(ASSIGNEE.getPrincipleName()));
+       assertThat(issue.getAssigneeId(),is(ASSIGNEE.getJiraKey()));
     }
     
     @Test
@@ -118,6 +118,12 @@ public class AssignLevelOneSupportPostFunctionTest
          assertThat(issue.getAssigneeId(),is(COMPONENT_ASSIGNEE.getPrincipleName()));
     }
 
+
+
+    /*
+     *  Helpers and mock objects..
+     *
+     */
     private MutableIssue createPartialMockedIssue() {
         GenericValue genericValue = mock(GenericValue.class);
         IssueManager issueManager = mock(IssueManager.class);
@@ -152,12 +158,14 @@ public class AssignLevelOneSupportPostFunctionTest
     }
 
     private static class MockSupportMember implements SupportMember{
+        private String jiraKey;
         private String principleName;
         private String displayName;
         private int id;
         
         
-        public MockSupportMember(String principleName, String displayName, int id) {
+        public MockSupportMember(String jiraKey,String principleName, String displayName, int id) {
+            this.jiraKey = jiraKey;
             this.principleName = principleName;
             this.displayName = displayName;
             this.id = id;
@@ -210,8 +218,7 @@ public class AssignLevelOneSupportPostFunctionTest
 
         @Override
         public String getJiraKey() {
-            // TODO Auto-generated method stub
-            return null;
+            return jiraKey;
         }
 
         @Override

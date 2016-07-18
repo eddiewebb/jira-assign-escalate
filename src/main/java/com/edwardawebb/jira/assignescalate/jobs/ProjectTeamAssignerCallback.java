@@ -13,6 +13,9 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.edwardawebb.jira.assignescalate.AssignmentService;
 import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 
+/**
+ * THis class is responsible to make sure an accurate list of users is available for each role.
+ */
 public class ProjectTeamAssignerCallback {
 
     // YES, this is not the same class, and allows our log statements to fall under the same as the job.

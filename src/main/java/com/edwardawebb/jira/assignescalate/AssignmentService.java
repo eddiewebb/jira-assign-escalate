@@ -65,7 +65,7 @@ public interface AssignmentService {
 
     SupportTeam[] findAllTeamsWith(Long projectId, ProjectComponent component);
 
-   
-   
+
+    SupportMember updateUserNameIfExistingUser(String key, String username, String displayName);
 
 }
