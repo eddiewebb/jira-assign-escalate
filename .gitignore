@@ -1,3 +1,5 @@
 jira-assign-escalate.iml
 .settings/
 .idea/
+target
+.DS_Store
