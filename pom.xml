@@ -275,8 +275,7 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <!-- allows us to use AWS CLI to spin up RDS and save URL to a file
-							read by maven -->
+                        <!-- reads properties file with DB info matching profile -->
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>properties-maven-plugin</artifactId>
                         <version>1.0-alpha-2</version>
@@ -318,6 +317,24 @@
                     <version>5.1.36</version>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>db-oracle</id>
+            <!-- Create a db.properties file that uses this format for oracle: -->
+            <!--db.url=jdbc:oracle:thin:@aefj-test.cutd4i9wvxsx.us-east-1.rds.amazonaws.com:1521:ORCL-->
+            <!--               NOT :// ^^^     -->
+            <!--db.engine=oracle-->
+            <!--db.schema=user-->
+            <!--db.username=user-->
+            <!--db.password=password-->
+            <dependencies>
+                <dependency>
+                    <groupId>com.hynnet</groupId>
+                    <artifactId>oracle-driver-ojdbc</artifactId>
+                    <version>12.1.0.2</version>
+                </dependency>
+            </dependencies>
+
         </profile>
         <profile>
             <id>db-mssql</id>

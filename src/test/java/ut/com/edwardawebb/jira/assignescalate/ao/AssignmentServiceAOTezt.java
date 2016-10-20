@@ -9,11 +9,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.beans.PropertyChangeListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
+import com.google.common.collect.Tables;
+import net.java.ao.DatabaseProvider;
 import net.java.ao.EntityManager;
 import net.java.ao.RawEntity;
+import net.java.ao.test.converters.NameConverters;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.jdbc.Jdbc;
@@ -35,7 +41,8 @@ import com.edwardawebb.jira.assignescalate.ao.SupportTeam;
 import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
 import com.edwardawebb.jira.assignescalate.ao.service.DefaultAssignmentService;
 import com.google.common.collect.Sets;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -49,8 +56,10 @@ import com.google.common.collect.Sets;
 @RunWith(ActiveObjectsJUnitRunner.class)
 @Data(AssignmentServiceAOTezt.ConfigAssigmentTestData.class)
 @Jdbc(net.java.ao.test.jdbc.DynamicJdbcConfiguration.class)
+
 public class AssignmentServiceAOTezt {
-    
+    private static final Logger log = LoggerFactory.getLogger(AssignmentServiceAOTezt.class);
+
     //gets injected thanks to ActiveObjectsJUnitRunner.class  
     private EntityManager entityManager;
 
@@ -435,6 +444,8 @@ public class AssignmentServiceAOTezt {
 
         @Override
         public void update(EntityManager em) throws Exception {
+            dropEverything(em);
+
             em.migrate(SupportTeam.class);
             em.migrate(SupportMember.class);
             em.migrate(TeamToUser.class);
@@ -511,5 +522,90 @@ public class AssignmentServiceAOTezt {
 
         }
 
+        public static void dropEverything(EntityManager em) throws SQLException {
+            DatabaseProvider provider = em.getProvider();
+
+            Connection connection = provider.startTransaction();
+            log.warn("Dropping Everything!");
+
+            // get all sequences, add to list for deletion
+            Statement stmt = null;
+            ArrayList<String> sequences = new ArrayList<String>();
+            try {
+                stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery("select * from user_sequences");
+                while (rs.next()) {
+                    String name = rs.getString("sequence_name");
+                    sequences.add(name);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            }
+
+            //loop list and drop all sequences
+            String schema = provider.getSchema();
+            log.warn("Found " + sequences.size() + " sequences in schema " + schema + " to delete");
+            for (String name : sequences) {
+                log.warn("Dropping " + name);
+                Statement dropstmt = null;
+                try {
+                    dropstmt = connection.createStatement();
+                    int result = dropstmt.executeUpdate("DROP SEQUENCE " + schema + "." + name);
+                    log.warn("Results: " + result);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (dropstmt != null) {
+                        dropstmt.close();
+                    }
+                }
+            }
+
+            log.warn("Sequences dropped");
+
+
+            ArrayList<String> tables = new ArrayList<String>();
+            try {
+                stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery("select * from user_tables");
+                while (rs.next()) {
+                    String name = rs.getString("table_name");
+                    tables.add(name);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            }
+
+            //loop list and drop all tables
+            log.warn("Found " + tables.size() + " tables in schema " + schema + " to delete");
+            for (String name : tables) {
+                log.warn("Dropping " + name);
+                Statement dropstmt = null;
+                try {
+                    dropstmt = connection.createStatement();
+                    int result = dropstmt.executeUpdate("DROP table " + provider.withSchema(name));
+                    log.warn("Results: " + result);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (dropstmt != null) {
+                        dropstmt.close();
+                    }
+                }
+            }
+
+            log.warn("tables dropped");
+            provider.commitTransaction(connection);
+
+            connection.close();
+        }
     }
 }

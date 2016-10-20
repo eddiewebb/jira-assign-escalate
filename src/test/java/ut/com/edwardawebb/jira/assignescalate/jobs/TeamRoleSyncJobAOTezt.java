@@ -99,12 +99,12 @@ public class TeamRoleSyncJobAOTezt {
     {
         @Override
         public void update(EntityManager em) throws Exception
-        {   
-            em.migrate(SupportTeam.class);
-            em.migrate(SupportMember.class);
-            em.migrate(TeamToUser.class);
- 
-            
+        {
+            em.migrateDestructively(SupportTeam.class);
+            em.migrateDestructively(SupportMember.class);
+            em.migrateDestructively(TeamToUser.class);
+
+
             /**
              * Team one 3/5 developers
              */
