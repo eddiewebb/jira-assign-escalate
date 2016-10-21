@@ -36,11 +36,9 @@ import com.edwardawebb.jira.assignescalate.ao.TeamToUser;
 import com.edwardawebb.jira.assignescalate.ao.service.DefaultAssignmentService;
 import com.edwardawebb.jira.assignescalate.jobs.SyncProjectTeamUsersScheduler;
 import com.google.common.collect.Sets;
+import ut.com.edwardawebb.jira.assignescalate.ao.AssignmentServiceAOTezt;
 
-@RunWith(ActiveObjectsJUnitRunner.class)
-@Data(TeamRoleSyncJobAOTezt.TestData.class)
-@Jdbc(net.java.ao.test.jdbc.DynamicJdbcConfiguration.class)
-public class TeamRoleSyncJobAOTezt {
+public class TeamRoleSyncTest {
     
     //gets injected thanks to ActiveObjectsJUnitRunner.class  
     private EntityManager entityManager;
@@ -68,9 +66,9 @@ public class TeamRoleSyncJobAOTezt {
 
     @Before
     public void before() {
-        activeObjects = new TestActiveObjects(entityManager);
-        assignmentService = new DefaultAssignmentService(activeObjects); 
-        
+        activeObjects = mock(ActiveObjects.class);
+        assignmentService = mock( DefaultAssignmentService.class);
+        SupportTeam team = mock(SupportTeam.class);
         //mock out enough of user/role services so job can get list of users from "ldap"
         when(projectManager.getProjectObj(anyLong())).thenReturn(project);
         when(roleManager.getProjectRole(anyString())).thenReturn(projectRole);
@@ -84,39 +82,13 @@ public class TeamRoleSyncJobAOTezt {
     @Test
     public void testTheMonitorCanCallTheAssignmentServiceWithNewUsersOnAnEmptyButExistentTeam(){
         monitor.scanAndUpdateProjectRoles();
-        
-        SupportTeam[] roles = assignmentService.getProjectTeams(PROJECT_ID);
-        
-        
-        // only a single Team should exist with 3 assignments.
-        assertThat(roles.length,is(1));
-        assertThat(roles[0].getAssignments().length,is(3));
-        
-    } 
-    
-    
-    public static class TestData implements DatabaseUpdater
-    {
-        @Override
-        public void update(EntityManager em) throws Exception
-        {
-            em.migrateDestructively(SupportTeam.class);
-            em.migrateDestructively(SupportMember.class);
-            em.migrateDestructively(TeamToUser.class);
 
+        int EXPECTED_ROLES = 1;
+        int EXPECTED_ASSIGNMENTS = 3;
 
-            /**
-             * Team one 3/5 developers
-             */
-            final SupportTeam todo = em.create(SupportTeam.class);
-            todo.setProjectId(PROJECT_ID);
-            todo.setName(ROLE_NAME);
-            todo.setRole(ROLE_NAME);
-            todo.save();
-
-            
-            
-        }
+        
     }
+
+
     
 }

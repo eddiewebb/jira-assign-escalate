@@ -49,7 +49,7 @@ public interface SupportTeam extends RawEntity<Integer> {
 
     //@OneToMany(value = ProjectRoleAssignmentMapping.class,reverse="getProjectRole",through="getUser",where="HIDE = false")
     //SupportMember[] getAssignees();
-    @OneToMany(reverse="getProjectRole",where="HIDE = 'false'")
+    @OneToMany(reverse="getProjectRole",where="HIDE = 0")
     TeamToUser[] getAssignments();
 
     @Accessor("CMPNTS")

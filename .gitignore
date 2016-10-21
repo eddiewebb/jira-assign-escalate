@@ -3,3 +3,4 @@ jira-assign-escalate.iml
 .idea/
 target
 .DS_Store
+db.properties

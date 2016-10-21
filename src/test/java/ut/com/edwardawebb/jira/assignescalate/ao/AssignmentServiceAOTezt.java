@@ -15,7 +15,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
+import com.atlassian.activeobjects.spi.DatabaseType;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Tables;
+import net.java.ao.ActiveObjectsException;
 import net.java.ao.DatabaseProvider;
 import net.java.ao.EntityManager;
 import net.java.ao.RawEntity;
@@ -442,9 +445,21 @@ public class AssignmentServiceAOTezt {
     
     public static class ConfigAssigmentTestData implements DatabaseUpdater {
 
+        private static final Map<String, DatabaseType> DATABASE_PRODUCT_TO_TYPE_MAP = ImmutableMap.<String, DatabaseType>builder()
+                .put("HSQL Database Engine", DatabaseType.HSQL)
+                .put("MySQL", DatabaseType.MYSQL)
+                .put("PostgreSQL", DatabaseType.POSTGRESQL)
+                .put("Oracle", DatabaseType.ORACLE)
+                .put("Microsoft SQL Server", DatabaseType.MS_SQL)
+                .put("DB2", DatabaseType.DB2)
+                .build();
+
         @Override
         public void update(EntityManager em) throws Exception {
-            dropEverything(em);
+            final TestActiveObjects activeObjects = new TestActiveObjects(em);
+            if (findDatabaseType(em).equals(DatabaseType.ORACLE)){
+                dropEverything(em);
+            }
 
             em.migrate(SupportTeam.class);
             em.migrate(SupportMember.class);
@@ -522,59 +537,41 @@ public class AssignmentServiceAOTezt {
 
         }
 
-        public static void dropEverything(EntityManager em) throws SQLException {
+        public static void dropEverything(EntityManager em)  {
             DatabaseProvider provider = em.getProvider();
-
-            Connection connection = provider.startTransaction();
-            log.warn("Dropping Everything!");
-
-            // get all sequences, add to list for deletion
-            Statement stmt = null;
-            ArrayList<String> sequences = new ArrayList<String>();
-            try {
-                stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery("select * from user_sequences");
-                while (rs.next()) {
-                    String name = rs.getString("sequence_name");
-                    sequences.add(name);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            }
-
-            //loop list and drop all sequences
             String schema = provider.getSchema();
-            log.warn("Found " + sequences.size() + " sequences in schema " + schema + " to delete");
-            for (String name : sequences) {
-                log.warn("Dropping " + name);
-                Statement dropstmt = null;
-                try {
-                    dropstmt = connection.createStatement();
-                    int result = dropstmt.executeUpdate("DROP SEQUENCE " + schema + "." + name);
-                    log.warn("Results: " + result);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (dropstmt != null) {
-                        dropstmt.close();
-                    }
-                }
+            try {
+                Connection connection = provider.startTransaction();
+                log.warn("Dropping All Sequences and Tables!");
+                drop("SEQUENCE", connection);
+                drop("TABLE", connection);
+                provider.commitTransaction(connection);
+                connection.close();
+            }catch (SQLException e){
+                log.error("nm. Encountered an issue, or perhaps not an oracle DB.");
             }
+        }
 
-            log.warn("Sequences dropped");
-
-
-            ArrayList<String> tables = new ArrayList<String>();
+        private static void drop(String type, Connection connection) throws SQLException{
+            Statement stmt = null;
             try {
                 stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery("select * from user_tables");
+                ResultSet rs = stmt.executeQuery("select * from user_" + type +  "s");
                 while (rs.next()) {
-                    String name = rs.getString("table_name");
-                    tables.add(name);
+                    String name = rs.getString(type +"_name");
+                    log.warn("Dropping "+ type +" " + name);
+                    Statement dropstmt = null;
+                    try {
+                        dropstmt = connection.createStatement();
+                        int result = dropstmt.executeUpdate("DROP " + type + " " + name );
+                        log.warn("Results: " + result);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (dropstmt != null) {
+                            dropstmt.close();
+                        }
+                    }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -583,29 +580,35 @@ public class AssignmentServiceAOTezt {
                     stmt.close();
                 }
             }
+            log.warn(type + "s dropped");
+        }
 
-            //loop list and drop all tables
-            log.warn("Found " + tables.size() + " tables in schema " + schema + " to delete");
-            for (String name : tables) {
-                log.warn("Dropping " + name);
-                Statement dropstmt = null;
-                try {
-                    dropstmt = connection.createStatement();
-                    int result = dropstmt.executeUpdate("DROP table " + provider.withSchema(name));
-                    log.warn("Results: " + result);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (dropstmt != null) {
-                        dropstmt.close();
+        /**
+         * This method was taken from AO code in the TestActiveObjects class.
+         * https://bitbucket.org/activeobjects/ao-plugin
+         * @param entityManager
+         * @return
+         */
+        private static DatabaseType findDatabaseType(EntityManager entityManager)
+        {
+            try (Connection connection = entityManager.getProvider().getConnection())
+            {
+                String dbName = connection.getMetaData().getDatabaseProductName();
+                for (Map.Entry<String, DatabaseType> entry : DATABASE_PRODUCT_TO_TYPE_MAP.entrySet())
+                {
+                    // We use "startsWith" here, because the ProductName for DB2 contains OS information.
+                    if (dbName.startsWith(entry.getKey()))
+                    {
+                        return entry.getValue();
                     }
                 }
             }
+            catch (SQLException e)
+            {
+                throw new ActiveObjectsException(e);
+            }
 
-            log.warn("tables dropped");
-            provider.commitTransaction(connection);
-
-            connection.close();
+            return DatabaseType.UNKNOWN;
         }
     }
 }
