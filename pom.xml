@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.edwardawebb</groupId>
     <artifactId>jira-assign-escalate</artifactId>
-    <version>1.4.8.1-SNAPSHOT</version>
+    <version>1.4.9-SNAPSHOT</version>
     <organization>
         <name>Edward A Webb</name>
         <url>http://www.edwardawebb.com/</url>
@@ -376,6 +376,36 @@
         </profile>
         <profile>
             <id>db-mssql</id>
+            <dependencies>
+                <dependency>
+                <groupId>net.sourceforge.jtds</groupId>
+                <artifactId>jtds</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+            </dependencies>
+            <build>
+            <plugins>
+                <plugin>
+                    <!-- reads properties file with DB info matching profile -->
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>properties-maven-plugin</artifactId>
+                    <version>1.0-alpha-2</version>
+                    <executions>
+                        <execution>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>read-project-properties</goal>
+                            </goals>
+                            <configuration>
+                                <files>
+                                    <file>${basedir}/db.properties.mssql</file>
+                                </files>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
         </profile>
     </profiles>
 

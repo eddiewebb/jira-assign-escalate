@@ -456,7 +456,6 @@ public class AssignmentServiceAOTezt {
 
         @Override
         public void update(EntityManager em) throws Exception {
-            final TestActiveObjects activeObjects = new TestActiveObjects(em);
             if (findDatabaseType(em).equals(DatabaseType.ORACLE)){
                 dropEverything(em);
             }

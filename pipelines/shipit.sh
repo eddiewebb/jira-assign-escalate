@@ -29,7 +29,7 @@ function findReleaseVersion {
 
 #deploy to configured repository and tagg with version
 function deployAndTag {
-	mvn --batch-mode test 
+	mvn --batch-mode test verify
 	mvn --batch-mode -DskipTests deploy scm:tag
 }
 
